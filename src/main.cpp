@@ -2,7 +2,8 @@
 #include "iostream"
 int main() {
     std::string input;
-    std::cin >> input;
+    getline(std::cin, input);
+    std::cout << input;
     Lexer lexer(input);
     std::list<SyntaxToken> tokens = lexer.tokenize();
     for (auto it: tokens) {
