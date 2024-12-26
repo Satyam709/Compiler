@@ -13,6 +13,15 @@ set(SOURCES
         include/Compiler/Lexer.h
         include/Compiler/Syntax.h
         src/Lexer.cpp
+        src/Parser.cpp
+        include/Compiler/Parser.h
+        src/Expression.cpp
+        src/Evaluator.cpp
+        include/Compiler/Evaluator.h
+        include/Compiler/Expression.h
+        src/SyntaxTree.cpp
+        include/Compiler/SyntaxTree.h
+        src/Program.cpp
 )
 
 # Create the executable

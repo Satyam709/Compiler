@@ -1,6 +1,5 @@
 #ifndef LEXER_H
 #define LEXER_H
-
 #include <list>
 #include <string_view>
 #include "Compiler/Syntax.h"

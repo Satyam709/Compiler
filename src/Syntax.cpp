@@ -2,10 +2,12 @@
 #include <iostream>
 
 SyntaxToken::SyntaxToken()
-    : position(0), kind(SyntaxKind::BadToken), text(""), val(nullptr) {}
+    : position(0), kind(SyntaxKind::BadToken), text(""), val(nullptr) {
+}
 
 SyntaxToken::SyntaxToken(int position, SyntaxKind kind, std::string_view text, std::any val)
-    : position(position), kind(kind), text(text), val(val) {}
+    : position(position), kind(kind), text(text), val(val) {
+}
 
 SyntaxToken::~SyntaxToken() = default;
 
@@ -29,9 +31,12 @@ std::string syntaxKindToString(SyntaxKind kind) {
     }
 }
 
-std::ostream& operator<<(std::ostream& out, const SyntaxToken& token) {
+
+
+
+std::ostream &operator<<(std::ostream &out, const SyntaxToken &token) {
     out << "text: " << token.text
-        << " position: " << token.position
-        << " kind: " << syntaxKindToString(token.kind);
+            << " position: " << token.position
+            << " kind: " << syntaxKindToString(token.kind);
     return out;
 }
