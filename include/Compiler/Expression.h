@@ -72,4 +72,24 @@ private:
     std::vector<SyntaxNode *> _children;
 };
 
+class UnaryExpressionSyntax final : public ExpressionSyntax {
+public:
+    explicit UnaryExpressionSyntax(const SyntaxToken &operatorToken, ExpressionSyntax& operand);
+
+    SyntaxKind getKind() const override;
+
+    const std::vector<SyntaxNode *> &getChildren() const override;
+
+    ExpressionSyntax *operand() const;
+
+    SyntaxToken operatorToken() const;
+
+private:
+    UnaryExpressionSyntax() = default;
+
+    SyntaxToken _token;
+    ExpressionSyntax& _operand;
+    std::vector<SyntaxNode *> _children;
+};
+
 #endif //EXPRESSION_H

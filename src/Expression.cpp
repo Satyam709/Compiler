@@ -9,11 +9,11 @@ LiteralExpressionSyntax::LiteralExpressionSyntax(const SyntaxToken &token): _tok
     _children.push_back(new SyntaxNodeToken(token));
 }
 
-SyntaxKind LiteralExpressionSyntax::getKind() const  {
+SyntaxKind LiteralExpressionSyntax::getKind() const {
     return LiteralExpression;
 };
 
-const std::vector<SyntaxNode *> &LiteralExpressionSyntax::getChildren() const  {
+const std::vector<SyntaxNode *> &LiteralExpressionSyntax::getChildren() const {
     return _children;
 }
 
@@ -33,11 +33,11 @@ BinaryExpressionSyntax::BinaryExpressionSyntax(ExpressionSyntax &left, SyntaxTok
     _children.push_back(&right);
 }
 
-SyntaxKind BinaryExpressionSyntax::getKind() const  {
+SyntaxKind BinaryExpressionSyntax::getKind() const {
     return BinaryExpression;
 };
 
-const std::vector<SyntaxNode *> &BinaryExpressionSyntax::getChildren() const  {
+const std::vector<SyntaxNode *> &BinaryExpressionSyntax::getChildren() const {
     return _children;
 };
 
@@ -83,4 +83,28 @@ SyntaxToken ParenthesizedExpressionSyntax::closeParenthesis() const {
 
 ExpressionSyntax &ParenthesizedExpressionSyntax::expression() const {
     return _expression;
+}
+
+
+UnaryExpressionSyntax::UnaryExpressionSyntax(const SyntaxToken &operatorToken,
+                                             ExpressionSyntax &operand) : _token(operatorToken), _operand(operand) {
+    _children.push_back(new SyntaxNodeToken(operatorToken));
+    _children.push_back(&_operand);
+}
+
+
+SyntaxKind UnaryExpressionSyntax::getKind() const {
+    return UnaryExpression;
+}
+
+const std::vector<SyntaxNode *> &UnaryExpressionSyntax::getChildren() const {
+    return _children;
+}
+
+SyntaxToken UnaryExpressionSyntax::operatorToken() const {
+    return _token;
+}
+
+ExpressionSyntax *UnaryExpressionSyntax::operand() const {
+    return &_operand;
 }

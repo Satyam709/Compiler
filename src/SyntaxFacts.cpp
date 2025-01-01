@@ -15,3 +15,11 @@ int SyntaxFacts::getPrecedence(const SyntaxKind &kind) {
         default: return 0;
     }
 }
+int SyntaxFacts::getUnaryPrecedence(const SyntaxKind &kind) {
+    switch (kind) {
+        case PlusToken:
+        case MinusToken:
+            return 3;
+        default: return 0;
+    }
+}

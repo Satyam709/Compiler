@@ -47,17 +47,26 @@ SyntaxToken Parser::match(SyntaxKind kind) {
     return {_position, kind, "", nullptr};
 }
 
-ExpressionSyntax *Parser::parseExpression(int parentPrecedence) {
-    // return parseTerm();
-    auto* left = parsePrimaryExpression();
+ExpressionSyntax *Parser::parseExpression(const int parentPrecedence) {
+    ExpressionSyntax *left;
+
+    if (const int unaryOperatorPrecedence = SyntaxFacts::getUnaryPrecedence(current().kind);
+        unaryOperatorPrecedence != 0 && unaryOperatorPrecedence >= parentPrecedence) {
+        const SyntaxToken operatorToken = nextToken();
+        auto* operand = parseExpression(unaryOperatorPrecedence);
+        left = new UnaryExpressionSyntax(operatorToken, *operand);
+    } else {
+        left = parsePrimaryExpression();
+    }
+
     while (true) {
         const int currentPrecedence = SyntaxFacts::getPrecedence(current().kind);
         if (currentPrecedence == 0 || currentPrecedence <= parentPrecedence)
             break;
 
         auto operatorToken = nextToken();
-        auto* right = parseExpression(currentPrecedence);
-        left =  new BinaryExpressionSyntax(*left,operatorToken, *right);
+        auto *right = parseExpression(currentPrecedence);
+        left = new BinaryExpressionSyntax(*left, operatorToken, *right);
     }
     return left;
 }

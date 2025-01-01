@@ -21,7 +21,8 @@ enum SyntaxKind {
     // expressions
     LiteralExpression,
     BinaryExpression,
-    ParenthesizedExpression
+    ParenthesizedExpression,
+    UnaryExpression
 };
 
 // just a helper method to convert enum kind from int to respective value

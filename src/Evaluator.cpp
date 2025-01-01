@@ -1,4 +1,3 @@
-
 #include "Compiler/Evaluator.h"
 #include <format>
 #include <sstream>
@@ -10,13 +9,25 @@ Evaluator::Evaluator(ExpressionSyntax &root): _root(root) {
 }
 
 int Evaluator::evaluateExpression(ExpressionSyntax *node) {
-    if (auto numberNode = dynamic_cast<LiteralExpressionSyntax *>(node)) {
+    if (const auto unaryNode = dynamic_cast<UnaryExpressionSyntax *>(node)) {
+        const auto operand = evaluateExpression(unaryNode->operand());
+        if (unaryNode->operatorToken().kind == PlusToken) {
+            return operand;
+        }
+        if (unaryNode->operatorToken().kind == MinusToken) {
+            return -1*operand;
+        }
+
+        throw std::runtime_error("Invalid unary operator" + unaryNode->operatorToken().kind);
+    }
+
+    if (const auto numberNode = dynamic_cast<LiteralExpressionSyntax *>(node)) {
         return std::any_cast<int>(numberNode->getToken().val);
     }
 
-    if (auto binaryNode = dynamic_cast<BinaryExpressionSyntax *>(node)) {
-        auto left = evaluateExpression(&binaryNode->left());
-        auto right = evaluateExpression(&binaryNode->right());
+    if (const auto binaryNode = dynamic_cast<BinaryExpressionSyntax *>(node)) {
+        const auto left = evaluateExpression(&binaryNode->left());
+        const auto right = evaluateExpression(&binaryNode->right());
 
         if (binaryNode->operator_token().kind == PlusToken) {
             return left + right;

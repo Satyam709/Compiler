@@ -9,6 +9,7 @@
 class SyntaxFacts {
 public:
     static int getPrecedence(const SyntaxKind &kind);
+    static int getUnaryPrecedence(const SyntaxKind &kind);
 };
 
 

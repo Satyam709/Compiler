@@ -27,6 +27,7 @@ std::string syntaxKindToString(SyntaxKind kind) {
         case LiteralExpression: return "LiteralExpression";
         case BinaryExpression: return "BinaryExpression";
         case ParenthesizedExpression: return "ParenthesizedExpression";
+        case UnaryExpression: return "UnaryExpression";
         default: return "UnknownToken";
     }
 }
