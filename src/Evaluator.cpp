@@ -10,7 +10,7 @@ Evaluator::Evaluator(ExpressionSyntax &root): _root(root) {
 }
 
 int Evaluator::evaluateExpression(ExpressionSyntax *node) {
-    if (auto numberNode = dynamic_cast<NumberExpressionSyntax *>(node)) {
+    if (auto numberNode = dynamic_cast<LiteralExpressionSyntax *>(node)) {
         return std::any_cast<int>(numberNode->getToken().val);
     }
 

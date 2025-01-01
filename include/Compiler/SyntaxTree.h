@@ -4,6 +4,8 @@
 #include <vector>
 #include "Syntax.h"
 
+class SyntaxNode;
+
 class ExpressionSyntax;
 
 class SyntaxTree final {
@@ -19,6 +21,8 @@ public:
     const SyntaxToken &endOfFileToken() const;
 
     static SyntaxTree* parseToken(std::string_view text);
+
+    static void prettyPrint(SyntaxNode &node, std::string indent = "", bool isLast = false);
 
 private:
     std::vector<std::string_view> _diagnostics;

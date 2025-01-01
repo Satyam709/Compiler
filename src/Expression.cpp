@@ -5,23 +5,23 @@
 // sealed classes for diff types of expression
 
 // Number expression
-NumberExpressionSyntax::NumberExpressionSyntax(const SyntaxToken &token): _token(token) {
-    _children.emplace_back(new SyntaxNodeToken(token));
+LiteralExpressionSyntax::LiteralExpressionSyntax(const SyntaxToken &token): _token(token) {
+    _children.push_back(new SyntaxNodeToken(token));
 }
 
-SyntaxKind NumberExpressionSyntax::getKind() const  {
-    return NumberExpression;
+SyntaxKind LiteralExpressionSyntax::getKind() const  {
+    return LiteralExpression;
 };
 
-const std::vector<SyntaxNode *> &NumberExpressionSyntax::getChildren() const  {
+const std::vector<SyntaxNode *> &LiteralExpressionSyntax::getChildren() const  {
     return _children;
 }
 
-const SyntaxToken &NumberExpressionSyntax::getToken() const {
+const SyntaxToken &LiteralExpressionSyntax::getToken() const {
     return _token;
 }
 
-NumberExpressionSyntax::NumberExpressionSyntax() = default;
+LiteralExpressionSyntax::LiteralExpressionSyntax() = default;
 
 // Binary expression
 BinaryExpressionSyntax::BinaryExpressionSyntax(ExpressionSyntax &left, SyntaxToken operator_token,

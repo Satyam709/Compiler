@@ -72,7 +72,7 @@ ExpressionSyntax *Parser::parsePrimaryExpression() {
     }
 
     auto numberToken = match(NumberToken);
-    return new NumberExpressionSyntax(numberToken);
+    return new LiteralExpressionSyntax(numberToken);
 }
 
 SyntaxTree *Parser::parse() {

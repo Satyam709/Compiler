@@ -8,9 +8,9 @@ class ExpressionSyntax : public SyntaxNode {
 };
 
 // sealed classes for diff types of expression
-class NumberExpressionSyntax final : public ExpressionSyntax {
+class LiteralExpressionSyntax final : public ExpressionSyntax {
 public:
-    explicit NumberExpressionSyntax(const SyntaxToken &token);
+    explicit LiteralExpressionSyntax(const SyntaxToken &token);
 
     SyntaxKind getKind() const override;
 
@@ -19,7 +19,7 @@ public:
     const SyntaxToken &getToken() const;
 
 private:
-    NumberExpressionSyntax();
+    LiteralExpressionSyntax();
 
     SyntaxToken _token;
     std::vector<SyntaxNode *> _children;

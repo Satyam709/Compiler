@@ -24,7 +24,7 @@ std::string syntaxKindToString(SyntaxKind kind) {
         case CloseParenthesisToken: return "CloseParenthesisToken";
         case BadToken: return "BadToken";
         case EndOfFileToken: return "EndOfFileToken";
-        case NumberExpression: return "NumberExpression";
+        case LiteralExpression: return "LiteralExpression";
         case BinaryExpression: return "BinaryExpression";
         case ParenthesizedExpression: return "ParenthesizedExpression";
         default: return "UnknownToken";

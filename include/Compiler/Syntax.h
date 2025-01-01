@@ -5,6 +5,7 @@
 #include <ostream>
 
 enum SyntaxKind {
+
     NumberToken,
     WhitespaceToken,
     PlusToken,
@@ -13,9 +14,12 @@ enum SyntaxKind {
     SlashToken,
     OpenParenthesisToken,
     CloseParenthesisToken,
+
     BadToken,
     EndOfFileToken,
-    NumberExpression,
+
+    // expressions
+    LiteralExpression,
     BinaryExpression,
     ParenthesizedExpression
 };
