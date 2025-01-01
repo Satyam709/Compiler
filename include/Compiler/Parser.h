@@ -22,13 +22,9 @@ private:
 
     SyntaxToken match(SyntaxKind kind);
 
-    ExpressionSyntax *parseExpression();
+    ExpressionSyntax *parseExpression(int parentPrecedence = 0);
 
     ExpressionSyntax *parsePrimaryExpression();
-
-    ExpressionSyntax *parseFactor();
-
-    ExpressionSyntax *parseTerm();
 
 
 };

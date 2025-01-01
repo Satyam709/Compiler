@@ -22,6 +22,8 @@ set(SOURCES
         src/SyntaxTree.cpp
         include/Compiler/SyntaxTree.h
         src/Program.cpp
+        src/SyntaxFacts.cpp
+        include/Compiler/SyntaxFacts.h
 )
 
 # Create the executable

@@ -7,6 +7,8 @@
 #include "Compiler/Expression.h"
 #include "Compiler/Lexer.h"
 #include "Compiler/Syntax.h"
+#include "Compiler/SyntaxFacts.h"
+
 
 Parser::Parser(const std::string_view input) {
     Lexer lexer(input);
@@ -45,11 +47,22 @@ SyntaxToken Parser::match(SyntaxKind kind) {
     return {_position, kind, "", nullptr};
 }
 
-ExpressionSyntax* Parser::parseExpression() {
-    return parseTerm();
+ExpressionSyntax *Parser::parseExpression(int parentPrecedence) {
+    // return parseTerm();
+    auto* left = parsePrimaryExpression();
+    while (true) {
+        const int currentPrecedence = SyntaxFacts::getPrecedence(current().kind);
+        if (currentPrecedence == 0 || currentPrecedence <= parentPrecedence)
+            break;
+
+        auto operatorToken = nextToken();
+        auto* right = parseExpression(currentPrecedence);
+        left =  new BinaryExpressionSyntax(*left,operatorToken, *right);
+    }
+    return left;
 }
 
-ExpressionSyntax* Parser::parsePrimaryExpression() {
+ExpressionSyntax *Parser::parsePrimaryExpression() {
     auto crnt = current();
     if (crnt.kind == OpenParenthesisToken) {
         auto left = nextToken();
@@ -62,30 +75,8 @@ ExpressionSyntax* Parser::parsePrimaryExpression() {
     return new NumberExpressionSyntax(numberToken);
 }
 
-ExpressionSyntax* Parser::parseFactor() {
-    auto left = parsePrimaryExpression();
-
-    while (current().kind == StarToken || current().kind == SlashToken) {  // Use current() instead of crnt
-        auto operatorToken = nextToken();
-        auto right = parsePrimaryExpression();
-        left = new BinaryExpressionSyntax(*left, operatorToken, *right);
-    }
-    return left;
-}
-
-ExpressionSyntax* Parser::parseTerm() {
-    auto left = parseFactor();
-
-    while (current().kind == PlusToken || current().kind == MinusToken) {  // Use current() instead of crnt
-        auto operatorToken = nextToken();
-        auto right = parseFactor();
-        left = new BinaryExpressionSyntax(*left, operatorToken, *right);
-    }
-    return left;
-}
-
-SyntaxTree* Parser::parse() {
-    auto expression = parseExpression();
+SyntaxTree *Parser::parse() {
+    auto expression = parseExpression(0);
     auto endOfFileToken = match(EndOfFileToken);
     return new SyntaxTree(_diagnostics, *expression, endOfFileToken);
 }
