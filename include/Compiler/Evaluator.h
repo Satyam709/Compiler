@@ -2,17 +2,18 @@
 #ifndef EVALUATOR_H
 #define EVALUATOR_H
 #include "Compiler/Expression.h"
+#include "Compiler/Binder.h"
 
 class Evaluator {
 public:
-    Evaluator( ExpressionSyntax& root);
+    Evaluator( BoundExpression& root);
 
-    int evaluateExpression(ExpressionSyntax* node);
+    int evaluateExpression(BoundExpression* node);
 
     int evaluate();
 
 private:
-     ExpressionSyntax& _root;
+     BoundExpression& _root;
 };
 
 #endif //EVALUATOR_H

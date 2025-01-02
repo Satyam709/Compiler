@@ -35,7 +35,7 @@ public:
 
     ExpressionSyntax &left() const;
 
-    SyntaxToken operator_token() const;
+    SyntaxToken operatorToken() const;
 
     ExpressionSyntax &right() const;
 
@@ -43,7 +43,7 @@ private:
     BinaryExpressionSyntax();
 
     ExpressionSyntax &_left;
-    SyntaxToken _operator_token;
+    SyntaxToken _operatorToken;
     ExpressionSyntax &_right;
     std::vector<SyntaxNode *> _children;
 };

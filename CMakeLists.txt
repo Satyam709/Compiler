@@ -10,18 +10,22 @@ include_directories(include)
 set(SOURCES
         src/Syntax.cpp
         src/main.cpp
-        include/Compiler/Lexer.h
-        include/Compiler/Syntax.h
         src/Lexer.cpp
         src/Parser.cpp
-        include/Compiler/Parser.h
         src/Expression.cpp
         src/Evaluator.cpp
+        src/SyntaxTree.cpp
+        src/Binder.cpp
+        src/Program.cpp
+
+        # Header files (optional, for clarity; not strictly required in SOURCES)
+        include/Compiler/Lexer.h
+        include/Compiler/Syntax.h
+        include/Compiler/Parser.h
         include/Compiler/Evaluator.h
         include/Compiler/Expression.h
-        src/SyntaxTree.cpp
         include/Compiler/SyntaxTree.h
-        src/Program.cpp
+        include/Compiler/Binder.h  # Add Binder.h here
 )
 
 # Create the executable

@@ -4,6 +4,7 @@
 
 #include "Compiler/Evaluator.h"
 #include "Compiler/SyntaxTree.h"
+#include "Compiler/Binder.h"
 
 static void prettyPrint(const SyntaxNode &node, std::string indent = "", bool isLast = true) {
     // Using simple ASCII characters instead of UTF-8 box characters
@@ -50,13 +51,17 @@ int main() {
 
 
         auto syntaxTree = SyntaxTree::parseToken(line);
+        auto binder = new Binder();
+        std::vector<std::string_view> diagnostics = syntaxTree->diagnostics();
+        // diagnostics.insert(syntaxTree->diagnostics().end(), binder->Diagnostics().begin(), binder->Diagnostics().end());
+        auto boundExpression = binder->BindExpression(&syntaxTree->root());
 
         if (showTree) {
             prettyPrint(syntaxTree->root());
         }
 
         if (syntaxTree->diagnostics().empty()) {
-            Evaluator e(syntaxTree->root());
+            Evaluator e(*boundExpression);
             auto result = e.evaluate();
             std::cout << result << std::endl;
         } else {

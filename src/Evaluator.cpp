@@ -4,56 +4,75 @@
 #include <sstream>
 
 #include "Compiler/Expression.h"
+#include "Compiler/Syntax.h"
+#include "Compiler/Binder.h"
 
 
-Evaluator::Evaluator(ExpressionSyntax &root): _root(root) {
+
+Evaluator::Evaluator(BoundExpression &root): _root(root) {
 }
 
-int Evaluator::evaluateExpression(ExpressionSyntax *node) {
-    if (auto literalNode = dynamic_cast<LiteralExpressionSyntax *>(node)) {
-        return std::any_cast<int>(literalNode->getToken().val);
+int Evaluator::evaluateExpression(BoundExpression *node) {
+    if (auto literalNode = dynamic_cast<BoundLiteralExpression<int> *>(node)) {
+        return std::any_cast<int>(literalNode->_value);
     }
 
-    if (auto unaryNode = dynamic_cast<UnaryExpressionSyntax *>(node)) {
-        auto operand = evaluateExpression(&unaryNode->operand());
-        if (unaryNode->operatorToken().kind == MinusToken) {
-            return -operand;
-        }
-        else if(unaryNode->operatorToken().kind == PlusToken)   
-            return operand;
-        else {
-            std::stringstream ss;
-            ss << "Unexpected unary operator " << unaryNode->operatorToken();
-            throw std::runtime_error(ss.str());
+    if (auto unaryNode = dynamic_cast<BoundUnaryExpression *>(node)) {
+        auto operand = evaluateExpression(unaryNode->_operand);
+        switch(unaryNode->_op){
+            case BoundUnaryOperatorKind::Identity:
+                return operand;
+            case BoundUnaryOperatorKind::Negation:
+                return -operand;
+            default:
+                std::string err;
+                switch(unaryNode->_op){
+                    case BoundUnaryOperatorKind::Identity:
+                        err = "Identity"; break;
+                    case BoundUnaryOperatorKind::Negation:
+                        err = "Negation"; break;
+                }
+                std::stringstream ss;
+                ss << "Unexpected unary operator " << err;
+                throw std::runtime_error(ss.str());
         }
     }
 
-    if (auto binaryNode = dynamic_cast<BinaryExpressionSyntax *>(node)) {
-        auto left = evaluateExpression(&binaryNode->left());
-        auto right = evaluateExpression(&binaryNode->right());
+    if (auto binaryNode = dynamic_cast<BoundBinaryExpression *>(node)) {
+        auto left = evaluateExpression(binaryNode->_left);
+        auto right = evaluateExpression(binaryNode->_right);
 
-        if (binaryNode->operator_token().kind == PlusToken) {
+        if (binaryNode->_op == BoundBinaryOperatorKind::Addition) {
             return left + right;
         }
-        if (binaryNode->operator_token().kind == MinusToken) {
+        if (binaryNode->_op == BoundBinaryOperatorKind::Subtraction) {
             return left - right;
         }
-        if (binaryNode->operator_token().kind == StarToken) {
+        if (binaryNode->_op == BoundBinaryOperatorKind::Multiplication) {
             return left * right;
         }
-        if (binaryNode->operator_token().kind == SlashToken) {
+        if (binaryNode->_op == BoundBinaryOperatorKind::Division) {
             return left / right;
         }
+        std::string err;
+        switch(binaryNode->_op){
+            case BoundBinaryOperatorKind::Addition:
+                err = "Addition"; break;
+            case BoundBinaryOperatorKind::Subtraction:
+                err = "Subtraction"; break;
+            case BoundBinaryOperatorKind::Multiplication:
+                err = "Multiplication"; break;
+            case BoundBinaryOperatorKind::Division:
+                err = "Division"; break;
+        }
         std::stringstream ss;
-        ss << "Unexpected binary operator " << binaryNode->operator_token();
-        throw std::runtime_error(ss.str());
+        ss << "Unexpected binary operator " << err;
+        throw std::runtime_error(ss.str());       
     }
-    if (const auto parenthesisNode = dynamic_cast<ParenthesizedExpressionSyntax *>(node)) {
-        return evaluateExpression(&parenthesisNode->expression());
-    }
-    std::stringstream ss;
-    ss << "Unexpected node <" << syntaxKindToString(node->getKind()) << ">";
-    throw std::runtime_error(ss.str());
+    // if (const auto parenthesisNode = dynamic_cast<ParenthesizedExpressionSyntax *>(node)) {
+    //     return evaluateExpression(&parenthesisNode->expression());
+    // }
+    throw std::runtime_error("Unexpected node");
 }
 
 int Evaluator::evaluate() {

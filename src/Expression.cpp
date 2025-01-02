@@ -27,7 +27,7 @@ LiteralExpressionSyntax::LiteralExpressionSyntax() = default;
 BinaryExpressionSyntax::BinaryExpressionSyntax(ExpressionSyntax &left, SyntaxToken operator_token,
                                                ExpressionSyntax &right): _left(left),
                                                                          _right(right),
-                                                                         _operator_token(operator_token) {
+                                                                         _operatorToken(operator_token) {
     _children.push_back(&left);
     _children.push_back(new SyntaxNodeToken(operator_token));
     _children.push_back(&right);
@@ -45,8 +45,8 @@ ExpressionSyntax &BinaryExpressionSyntax::left() const {
     return _left;
 }
 
-SyntaxToken BinaryExpressionSyntax::operator_token() const {
-    return _operator_token;
+SyntaxToken BinaryExpressionSyntax::operatorToken() const {
+    return _operatorToken;
 }
 
 ExpressionSyntax &BinaryExpressionSyntax::right() const {
