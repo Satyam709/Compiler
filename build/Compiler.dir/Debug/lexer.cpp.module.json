@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "Compiler.dir\\Debug\\Lexer.obj",
+            "outputs": [
+                "C:\\Users\\jayan\\OneDrive\\Desktop\\compiler\\Compiler\\build\\Compiler.dir\\Debug\\vc143.pdb",
+                "Compiler.dir\\Debug\\"
+            ],
+            "requires": []
+        }
+    ]
+}

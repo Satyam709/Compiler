@@ -7,7 +7,7 @@
 
 static void prettyPrint(const SyntaxNode &node, std::string indent = "", bool isLast = true) {
     // Using simple ASCII characters instead of UTF-8 box characters
-    std::string marker = isLast ? "+--" : "+--";
+    std::string marker = isLast ? "|__" : "|--";
     std::cout << indent;
     std::cout << marker;
     std::cout << syntaxKindToString(node.getKind());
@@ -20,7 +20,7 @@ static void prettyPrint(const SyntaxNode &node, std::string indent = "", bool is
     std::cout << std::endl;
 
     // Using simple ASCII vertical line
-    indent += isLast ? "    " : "|   ";
+    indent += isLast ? "   " : "|   ";
 
     const auto &children = node.getChildren();
     if (!children.empty()) {
@@ -60,7 +60,7 @@ int main() {
             auto result = e.evaluate();
             std::cout << result << std::endl;
         } else {
-            for (const auto &diagnostic: syntaxTree->diagnostics()) {
+            for (const auto diagnostic: syntaxTree->diagnostics()) {
                 std::cerr << diagnostic << std::endl;
             }
         }

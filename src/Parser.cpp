@@ -17,7 +17,7 @@ Parser::Parser(const std::string_view input) {
     // for (auto token : _tokens) {
     //     std::cout << token<<std::endl;
     // }
-
+    _diagnostics = lexer.diagnostics();
     _position = 0;
 }
 
@@ -38,16 +38,17 @@ SyntaxToken Parser::nextToken() {
 SyntaxToken Parser::match(SyntaxKind kind) {
     const auto token = current();
     if (token.kind == kind)return nextToken();
+    // std::string err = std::format("ERROR: Unexpected token <{}>, expected <{}>", token, syntaxKindToString(kind));
     std::ostringstream os;
     os << "ERROR: Unexpected token <" << token
             << ">, expected <" << syntaxKindToString(kind) << ">";
     _diagnostics.push_back(os.str());
-    return {_position, kind, "", nullptr};
+    return {_position-1, kind, "", nullptr};
 }
 
-ExpressionSyntax* Parser::parseExpression() {
-    return parseTerm();
-}
+// ExpressionSyntax* Parser::parseExpression() {
+//     return parseTerm();
+// }
 
 ExpressionSyntax* Parser::parsePrimaryExpression() {
     auto crnt = current();
@@ -59,30 +60,30 @@ ExpressionSyntax* Parser::parsePrimaryExpression() {
     }
 
     auto numberToken = match(NumberToken);
-    return new NumberExpressionSyntax(numberToken);
+    return new LiteralExpressionSyntax(numberToken);
 }
 
-ExpressionSyntax* Parser::parseFactor() {
-    auto left = parsePrimaryExpression();
+// ExpressionSyntax* Parser::parseFactor() {
+//     auto left = parsePrimaryExpression();
 
-    while (current().kind == StarToken || current().kind == SlashToken) {  // Use current() instead of crnt
-        auto operatorToken = nextToken();
-        auto right = parsePrimaryExpression();
-        left = new BinaryExpressionSyntax(*left, operatorToken, *right);
-    }
-    return left;
-}
+//     while (current().kind == StarToken || current().kind == SlashToken) {  // Use current() instead of crnt
+//         auto operatorToken = nextToken();
+//         auto right = parsePrimaryExpression();
+//         left = new BinaryExpressionSyntax(*left, operatorToken, *right);
+//     }
+//     return left;
+// }
 
-ExpressionSyntax* Parser::parseTerm() {
-    auto left = parseFactor();
+// ExpressionSyntax* Parser::parseTerm() {
+//     auto left = parseFactor();
 
-    while (current().kind == PlusToken || current().kind == MinusToken) {  // Use current() instead of crnt
-        auto operatorToken = nextToken();
-        auto right = parseFactor();
-        left = new BinaryExpressionSyntax(*left, operatorToken, *right);
-    }
-    return left;
-}
+//     while (current().kind == PlusToken || current().kind == MinusToken) {  // Use current() instead of crnt
+//         auto operatorToken = nextToken();
+//         auto right = parseFactor();
+//         left = new BinaryExpressionSyntax(*left, operatorToken, *right);
+//     }
+//     return left;
+// }
 
 SyntaxTree* Parser::parse() {
     auto expression = parseExpression();

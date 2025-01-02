@@ -4,24 +4,24 @@
 
 // sealed classes for diff types of expression
 
-// Number expression
-NumberExpressionSyntax::NumberExpressionSyntax(const SyntaxToken &token): _token(token) {
+// Literal expression
+LiteralExpressionSyntax::LiteralExpressionSyntax(const SyntaxToken &token): _token(token) {
     _children.emplace_back(new SyntaxNodeToken(token));
 }
 
-SyntaxKind NumberExpressionSyntax::getKind() const  {
-    return NumberExpression;
+SyntaxKind LiteralExpressionSyntax::getKind() const  {
+    return LiteralExpression;
 };
 
-const std::vector<SyntaxNode *> &NumberExpressionSyntax::getChildren() const  {
+const std::vector<SyntaxNode *> &LiteralExpressionSyntax::getChildren() const  {
     return _children;
 }
 
-const SyntaxToken &NumberExpressionSyntax::getToken() const {
+const SyntaxToken &LiteralExpressionSyntax::getToken() const {
     return _token;
 }
 
-NumberExpressionSyntax::NumberExpressionSyntax() = default;
+LiteralExpressionSyntax::LiteralExpressionSyntax() = default;
 
 // Binary expression
 BinaryExpressionSyntax::BinaryExpressionSyntax(ExpressionSyntax &left, SyntaxToken operator_token,
@@ -52,6 +52,32 @@ SyntaxToken BinaryExpressionSyntax::operator_token() const {
 ExpressionSyntax &BinaryExpressionSyntax::right() const {
     return _right;
 }
+
+UnaryExpressionSyntax::UnaryExpressionSyntax(SyntaxToken operatorToken, ExpressionSyntax &operand): _operatorToken(
+    operatorToken),
+    _operand(operand) {
+    _children.push_back(new SyntaxNodeToken(operatorToken));
+    _children.push_back(&operand);
+}
+
+SyntaxKind UnaryExpressionSyntax::getKind() const {
+    return UnaryExpression;
+}
+
+const std::vector<SyntaxNode *> & UnaryExpressionSyntax::getChildren() const {
+    return _children;
+}
+
+SyntaxToken UnaryExpressionSyntax::operatorToken() const {
+    return _operatorToken;
+}
+
+ExpressionSyntax &UnaryExpressionSyntax::operand() const {
+    return _operand;
+}
+
+
+
 
 
 ParenthesizedExpressionSyntax::ParenthesizedExpressionSyntax(SyntaxToken openParenthesisToken,

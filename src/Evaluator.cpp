@@ -10,8 +10,22 @@ Evaluator::Evaluator(ExpressionSyntax &root): _root(root) {
 }
 
 int Evaluator::evaluateExpression(ExpressionSyntax *node) {
-    if (auto numberNode = dynamic_cast<NumberExpressionSyntax *>(node)) {
-        return std::any_cast<int>(numberNode->getToken().val);
+    if (auto literalNode = dynamic_cast<LiteralExpressionSyntax *>(node)) {
+        return std::any_cast<int>(literalNode->getToken().val);
+    }
+
+    if (auto unaryNode = dynamic_cast<UnaryExpressionSyntax *>(node)) {
+        auto operand = evaluateExpression(&unaryNode->operand());
+        if (unaryNode->operatorToken().kind == MinusToken) {
+            return -operand;
+        }
+        else if(unaryNode->operatorToken().kind == PlusToken)   
+            return operand;
+        else {
+            std::stringstream ss;
+            ss << "Unexpected unary operator " << unaryNode->operatorToken();
+            throw std::runtime_error(ss.str());
+        }
     }
 
     if (auto binaryNode = dynamic_cast<BinaryExpressionSyntax *>(node)) {

@@ -8,16 +8,22 @@ class ExpressionSyntax;
 
 class SyntaxTree final {
 public:
+    // constructor
     SyntaxTree(std::vector<std::string_view> diagnostics, ExpressionSyntax &root, SyntaxToken endOfFileToken);
 
+    // default destructor
     ~SyntaxTree();
 
+    // returns diagnostics
     const std::vector<std::string_view> diagnostics() const;
 
+    // returns SyntaxTree root
     ExpressionSyntax &root();
 
+    // returns end of file token
     const SyntaxToken &endOfFileToken() const;
 
+    
     static SyntaxTree* parseToken(std::string_view text);
 
 private:
@@ -29,6 +35,7 @@ private:
 // syntax node interface
 class SyntaxNode {
 public:
+
     virtual SyntaxKind getKind() const = 0;
 
     virtual const std::vector<SyntaxNode *> &getChildren() const = 0;
@@ -39,12 +46,16 @@ public:
 // a wrapper of syntax token on syntax node -> represents leaf node(terminals)
 class SyntaxNodeToken final : public SyntaxNode {
 public:
+    // constructor
     explicit SyntaxNodeToken(const SyntaxToken &token);
 
+    // returns kind of token
     SyntaxKind getKind() const override;
 
+    // getter function for token
     const SyntaxToken &getToken() const;
 
+    
     const std::vector<SyntaxNode *> &getChildren() const override;
 
 private:

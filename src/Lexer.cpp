@@ -1,5 +1,7 @@
 #include "Compiler/Lexer.h"
 #include <cctype>
+#include <string>
+#include <sstream>
 
 Lexer::Lexer(const std::string_view inputText)
     : _inputText(inputText), _position(0), _len(inputText.size()) {
@@ -23,6 +25,10 @@ void Lexer::advance() {
 
 char Lexer::getCurrentChar() const {
     return _position < _len ? _inputText[_position] : '\0';
+}
+
+const std::vector<std::string_view> & Lexer::diagnostics() const {
+        return _diagnostics;
 }
 
 SyntaxToken Lexer::nextToken() {
@@ -67,6 +73,10 @@ SyntaxToken Lexer::nextToken() {
         return {_position++, CloseParenthesisToken, ")", nullptr};
     }
 
+    std::ostringstream os;
+    os << "ERROR: Bad token <" << getCurrentChar()
+            << "> at position " << _position;
+    _diagnostics.push_back(os.str());
     return {_position++, BadToken, std::string_view(&current, 1), nullptr};
 }
 
