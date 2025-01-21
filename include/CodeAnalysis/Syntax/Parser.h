@@ -1,7 +1,7 @@
 #ifndef PARSER_H
 #define PARSER_H
 #include <vector>
-#include "Compiler/Syntax.h"
+#include "CodeAnalysis/Syntax/Syntax.h"
 class SyntaxTree;
 class ExpressionSyntax;
 

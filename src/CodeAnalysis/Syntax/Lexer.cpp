@@ -1,4 +1,4 @@
-#include "Compiler/Lexer.h"
+#include "CodeAnalysis/Syntax/Lexer.h"
 #include <cctype>
 
 Lexer::Lexer(const std::string inputText)

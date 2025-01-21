@@ -2,8 +2,8 @@
 #include <string>
 #include <vector>
 
-#include "Compiler/Evaluator.h"
-#include "Compiler/SyntaxTree.h"
+#include "CodeAnalysis/Evaluator.h"
+#include "CodeAnalysis/Syntax/SyntaxTree.h"
 
 
 int main() {

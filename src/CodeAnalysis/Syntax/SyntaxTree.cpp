@@ -1,8 +1,8 @@
-#include "Compiler/SyntaxTree.h"
-#include "Compiler/Parser.h"
-#include "Compiler/Syntax.h"
+#include "CodeAnalysis/Syntax/SyntaxTree.h"
+#include "CodeAnalysis/Syntax/Parser.h"
+#include "CodeAnalysis/Syntax/Syntax.h"
 #include "iostream"
-#include "Compiler/Expression.h"
+#include "CodeAnalysis/Syntax/Expression.h"
 
 SyntaxTree::SyntaxTree(std::vector<std::string> diagnostics,
                        ExpressionSyntax &root,

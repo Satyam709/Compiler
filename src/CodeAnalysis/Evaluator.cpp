@@ -1,8 +1,7 @@
-#include "Compiler/Evaluator.h"
+#include "CodeAnalysis/Evaluator.h"
 #include <format>
 #include <sstream>
-
-#include "Compiler/Expression.h"
+#include "CodeAnalysis/Syntax/Expression.h"
 
 
 Evaluator::Evaluator(ExpressionSyntax &root): _root(root) {

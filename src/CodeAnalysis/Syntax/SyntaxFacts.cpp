@@ -2,7 +2,7 @@
 // Created by satya on 01-01-2025.
 //
 
-#include "../include/Compiler/SyntaxFacts.h"
+#include "CodeAnalysis/Syntax/SyntaxFacts.h"
 
 int SyntaxFacts::getPrecedence(const SyntaxKind &kind) {
     switch (kind) {

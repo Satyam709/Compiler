@@ -1,7 +1,7 @@
 
 #ifndef EVALUATOR_H
 #define EVALUATOR_H
-#include "Compiler/Expression.h"
+#include "CodeAnalysis/Syntax/Expression.h"
 
 class Evaluator {
 public:

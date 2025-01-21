@@ -1,13 +1,13 @@
-#include "Compiler/Parser.h"
+#include "CodeAnalysis/Syntax/Parser.h"
 #include <format>
 #include <iostream>
 #include <sstream>
 #include <vector>
 
-#include "Compiler/Expression.h"
-#include "Compiler/Lexer.h"
-#include "Compiler/Syntax.h"
-#include "Compiler/SyntaxFacts.h"
+#include "CodeAnalysis/Syntax/Expression.h"
+#include "CodeAnalysis/Syntax/Lexer.h"
+#include "CodeAnalysis/Syntax/Syntax.h"
+#include "CodeAnalysis/Syntax/SyntaxFacts.h"
 
 
 Parser::Parser(const std::string input) {
