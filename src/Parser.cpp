@@ -10,7 +10,7 @@
 #include "Compiler/SyntaxFacts.h"
 
 
-Parser::Parser(const std::string_view input) {
+Parser::Parser(const std::string input) {
     Lexer lexer(input);
     auto tokenList = lexer.tokenize();
     _tokens = std::vector(tokenList.begin(), tokenList.end()); // Convert list to vector

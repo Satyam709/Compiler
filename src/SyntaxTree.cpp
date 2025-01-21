@@ -4,7 +4,7 @@
 #include "iostream"
 #include "Compiler/Expression.h"
 
-SyntaxTree::SyntaxTree(std::vector<std::string_view> diagnostics,
+SyntaxTree::SyntaxTree(std::vector<std::string> diagnostics,
                        ExpressionSyntax &root,
                        SyntaxToken endOfFileToken)
     : _diagnostics(std::move(diagnostics))
@@ -14,7 +14,7 @@ SyntaxTree::SyntaxTree(std::vector<std::string_view> diagnostics,
 
 SyntaxTree::~SyntaxTree() = default;
 
-const std::vector<std::string_view> SyntaxTree::diagnostics() const {
+const std::vector<std::string> SyntaxTree::diagnostics() const {
     return _diagnostics;
 }
 
@@ -26,7 +26,7 @@ const SyntaxToken &SyntaxTree::endOfFileToken() const {
     return _endOfFileToken;
 }
 
-SyntaxTree* SyntaxTree::parseToken(std::string_view text) {
+SyntaxTree* SyntaxTree::parseToken(std::string text) {
     Parser parser(text);
     return parser.parse();
 }

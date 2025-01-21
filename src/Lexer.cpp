@@ -1,7 +1,7 @@
 #include "Compiler/Lexer.h"
 #include <cctype>
 
-Lexer::Lexer(const std::string_view inputText)
+Lexer::Lexer(const std::string inputText)
     : _inputText(inputText), _position(0), _len(inputText.size()) {
 }
 
@@ -37,7 +37,7 @@ SyntaxToken Lexer::nextToken() {
         while (std::isdigit(getCurrentChar())) {
             advance();
         }
-        std::string_view tokenText = _inputText.substr(start, _position - start);
+        std::string tokenText = _inputText.substr(start, _position - start);
         return {start, NumberToken, tokenText, std::stoi(std::string(tokenText))};
     }
     if (std::isspace(current)) {
@@ -45,7 +45,7 @@ SyntaxToken Lexer::nextToken() {
         while (std::isspace(getCurrentChar())) {
             advance();
         }
-        std::string_view tokenText = _inputText.substr(start, _position - start);
+        std::string tokenText = _inputText.substr(start, _position - start);
         return {start, WhitespaceToken, tokenText, nullptr};
     }
     if (current == '+') {
@@ -67,6 +67,6 @@ SyntaxToken Lexer::nextToken() {
         return {_position++, CloseParenthesisToken, ")", nullptr};
     }
 
-    return {_position++, BadToken, std::string_view(&current, 1), nullptr};
+    return {_position++, BadToken, std::string(&current, 1), nullptr};
 }
 

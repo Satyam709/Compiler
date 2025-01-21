@@ -1,7 +1,7 @@
 #ifndef SYNTAX_H
 #define SYNTAX_H
 #include <any>
-#include <string_view>
+#include <string>
 #include <ostream>
 
 enum SyntaxKind {
@@ -31,11 +31,11 @@ std::string syntaxKindToString(SyntaxKind kind);
 class SyntaxToken {
 public:
     SyntaxToken();
-    SyntaxToken(int position, SyntaxKind kind, std::string_view text, std::any val);
+    SyntaxToken(int position, SyntaxKind kind, std::string text, std::any val);
     ~SyntaxToken();
     int position;
     SyntaxKind kind;
-    std::string_view text{};
+    std::string text{};
     std::any val;
 };
 

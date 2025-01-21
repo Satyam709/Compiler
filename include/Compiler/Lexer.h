@@ -1,13 +1,13 @@
 #ifndef LEXER_H
 #define LEXER_H
 #include <list>
-#include <string_view>
+#include <string>
 #include "Compiler/Syntax.h"
 
 class Lexer {
 public:
     // Constructor to initialize the Lexer with input text
-    Lexer(const std::string_view inputText);
+    Lexer(const std::string inputText);
 
     // Destructor
     ~Lexer() = default;
@@ -16,7 +16,7 @@ public:
     std::list<SyntaxToken> tokenize();
 
 private:
-    std::string_view _inputText;  // The input text to tokenize
+    std::string _inputText;  // The input text to tokenize
     const unsigned _len;          // Length of input text
     int _position;                // Current position in inputText
 

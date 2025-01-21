@@ -5,7 +5,7 @@ SyntaxToken::SyntaxToken()
     : position(0), kind(SyntaxKind::BadToken), text(""), val(nullptr) {
 }
 
-SyntaxToken::SyntaxToken(int position, SyntaxKind kind, std::string_view text, std::any val)
+SyntaxToken::SyntaxToken(int position, SyntaxKind kind, std::string text, std::any val)
     : position(position), kind(kind), text(text), val(val) {
 }
 
