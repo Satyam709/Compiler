@@ -15,6 +15,11 @@ enum class SyntaxKind {
     OpenParenthesisToken,
     CloseParenthesisToken,
 
+    // logical operators
+    BangToken,
+    AmpersandAmpersandToken,
+    PipePipeToken,
+
     BadToken,
     EndOfFileToken,
 
@@ -32,7 +37,7 @@ enum class SyntaxKind {
 
     // identifier
 
-    IdentifierToken
+    IdentifierToken,
 };
 
 // just a helper method to convert enum class kind from int to respective value

@@ -18,6 +18,9 @@ std::any Evaluator::evaluateExpression(const BoundExpression *node) {
         if (unaryNode->getOperatorKind() == BoundUnaryOperatorKind::Negation) {
             return -1 * std::any_cast<int>(operand);
         }
+        if (unaryNode->getOperatorKind() == BoundUnaryOperatorKind::LogicalAnd) {
+            return !std::any_cast<bool>(operand);
+        }
 
         throw std::runtime_error("Invalid unary operator" + boundKindsToString(unaryNode->getOperatorKind()));
     }
@@ -31,8 +34,21 @@ std::any Evaluator::evaluateExpression(const BoundExpression *node) {
     }
 
     if (const auto binaryNode = dynamic_cast<const BoundBinaryExpression *>(node)) {
-        const auto left = std::any_cast<int>(evaluateExpression(&binaryNode->left()));
-        const auto right = std::any_cast<int>(evaluateExpression(&binaryNode->right()));
+        const auto leftResult = evaluateExpression(&binaryNode->left());
+        const auto rightResult = evaluateExpression(&binaryNode->right());
+
+
+        // evaluate bool operations first
+        if (binaryNode->getOperator() == BoundBinaryOperatorKind::LogicalAnd) {
+            return std::any_cast<bool>(leftResult) && std::any_cast<bool>(rightResult);
+        }
+        if (binaryNode->getOperator() == BoundBinaryOperatorKind::LogicalOR) {
+            return std::any_cast<bool>(leftResult) || std::any_cast<bool>(rightResult);
+        }
+
+        // evaluate algebraic operations
+        const auto left = std::any_cast<int>(leftResult);
+        const auto right = std::any_cast<int>(rightResult);
 
         if (binaryNode->getOperator() == BoundBinaryOperatorKind::Addition) {
             return left + right;
@@ -42,6 +58,9 @@ std::any Evaluator::evaluateExpression(const BoundExpression *node) {
         }
         if (binaryNode->getOperator() == BoundBinaryOperatorKind::Multiplication) {
             return left * right;
+        }
+        if (binaryNode->getOperator() == BoundBinaryOperatorKind::Division) {
+            return left / right;
         }
         if (binaryNode->getOperator() == BoundBinaryOperatorKind::Division) {
             return left / right;

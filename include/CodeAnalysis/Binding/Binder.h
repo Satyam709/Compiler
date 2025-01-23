@@ -54,6 +54,7 @@ enum class BoundUnaryOperatorKind {
     Negation,
 
     Invalid,
+    LogicalAnd,
 };
 
 enum class BoundBinaryOperatorKind {
@@ -62,6 +63,8 @@ enum class BoundBinaryOperatorKind {
     Multiplication,
     Division,
     Invalid,
+    LogicalAnd,
+    LogicalOR,
 };
 
 class BoundBinaryExpression : public BoundExpression {
@@ -75,11 +78,11 @@ public:
         return BoundNodeKind::BinaryExpression;
     }
 
-    [[nodiscard]] const BoundExpression& left() const {
+    [[nodiscard]] const BoundExpression &left() const {
         return _left;
     }
 
-    [[nodiscard]] const BoundExpression& right() const {
+    [[nodiscard]] const BoundExpression &right() const {
         return _right;
     }
 
@@ -121,14 +124,14 @@ private:
 
 class Binder {
 private:
-     std::vector<std::string> _diagnostics;
+    std::vector<std::string> _diagnostics;
 
 public:
-    [[nodiscard]]  const std::vector<std::string> &diagnostics() {
+    [[nodiscard]] const std::vector<std::string> &diagnostics() {
         return _diagnostics;
     }
 
-     const BoundExpression *BindLiteralExpression(const ExpressionSyntax &syntax) {
+    const BoundExpression *BindLiteralExpression(const ExpressionSyntax &syntax) {
         if (const auto *exp = dynamic_cast<const LiteralExpressionSyntax *>(&syntax)) {
             try {
                 std::any val = 0;
@@ -136,7 +139,6 @@ public:
 
                 return new BoundLiteralExpression(val);
             } catch (const std::bad_any_cast &e) {
-
                 std::cerr << "Cant bind to literal exp!!: " << std::endl;
                 std::cerr << "Error: Failed to cast to int. Reason: " << e.what() << std::endl;
                 return new BoundLiteralExpression(0);
@@ -146,22 +148,29 @@ public:
     }
 
     // binds the unary operator
-     BoundUnaryOperatorKind bindUnaryOperatorKind(const SyntaxKind kind, const std::type_info &operandType) {
-        if (operandType != typeid(int)) {
-            return BoundUnaryOperatorKind::Invalid;
+    BoundUnaryOperatorKind bindUnaryOperatorKind(const SyntaxKind kind, const std::type_info &operandType) {
+        if (operandType == typeid(int)) {
+            switch (kind) {
+                case SyntaxKind::PlusToken:
+                    return BoundUnaryOperatorKind::Identity;
+                case SyntaxKind::MinusToken:
+                    return BoundUnaryOperatorKind::Negation;
+            }
         }
-        switch (kind) {
-            case SyntaxKind::PlusToken:
-                return BoundUnaryOperatorKind::Identity;
-            case SyntaxKind::MinusToken:
-                return BoundUnaryOperatorKind::Negation;
-            default:
-                throw std::runtime_error("Unknown syntax kind");
+
+        if (operandType == typeid(bool)) {
+            switch (kind) {
+                case SyntaxKind::BangToken:
+                    return BoundUnaryOperatorKind::LogicalAnd;
+            }
         }
+
+
+        return BoundUnaryOperatorKind::Invalid;
     }
 
 
-     const BoundExpression *BindUnaryExpression(const ExpressionSyntax &syntax) {
+    const BoundExpression *BindUnaryExpression(const ExpressionSyntax &syntax) {
         if (const auto *exp = dynamic_cast<const UnaryExpressionSyntax *>(&syntax)) {
             const auto boundOperand = bindExpression(*(exp->operand()));
             const BoundUnaryOperatorKind boundOperator = bindUnaryOperatorKind(
@@ -180,27 +189,34 @@ public:
         throw std::invalid_argument("Invalid expression: expression failed to bound");
     }
 
-     BoundBinaryOperatorKind bindBinaryOperatorKind(const SyntaxKind kind, const std::type_info &leftType,
-                                                          const std::type_info &rightType) {
-        if (leftType != typeid(int) || rightType != typeid(int)) {
-            return BoundBinaryOperatorKind::Invalid;
+    BoundBinaryOperatorKind bindBinaryOperatorKind(const SyntaxKind kind, const std::type_info &leftType,
+                                                   const std::type_info &rightType) {
+        if (leftType == typeid(int) && rightType == typeid(int)) {
+            switch (kind) {
+                case SyntaxKind::PlusToken:
+                    return BoundBinaryOperatorKind::Addition;
+                case SyntaxKind::MinusToken:
+                    return BoundBinaryOperatorKind::Subtraction;
+                case SyntaxKind::StarToken:
+                    return BoundBinaryOperatorKind::Multiplication;
+                case SyntaxKind::SlashToken:
+                    return BoundBinaryOperatorKind::Division;
+            }
         }
 
-        switch (kind) {
-            case SyntaxKind::PlusToken:
-                return BoundBinaryOperatorKind::Addition;
-            case SyntaxKind::MinusToken:
-                return BoundBinaryOperatorKind::Subtraction;
-            case SyntaxKind::StarToken:
-                return BoundBinaryOperatorKind::Multiplication;
-            case SyntaxKind::SlashToken:
-                return BoundBinaryOperatorKind::Division;
-            default:
-                throw std::invalid_argument("Unknown syntax kind " + syntaxKindToString(kind));
+        if (leftType == typeid(bool) && rightType == typeid(bool)) {
+            switch (kind) {
+                case SyntaxKind::AmpersandAmpersandToken:
+                    return BoundBinaryOperatorKind::LogicalAnd;
+                case SyntaxKind::PipePipeToken:
+                    return BoundBinaryOperatorKind::LogicalOR;
+            }
         }
+
+        return BoundBinaryOperatorKind::Invalid;
     };
 
-     const BoundExpression *BindBinaryExpression(const ExpressionSyntax &syntax) {
+    const BoundExpression *BindBinaryExpression(const ExpressionSyntax &syntax) {
         if (const auto *exp = dynamic_cast<const BinaryExpressionSyntax *>(&syntax)) {
             const auto left = bindExpression(exp->left());
             const auto right = bindExpression(exp->right());
@@ -210,7 +226,8 @@ public:
             if (op == BoundBinaryOperatorKind::Invalid) {
                 std::ostringstream os;
                 os << "Binary operator: " << syntaxKindToString(exp->operator_token().kind)
-                        << " is not defined for type " << getTypeName(left->getType())<<" and "<< getTypeName(right->getType());
+                        << " is not defined for type " << getTypeName(left->getType()) << " and " << getTypeName(
+                            right->getType());
                 _diagnostics.push_back(os.str());
 
                 // for avoiding cascading type error or null returns
@@ -222,7 +239,7 @@ public:
         throw std::invalid_argument("Invalid expression: expression failed to bound");
     }
 
-    const  BoundExpression *bindExpression(const ExpressionSyntax &syntax) {
+    const BoundExpression *bindExpression(const ExpressionSyntax &syntax) {
         switch (syntax.getKind()) {
             case SyntaxKind::LiteralExpression: return BindLiteralExpression(syntax);
             case SyntaxKind::UnaryExpression: return BindUnaryExpression(syntax);

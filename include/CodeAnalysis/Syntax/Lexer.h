@@ -26,6 +26,8 @@ private:
     // Helper function to get the current character
     char getCurrentChar() const;
 
+    char peek(int offset) const;
+
     // Helper function to get the next token from input text
     SyntaxToken nextToken();
 };

@@ -24,8 +24,14 @@ void Lexer::advance() {
     ++_position;
 }
 
+
+
 char Lexer::getCurrentChar() const {
-    return _position < _len ? _inputText[_position] : '\0';
+    return peek(0);
+}
+
+char Lexer::peek(const int offset) const {
+    return _position+offset < _len ? _inputText[_position+offset] : '\0';
 }
 
 SyntaxToken Lexer::nextToken() {
@@ -33,7 +39,7 @@ SyntaxToken Lexer::nextToken() {
         return {_position, SyntaxKind::EndOfFileToken, "EOF", nullptr};
     }
 
-    char current = getCurrentChar();
+    const char current = getCurrentChar();
 
     if (std::isdigit(current)) {
         int start = _position;
@@ -80,6 +86,15 @@ SyntaxToken Lexer::nextToken() {
     }
     if (current == ')') {
         return {_position++, SyntaxKind::CloseParenthesisToken, ")", nullptr};
+    }
+    if (current == '!') {
+        return {_position++, SyntaxKind::BangToken, "!", nullptr};
+    }
+    if (current == '&' && peek(1)== '&') {
+        return {_position++, SyntaxKind::AmpersandAmpersandToken, "&&", nullptr};
+    }
+    if (current == '|' && peek(1)== '|') {
+        return {_position++, SyntaxKind::PipePipeToken, "||", nullptr};
     }
 
     return {_position++, SyntaxKind::BadToken, std::string(&current, 1), nullptr};

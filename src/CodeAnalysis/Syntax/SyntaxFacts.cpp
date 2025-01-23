@@ -5,24 +5,30 @@
 #include "CodeAnalysis/Syntax/SyntaxFacts.h"
 
 #include <unordered_map>
-
-int SyntaxFacts::getPrecedence(const SyntaxKind &kind) {
+int SyntaxFacts::getUnaryPrecedence(const SyntaxKind &kind) {
     switch (kind) {
+        case SyntaxKind::BangToken:
         case SyntaxKind::PlusToken:
         case SyntaxKind::MinusToken:
-            return 1;
-        case SyntaxKind::StarToken:
-        case SyntaxKind::SlashToken:
-            return 2;
+            return 5;
+
         default: return 0;
     }
 }
 
-int SyntaxFacts::getUnaryPrecedence(const SyntaxKind &kind) {
+int SyntaxFacts::getPrecedence(const SyntaxKind &kind) {
     switch (kind) {
+        case SyntaxKind::StarToken:
+        case SyntaxKind::SlashToken:
+            return 4;
         case SyntaxKind::PlusToken:
         case SyntaxKind::MinusToken:
             return 3;
+
+        case SyntaxKind::AmpersandAmpersandToken:
+            return 2;
+        case SyntaxKind::PipePipeToken:
+            return 1;
         default: return 0;
     }
 }
