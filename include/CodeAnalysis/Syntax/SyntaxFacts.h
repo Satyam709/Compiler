@@ -10,6 +10,7 @@ class SyntaxFacts {
 public:
     static int getPrecedence(const SyntaxKind &kind);
     static int getUnaryPrecedence(const SyntaxKind &kind);
+    static SyntaxKind getKeywordKind(const std::string& text);
 };
 
 

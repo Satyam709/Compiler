@@ -8,9 +8,9 @@ class Evaluator {
 public:
     explicit Evaluator(const BoundExpression& root);
 
-    int evaluateExpression(const BoundExpression* node);
+    std::any evaluateExpression(const BoundExpression* node);
 
-    int evaluate();
+    std::any evaluate();
 
 private:
     const BoundExpression& _root;

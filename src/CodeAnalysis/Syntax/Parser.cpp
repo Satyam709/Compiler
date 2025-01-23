@@ -53,7 +53,7 @@ ExpressionSyntax *Parser::parseExpression(const int parentPrecedence) {
     if (const int unaryOperatorPrecedence = SyntaxFacts::getUnaryPrecedence(current().kind);
         unaryOperatorPrecedence != 0 && unaryOperatorPrecedence >= parentPrecedence) {
         const SyntaxToken operatorToken = nextToken();
-        auto* operand = parseExpression(unaryOperatorPrecedence);
+        auto *operand = parseExpression(unaryOperatorPrecedence);
         left = new UnaryExpressionSyntax(operatorToken, *operand);
     } else {
         left = parsePrimaryExpression();
@@ -63,8 +63,7 @@ ExpressionSyntax *Parser::parseExpression(const int parentPrecedence) {
         const int currentPrecedence = SyntaxFacts::getPrecedence(current().kind);
         if (currentPrecedence == 0 || currentPrecedence <= parentPrecedence)
             break;
-
-        auto operatorToken = nextToken();
+        const auto operatorToken = nextToken();
         auto *right = parseExpression(currentPrecedence);
         left = new BinaryExpressionSyntax(*left, operatorToken, *right);
     }
@@ -72,20 +71,28 @@ ExpressionSyntax *Parser::parseExpression(const int parentPrecedence) {
 }
 
 ExpressionSyntax *Parser::parsePrimaryExpression() {
-    auto crnt = current();
-    if (crnt.kind == SyntaxKind::OpenParenthesisToken) {
-        auto left = nextToken();
-        auto expression = parseExpression();
-        auto right = match(SyntaxKind::CloseParenthesisToken);
-        return new ParenthesizedExpressionSyntax(left, *expression, right);
+    switch (current().kind) {
+        case SyntaxKind::OpenParenthesisToken: {
+            const auto left = nextToken();
+            const auto expression = parseExpression();
+            const auto right = match(SyntaxKind::CloseParenthesisToken);
+            return new ParenthesizedExpressionSyntax(left, *expression, right);
+        }
+        case SyntaxKind::TrueKeyword:
+        case SyntaxKind::FalseKeyword: {
+            const auto keywordToken = nextToken();
+            bool val = keywordToken.kind == SyntaxKind::TrueKeyword;
+            return new LiteralExpressionSyntax(keywordToken, val); // give the tyoe bool
+        }
+        default: {
+            const auto numberToken = match(SyntaxKind::NumberToken);
+            return new LiteralExpressionSyntax(numberToken);
+        }
     }
-
-    auto numberToken = match(SyntaxKind::NumberToken);
-    return new LiteralExpressionSyntax(numberToken);
 }
 
 SyntaxTree *Parser::parse() {
-    auto expression = parseExpression(0);
-    auto endOfFileToken = match(SyntaxKind::EndOfFileToken);
+    const auto expression = parseExpression(0);
+    const auto endOfFileToken = match(SyntaxKind::EndOfFileToken);
     return new SyntaxTree(_diagnostics, *expression, endOfFileToken);
 }

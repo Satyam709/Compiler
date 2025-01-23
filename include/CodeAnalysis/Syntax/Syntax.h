@@ -22,7 +22,17 @@ enum class SyntaxKind {
     LiteralExpression,
     BinaryExpression,
     ParenthesizedExpression,
-    UnaryExpression
+    UnaryExpression,
+
+    // keywords
+
+    // bools
+    TrueKeyword,
+    FalseKeyword,
+
+    // identifier
+
+    IdentifierToken
 };
 
 // just a helper method to convert enum class kind from int to respective value

@@ -28,6 +28,9 @@ std::string syntaxKindToString(const SyntaxKind kind) {
         case SyntaxKind::BinaryExpression: return "BinaryExpression";
         case SyntaxKind::ParenthesizedExpression: return "ParenthesizedExpression";
         case SyntaxKind::UnaryExpression: return "UnaryExpression";
+        case SyntaxKind::FalseKeyword: return "FalseKeyword";
+        case SyntaxKind::TrueKeyword: return "TrueKeyword";
+        case SyntaxKind::IdentifierToken: return "IdentifierToken";
         default: return "UnknownToken";
     }
 }

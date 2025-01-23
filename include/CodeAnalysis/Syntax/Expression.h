@@ -11,7 +11,7 @@ class ExpressionSyntax : public SyntaxNode {
 class LiteralExpressionSyntax final : public ExpressionSyntax {
 public:
     explicit LiteralExpressionSyntax(const SyntaxToken &token);
-
+    explicit LiteralExpressionSyntax(const SyntaxToken &token,const std::any &value);
     SyntaxKind getKind() const override;
 
     const std::vector<SyntaxNode *> &getChildren() const override;

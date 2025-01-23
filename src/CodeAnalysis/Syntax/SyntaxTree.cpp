@@ -35,6 +35,11 @@ SyntaxNodeToken::SyntaxNodeToken(const SyntaxToken &token)
     : _token(token) {
 }
 
+const std::any &SyntaxNodeToken::getValue() const {
+    return _token.val;
+}
+
+
 SyntaxKind SyntaxNodeToken::getKind() const {
     return _token.kind;
 }

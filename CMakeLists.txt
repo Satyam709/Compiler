@@ -24,6 +24,7 @@ set(SOURCES
         src/CodeAnalysis/Syntax/SyntaxFacts.cpp
         include/CodeAnalysis/Syntax/SyntaxFacts.h
         include/CodeAnalysis/Binding/Binder.h
+        include/CodeAnalysis/Utils/Caster.h
 )
 
 # Create the executable

@@ -49,6 +49,8 @@ public:
 
     const SyntaxToken &getToken() const;
 
+    const std::any &getValue() const;
+
     const std::vector<SyntaxNode *> &getChildren() const override;
 
 private:

@@ -4,6 +4,7 @@
 
 #include "CodeAnalysis/Evaluator.h"
 #include "CodeAnalysis/Syntax/SyntaxTree.h"
+#include "CodeAnalysis/Utils/Caster.h"
 
 
 int main() {
@@ -39,7 +40,11 @@ int main() {
         if (all_diag.empty()) {
             Evaluator e(*boundExpression);
             const auto result = e.evaluate();
-            std::cout << result << std::endl;
+            try {
+                printAnyValue(result);
+            } catch (const std::bad_any_cast& e) {
+                std::cerr << "Cannot cast final result to int !!" << std::endl;
+            }
         } else {
             for (const auto &diagnostic: all_diag) {
                 std::cerr << diagnostic << std::endl;

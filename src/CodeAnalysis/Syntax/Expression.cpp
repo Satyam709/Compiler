@@ -8,6 +8,14 @@
 LiteralExpressionSyntax::LiteralExpressionSyntax(const SyntaxToken &token): _token(token) {
     _children.push_back(new SyntaxNodeToken(token));
 }
+LiteralExpressionSyntax::LiteralExpressionSyntax(const SyntaxToken &token,const std::any& value): _token(token) {
+    _token.val = value;
+    _children.push_back(new SyntaxNodeToken(token));
+}
+
+// LiteralExpressionSyntax::LiteralExpressionSyntax(const SyntaxToken &token): _token(token) {
+//     _children.push_back(new SyntaxNodeToken(token));
+// }
 
 SyntaxKind LiteralExpressionSyntax::getKind() const {
     return SyntaxKind::LiteralExpression;

@@ -7,6 +7,7 @@
 
 #include "CodeAnalysis/Syntax/Expression.h"
 #include "CodeAnalysis/Syntax/Syntax.h"
+#include "CodeAnalysis/Utils/Caster.h"
 
 enum class BoundNodeKind {
     UnaryExpression,
@@ -131,7 +132,8 @@ public:
         if (const auto *exp = dynamic_cast<const LiteralExpressionSyntax *>(&syntax)) {
             try {
                 std::any val = 0;
-                val = exp->getToken().val;
+                val = exp->getToken().val; // nulls ?
+
                 return new BoundLiteralExpression(val);
             } catch (const std::bad_any_cast &e) {
 
@@ -167,7 +169,7 @@ public:
             if (boundOperator == BoundUnaryOperatorKind::Invalid) {
                 std::ostringstream os;
                 os << "Unary operator: " << syntaxKindToString(exp->operatorToken().kind)
-                        << " is not defined for type " << boundOperand->getType().name();
+                        << " is not defined for type " << getTypeName(boundOperand->getType());
                 _diagnostics.push_back(os.str());
 
                 // for avoiding cascading type error or null returns
@@ -208,7 +210,7 @@ public:
             if (op == BoundBinaryOperatorKind::Invalid) {
                 std::ostringstream os;
                 os << "Binary operator: " << syntaxKindToString(exp->operator_token().kind)
-                        << " is not defined for type " << left->getType().name()<<" and "<< right->getType().name();
+                        << " is not defined for type " << getTypeName(left->getType())<<" and "<< getTypeName(right->getType());
                 _diagnostics.push_back(os.str());
 
                 // for avoiding cascading type error or null returns

@@ -1,5 +1,8 @@
 #include "CodeAnalysis/Syntax/Lexer.h"
 #include <cctype>
+#include <iostream>
+
+#include "CodeAnalysis/Syntax/SyntaxFacts.h"
 
 Lexer::Lexer(const std::string inputText)
     : _inputText(inputText), _position(0), _len(inputText.size()) {
@@ -48,6 +51,18 @@ SyntaxToken Lexer::nextToken() {
         std::string tokenText = _inputText.substr(start, _position - start);
         return {start, SyntaxKind::WhitespaceToken, tokenText, nullptr};
     }
+
+    if(std::isalpha(current)) {
+        const int start = _position;
+        while (std::isalpha(getCurrentChar())) {
+            advance();
+        }
+
+        std::string tokenText = _inputText.substr(start, _position - start);
+        auto kind = SyntaxFacts::getKeywordKind(tokenText);
+        return {start, kind, tokenText, nullptr};
+    }
+
     if (current == '+') {
         return {_position++, SyntaxKind::PlusToken, "+", nullptr};
     }
