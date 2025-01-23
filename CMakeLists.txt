@@ -23,6 +23,7 @@ set(SOURCES
         src/Program.cpp
         src/CodeAnalysis/Syntax/SyntaxFacts.cpp
         include/CodeAnalysis/Syntax/SyntaxFacts.h
+        include/CodeAnalysis/Binding/Binder.h
 )
 
 # Create the executable

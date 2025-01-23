@@ -22,7 +22,7 @@ public:
 
     static SyntaxTree* parseToken(std::string text);
 
-    static void prettyPrint(SyntaxNode &node, std::string indent = "", bool isLast = false);
+    static void prettyPrint(const SyntaxNode &node, std::string indent = "", bool isLast = false);
 
 private:
     std::vector<std::string> _diagnostics;

@@ -5,29 +5,29 @@ SyntaxToken::SyntaxToken()
     : position(0), kind(SyntaxKind::BadToken), text(""), val(nullptr) {
 }
 
-SyntaxToken::SyntaxToken(int position, SyntaxKind kind, std::string text, std::any val)
-    : position(position), kind(kind), text(text), val(val) {
+SyntaxToken::SyntaxToken(const int position, const SyntaxKind kind, const std::string &text, std::any val)
+    : position(position), kind(kind), text(text), val(std::move(val)) {
 }
 
 SyntaxToken::~SyntaxToken() = default;
 
 // Function to convert SyntaxKind to string
-std::string syntaxKindToString(SyntaxKind kind) {
+std::string syntaxKindToString(const SyntaxKind kind) {
     switch (kind) {
-        case NumberToken: return "NumberToken";
-        case WhitespaceToken: return "WhitespaceToken";
-        case PlusToken: return "PlusToken";
-        case MinusToken: return "MinusToken";
-        case StarToken: return "StarToken";
-        case SlashToken: return "SlashToken";
-        case OpenParenthesisToken: return "OpenParenthesisToken";
-        case CloseParenthesisToken: return "CloseParenthesisToken";
-        case BadToken: return "BadToken";
-        case EndOfFileToken: return "EndOfFileToken";
-        case LiteralExpression: return "LiteralExpression";
-        case BinaryExpression: return "BinaryExpression";
-        case ParenthesizedExpression: return "ParenthesizedExpression";
-        case UnaryExpression: return "UnaryExpression";
+        case SyntaxKind::NumberToken: return "NumberToken";
+        case SyntaxKind::WhitespaceToken: return "WhitespaceToken";
+        case SyntaxKind::PlusToken: return "PlusToken";
+        case SyntaxKind::MinusToken: return "MinusToken";
+        case SyntaxKind::StarToken: return "StarToken";
+        case SyntaxKind::SlashToken: return "SlashToken";
+        case SyntaxKind::OpenParenthesisToken: return "OpenParenthesisToken";
+        case SyntaxKind::CloseParenthesisToken: return "CloseParenthesisToken";
+        case SyntaxKind::BadToken: return "BadToken";
+        case SyntaxKind::EndOfFileToken: return "EndOfFileToken";
+        case SyntaxKind::LiteralExpression: return "LiteralExpression";
+        case SyntaxKind::BinaryExpression: return "BinaryExpression";
+        case SyntaxKind::ParenthesizedExpression: return "ParenthesizedExpression";
+        case SyntaxKind::UnaryExpression: return "UnaryExpression";
         default: return "UnknownToken";
     }
 }

@@ -73,19 +73,19 @@ ExpressionSyntax *Parser::parseExpression(const int parentPrecedence) {
 
 ExpressionSyntax *Parser::parsePrimaryExpression() {
     auto crnt = current();
-    if (crnt.kind == OpenParenthesisToken) {
+    if (crnt.kind == SyntaxKind::OpenParenthesisToken) {
         auto left = nextToken();
         auto expression = parseExpression();
-        auto right = match(CloseParenthesisToken);
+        auto right = match(SyntaxKind::CloseParenthesisToken);
         return new ParenthesizedExpressionSyntax(left, *expression, right);
     }
 
-    auto numberToken = match(NumberToken);
+    auto numberToken = match(SyntaxKind::NumberToken);
     return new LiteralExpressionSyntax(numberToken);
 }
 
 SyntaxTree *Parser::parse() {
     auto expression = parseExpression(0);
-    auto endOfFileToken = match(EndOfFileToken);
+    auto endOfFileToken = match(SyntaxKind::EndOfFileToken);
     return new SyntaxTree(_diagnostics, *expression, endOfFileToken);
 }

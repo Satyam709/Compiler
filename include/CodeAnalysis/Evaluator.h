@@ -5,7 +5,7 @@
 
 class Evaluator {
 public:
-    Evaluator( ExpressionSyntax& root);
+    explicit Evaluator( ExpressionSyntax& root);
 
     int evaluateExpression(ExpressionSyntax* node);
 

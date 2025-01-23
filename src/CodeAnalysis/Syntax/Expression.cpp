@@ -10,7 +10,7 @@ LiteralExpressionSyntax::LiteralExpressionSyntax(const SyntaxToken &token): _tok
 }
 
 SyntaxKind LiteralExpressionSyntax::getKind() const {
-    return LiteralExpression;
+    return SyntaxKind::LiteralExpression;
 };
 
 const std::vector<SyntaxNode *> &LiteralExpressionSyntax::getChildren() const {
@@ -34,7 +34,7 @@ BinaryExpressionSyntax::BinaryExpressionSyntax(ExpressionSyntax &left, SyntaxTok
 }
 
 SyntaxKind BinaryExpressionSyntax::getKind() const {
-    return BinaryExpression;
+    return SyntaxKind::BinaryExpression;
 };
 
 const std::vector<SyntaxNode *> &BinaryExpressionSyntax::getChildren() const {
@@ -66,7 +66,7 @@ ParenthesizedExpressionSyntax::ParenthesizedExpressionSyntax(SyntaxToken openPar
 }
 
 SyntaxKind ParenthesizedExpressionSyntax::getKind() const {
-    return ParenthesizedExpression;
+    return SyntaxKind::ParenthesizedExpression;
 }
 
 const std::vector<SyntaxNode *> &ParenthesizedExpressionSyntax::getChildren() const {
@@ -94,7 +94,7 @@ UnaryExpressionSyntax::UnaryExpressionSyntax(const SyntaxToken &operatorToken,
 
 
 SyntaxKind UnaryExpressionSyntax::getKind() const {
-    return UnaryExpression;
+    return SyntaxKind::UnaryExpression;
 }
 
 const std::vector<SyntaxNode *> &UnaryExpressionSyntax::getChildren() const {

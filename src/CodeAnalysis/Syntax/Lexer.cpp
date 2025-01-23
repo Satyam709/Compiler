@@ -8,8 +8,8 @@ Lexer::Lexer(const std::string inputText)
 std::list<SyntaxToken> Lexer::tokenize() {
     std::list<SyntaxToken> tokens;
     SyntaxToken token;
-    while ((token = nextToken()).kind != EndOfFileToken) {
-        if (token.kind != WhitespaceToken && token.kind != BadToken)
+    while ((token = nextToken()).kind != SyntaxKind::EndOfFileToken) {
+        if (token.kind != SyntaxKind::WhitespaceToken && token.kind != SyntaxKind::BadToken)
             tokens.push_back(token);
     }
     tokens.push_back(token); // Add the EOF token
@@ -27,7 +27,7 @@ char Lexer::getCurrentChar() const {
 
 SyntaxToken Lexer::nextToken() {
     if (_position >= _len) {
-        return {_position, EndOfFileToken, "EOF", nullptr};
+        return {_position, SyntaxKind::EndOfFileToken, "EOF", nullptr};
     }
 
     char current = getCurrentChar();
@@ -38,7 +38,7 @@ SyntaxToken Lexer::nextToken() {
             advance();
         }
         std::string tokenText = _inputText.substr(start, _position - start);
-        return {start, NumberToken, tokenText, std::stoi(std::string(tokenText))};
+        return {start,SyntaxKind:: NumberToken, tokenText, std::stoi(std::string(tokenText))};
     }
     if (std::isspace(current)) {
         int start = _position;
@@ -46,27 +46,26 @@ SyntaxToken Lexer::nextToken() {
             advance();
         }
         std::string tokenText = _inputText.substr(start, _position - start);
-        return {start, WhitespaceToken, tokenText, nullptr};
+        return {start, SyntaxKind::WhitespaceToken, tokenText, nullptr};
     }
     if (current == '+') {
-        return {_position++, PlusToken, "+", nullptr};
+        return {_position++, SyntaxKind::PlusToken, "+", nullptr};
     }
     if (current == '-') {
-        return {_position++, MinusToken, "-", nullptr};
+        return {_position++, SyntaxKind::MinusToken, "-", nullptr};
     }
     if (current == '*') {
-        return {_position++, StarToken, "*", nullptr};
+        return {_position++, SyntaxKind::StarToken, "*", nullptr};
     }
     if (current == '/') {
-        return {_position++, SlashToken, "/", nullptr};
+        return {_position++, SyntaxKind::SlashToken, "/", nullptr};
     }
     if (current == '(') {
-        return {_position++, OpenParenthesisToken, "(", nullptr};
+        return {_position++, SyntaxKind::OpenParenthesisToken, "(", nullptr};
     }
     if (current == ')') {
-        return {_position++, CloseParenthesisToken, ")", nullptr};
+        return {_position++, SyntaxKind::CloseParenthesisToken, ")", nullptr};
     }
 
-    return {_position++, BadToken, std::string(&current, 1), nullptr};
+    return {_position++, SyntaxKind::BadToken, std::string(&current, 1), nullptr};
 }
-
