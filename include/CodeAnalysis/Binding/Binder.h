@@ -203,6 +203,8 @@ public:
                 std::any val = 0;
                 val = exp->getToken().val; // nulls ?
 
+                // recieved
+
                 return new BoundLiteralExpression(val);
             } catch (const std::bad_any_cast &e) {
                 std::cerr << "Cant bind to literal exp!!: " << std::endl;
@@ -313,7 +315,7 @@ public:
             // for bounding to ParenthesizedExpression just use its expression as they are just dead weights
             case SyntaxKind::ParenthesizedExpression: {
                 if (const auto* exp = dynamic_cast<const ParenthesizedExpressionSyntax *>(&syntax)) {
-                    return BindBinaryExpression(exp->expression());
+                    return bindExpression(exp->expression());
                 }
             }
             default:throw std::runtime_error("Unknown syntax kind");
