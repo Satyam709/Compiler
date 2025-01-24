@@ -88,13 +88,28 @@ SyntaxToken Lexer::nextToken() {
         return {_position++, SyntaxKind::CloseParenthesisToken, ")", nullptr};
     }
     if (current == '!') {
+        if (peek(1)=='=') {
+            int start = _position;
+            _position+=2;
+            return {start, SyntaxKind::NotEqualToken, "!=", nullptr};
+        }
         return {_position++, SyntaxKind::BangToken, "!", nullptr};
     }
     if (current == '&' && peek(1)== '&') {
-        return {_position++, SyntaxKind::AmpersandAmpersandToken, "&&", nullptr};
+        int start = _position;
+        _position+=2;
+        return {start, SyntaxKind::AmpersandAmpersandToken, "&&", nullptr};
     }
     if (current == '|' && peek(1)== '|') {
-        return {_position++, SyntaxKind::PipePipeToken, "||", nullptr};
+        int start = _position;
+        _position+=2;
+        return {start, SyntaxKind::PipePipeToken, "||", nullptr};
+    }
+    if (current == '=' && peek(1)== '=') {
+        int start = _position;
+        _position+=2;
+        return {start, SyntaxKind::EqualEqualToken, "==", nullptr};
+
     }
 
     return {_position++, SyntaxKind::BadToken, std::string(&current, 1), nullptr};

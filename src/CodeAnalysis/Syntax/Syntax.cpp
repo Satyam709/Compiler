@@ -34,6 +34,8 @@ std::string syntaxKindToString(const SyntaxKind kind) {
         case SyntaxKind::BangToken: return "BangToken";
         case SyntaxKind::PipePipeToken: return "PipePipeToken";
         case SyntaxKind::AmpersandAmpersandToken: return "AmpersandAmpersandToken";
+        case SyntaxKind::EqualEqualToken: return "EqualEqualToken";
+        case SyntaxKind::NotEqualToken:return "NotEqualToken";
         default: return "UnknownToken";
     }
 }

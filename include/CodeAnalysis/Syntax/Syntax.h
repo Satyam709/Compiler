@@ -38,6 +38,8 @@ enum class SyntaxKind {
     // identifier
 
     IdentifierToken,
+    EqualEqualToken,
+    NotEqualToken,
 };
 
 // just a helper method to convert enum class kind from int to respective value
