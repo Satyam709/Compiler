@@ -309,8 +309,16 @@ public:
             case SyntaxKind::LiteralExpression: return BindLiteralExpression(syntax);
             case SyntaxKind::UnaryExpression: return BindUnaryExpression(syntax);
             case SyntaxKind::BinaryExpression: return BindBinaryExpression(syntax);
-            default: throw std::runtime_error("Unknown syntax kind");
+
+            // for bounding to ParenthesizedExpression just use its expression as they are just dead weights
+            case SyntaxKind::ParenthesizedExpression: {
+                if (const auto* exp = dynamic_cast<const ParenthesizedExpressionSyntax *>(&syntax)) {
+                    return BindBinaryExpression(exp->expression());
+                }
+            }
+            default:throw std::runtime_error("Unknown syntax kind");
         }
+
     }
 };
 
