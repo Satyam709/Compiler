@@ -1,27 +1,35 @@
 #include <vector>
-#include "Compiler/Syntax.h"
-#include "Compiler/Expression.h"
+#include "CodeAnalysis/Syntax/Syntax.h"
+#include "CodeAnalysis/Syntax/Expression.h"
 
 // sealed classes for diff types of expression
 
 // Number expression
-NumberExpressionSyntax::NumberExpressionSyntax(const SyntaxToken &token): _token(token) {
-    _children.emplace_back(new SyntaxNodeToken(token));
+LiteralExpressionSyntax::LiteralExpressionSyntax(const SyntaxToken &token): _token(token) {
+    _children.push_back(new SyntaxNodeToken(token));
+}
+LiteralExpressionSyntax::LiteralExpressionSyntax(const SyntaxToken &token,const std::any& value): _token(token) {
+    _token.val = value;
+    _children.push_back(new SyntaxNodeToken(token));
 }
 
-SyntaxKind NumberExpressionSyntax::getKind() const  {
-    return NumberExpression;
+// LiteralExpressionSyntax::LiteralExpressionSyntax(const SyntaxToken &token): _token(token) {
+//     _children.push_back(new SyntaxNodeToken(token));
+// }
+
+SyntaxKind LiteralExpressionSyntax::getKind() const {
+    return SyntaxKind::LiteralExpression;
 };
 
-const std::vector<SyntaxNode *> &NumberExpressionSyntax::getChildren() const  {
+const std::vector<SyntaxNode *> &LiteralExpressionSyntax::getChildren() const {
     return _children;
 }
 
-const SyntaxToken &NumberExpressionSyntax::getToken() const {
+const SyntaxToken &LiteralExpressionSyntax::getToken() const {
     return _token;
 }
 
-NumberExpressionSyntax::NumberExpressionSyntax() = default;
+LiteralExpressionSyntax::LiteralExpressionSyntax() = default;
 
 // Binary expression
 BinaryExpressionSyntax::BinaryExpressionSyntax(ExpressionSyntax &left, SyntaxToken operator_token,
@@ -33,11 +41,11 @@ BinaryExpressionSyntax::BinaryExpressionSyntax(ExpressionSyntax &left, SyntaxTok
     _children.push_back(&right);
 }
 
-SyntaxKind BinaryExpressionSyntax::getKind() const  {
-    return BinaryExpression;
+SyntaxKind BinaryExpressionSyntax::getKind() const {
+    return SyntaxKind::BinaryExpression;
 };
 
-const std::vector<SyntaxNode *> &BinaryExpressionSyntax::getChildren() const  {
+const std::vector<SyntaxNode *> &BinaryExpressionSyntax::getChildren() const {
     return _children;
 };
 
@@ -66,7 +74,7 @@ ParenthesizedExpressionSyntax::ParenthesizedExpressionSyntax(SyntaxToken openPar
 }
 
 SyntaxKind ParenthesizedExpressionSyntax::getKind() const {
-    return ParenthesizedExpression;
+    return SyntaxKind::ParenthesizedExpression;
 }
 
 const std::vector<SyntaxNode *> &ParenthesizedExpressionSyntax::getChildren() const {
@@ -83,4 +91,28 @@ SyntaxToken ParenthesizedExpressionSyntax::closeParenthesis() const {
 
 ExpressionSyntax &ParenthesizedExpressionSyntax::expression() const {
     return _expression;
+}
+
+
+UnaryExpressionSyntax::UnaryExpressionSyntax(const SyntaxToken &operatorToken,
+                                             ExpressionSyntax &operand) : _token(operatorToken), _operand(operand) {
+    _children.push_back(new SyntaxNodeToken(operatorToken));
+    _children.push_back(&_operand);
+}
+
+
+SyntaxKind UnaryExpressionSyntax::getKind() const {
+    return SyntaxKind::UnaryExpression;
+}
+
+const std::vector<SyntaxNode *> &UnaryExpressionSyntax::getChildren() const {
+    return _children;
+}
+
+SyntaxToken UnaryExpressionSyntax::operatorToken() const {
+    return _token;
+}
+
+ExpressionSyntax *UnaryExpressionSyntax::operand() const {
+    return &_operand;
 }

@@ -2,36 +2,13 @@
 #include <string>
 #include <vector>
 
-#include "Compiler/Evaluator.h"
-#include "Compiler/SyntaxTree.h"
+#include "CodeAnalysis/Evaluator.h"
+#include "CodeAnalysis/Syntax/SyntaxTree.h"
+#include "CodeAnalysis/Utils/Caster.h"
 
-static void prettyPrint(const SyntaxNode &node, std::string indent = "", bool isLast = true) {
-    // Using simple ASCII characters instead of UTF-8 box characters
-    std::string marker = isLast ? "+--" : "+--";
-    std::cout << indent;
-    std::cout << marker;
-    std::cout << syntaxKindToString(node.getKind());
-
-    if (auto *token = dynamic_cast<const SyntaxNodeToken *>(&node)) {
-        if (token->getKind()) {
-            std::cout << " " << token->getToken().text;
-        }
-    }
-    std::cout << std::endl;
-
-    // Using simple ASCII vertical line
-    indent += isLast ? "    " : "|   ";
-
-    const auto &children = node.getChildren();
-    if (!children.empty()) {
-        for (size_t i = 0; i < children.size(); ++i) {
-            prettyPrint(*children[i], indent, i == children.size() - 1);
-        }
-    }
-}
 
 int main() {
-    bool showTree = false;
+    bool showTree = true;
 
     while (true) {
         std::cout << "> ";
@@ -49,18 +26,27 @@ int main() {
         }
 
 
-        auto syntaxTree = SyntaxTree::parseToken(line);
+        const auto syntaxTree = SyntaxTree::parseToken(line);
+
+        const auto binder = new Binder();
+        const auto boundExpression = binder->bindExpression(syntaxTree->root());
 
         if (showTree) {
-            prettyPrint(syntaxTree->root());
+            SyntaxTree::prettyPrint(syntaxTree->root());
         }
+        auto all_diag = std::vector<std::string>(syntaxTree->diagnostics());
+        all_diag.insert(all_diag.end(), binder->diagnostics().begin(), binder->diagnostics().end());
 
-        if (syntaxTree->diagnostics().empty()) {
-            Evaluator e(syntaxTree->root());
-            auto result = e.evaluate();
-            std::cout << result << std::endl;
+        if (all_diag.empty()) {
+            Evaluator e(*boundExpression);
+            const auto result = e.evaluate();
+            try {
+                printAnyValue(result);
+            } catch (const std::bad_any_cast& e) {
+                std::cerr << "Cannot cast final result to int !!" << std::endl;
+            }
         } else {
-            for (const auto &diagnostic: syntaxTree->diagnostics()) {
+            for (const auto &diagnostic: all_diag) {
                 std::cerr << diagnostic << std::endl;
             }
         }

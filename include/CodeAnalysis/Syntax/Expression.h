@@ -1,6 +1,6 @@
 #ifndef EXPRESSION_H
 #define EXPRESSION_H
-#include "Compiler/SyntaxTree.h"
+#include "CodeAnalysis/Syntax/SyntaxTree.h"
 
 
 // abstract class
@@ -8,10 +8,10 @@ class ExpressionSyntax : public SyntaxNode {
 };
 
 // sealed classes for diff types of expression
-class NumberExpressionSyntax final : public ExpressionSyntax {
+class LiteralExpressionSyntax final : public ExpressionSyntax {
 public:
-    explicit NumberExpressionSyntax(const SyntaxToken &token);
-
+    explicit LiteralExpressionSyntax(const SyntaxToken &token);
+    explicit LiteralExpressionSyntax(const SyntaxToken &token,const std::any &value);
     SyntaxKind getKind() const override;
 
     const std::vector<SyntaxNode *> &getChildren() const override;
@@ -19,7 +19,7 @@ public:
     const SyntaxToken &getToken() const;
 
 private:
-    NumberExpressionSyntax();
+    LiteralExpressionSyntax();
 
     SyntaxToken _token;
     std::vector<SyntaxNode *> _children;
@@ -69,6 +69,26 @@ private:
     SyntaxToken _openParenthesisToken;
     SyntaxToken _closeParenthesisToken;
     ExpressionSyntax &_expression;
+    std::vector<SyntaxNode *> _children;
+};
+
+class UnaryExpressionSyntax final : public ExpressionSyntax {
+public:
+    explicit UnaryExpressionSyntax(const SyntaxToken &operatorToken, ExpressionSyntax& operand);
+
+    SyntaxKind getKind() const override;
+
+    const std::vector<SyntaxNode *> &getChildren() const override;
+
+    ExpressionSyntax *operand() const;
+
+    SyntaxToken operatorToken() const;
+
+private:
+    UnaryExpressionSyntax() = default;
+
+    SyntaxToken _token;
+    ExpressionSyntax& _operand;
     std::vector<SyntaxNode *> _children;
 };
 

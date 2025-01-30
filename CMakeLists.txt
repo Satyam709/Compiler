@@ -8,20 +8,25 @@ include_directories(include)
 
 # Add source files
 set(SOURCES
-        src/Syntax.cpp
-        src/main.cpp
-        include/Compiler/Lexer.h
-        include/Compiler/Syntax.h
-        src/Lexer.cpp
-        src/Parser.cpp
-        include/Compiler/Parser.h
-        src/Expression.cpp
-        src/Evaluator.cpp
-        include/Compiler/Evaluator.h
-        include/Compiler/Expression.h
-        src/SyntaxTree.cpp
-        include/Compiler/SyntaxTree.h
+        src/CodeAnalysis/Syntax/Syntax.cpp
+        include/CodeAnalysis/Syntax/Lexer.h
+        include/CodeAnalysis/Syntax/Syntax.h
+        src/CodeAnalysis/Syntax/Lexer.cpp
+        src/CodeAnalysis/Syntax/Parser.cpp
+        include/CodeAnalysis/Syntax/Parser.h
+        src/CodeAnalysis/Syntax/Expression.cpp
+        src/CodeAnalysis/Evaluator.cpp
+        include/CodeAnalysis/Evaluator.h
+        include/CodeAnalysis/Syntax/Expression.h
+        src/CodeAnalysis/Syntax/SyntaxTree.cpp
+        include/CodeAnalysis/Syntax/SyntaxTree.h
         src/Program.cpp
+        src/CodeAnalysis/Syntax/SyntaxFacts.cpp
+        include/CodeAnalysis/Syntax/SyntaxFacts.h
+        include/CodeAnalysis/Binding/Binder.h
+        include/CodeAnalysis/Utils/Caster.h
+        include/CodeAnalysis/Binding/BoundOperators.h
+        src/CodeAnalysis/Binding/BoundOperators.cpp
 )
 
 # Create the executable

@@ -1,27 +1,31 @@
 #ifndef SYNTAXTREE_H
 #define SYNTAXTREE_H
-#include <string_view>
+#include <string>
 #include <vector>
 #include "Syntax.h"
+
+class SyntaxNode;
 
 class ExpressionSyntax;
 
 class SyntaxTree final {
 public:
-    SyntaxTree(std::vector<std::string_view> diagnostics, ExpressionSyntax &root, SyntaxToken endOfFileToken);
+    SyntaxTree(std::vector<std::string> diagnostics, ExpressionSyntax &root, SyntaxToken endOfFileToken);
 
     ~SyntaxTree();
 
-    const std::vector<std::string_view> diagnostics() const;
+    const std::vector<std::string> diagnostics() const;
 
     ExpressionSyntax &root();
 
     const SyntaxToken &endOfFileToken() const;
 
-    static SyntaxTree* parseToken(std::string_view text);
+    static SyntaxTree* parseToken(std::string text);
+
+    static void prettyPrint(const SyntaxNode &node, std::string indent = "", bool isLast = false);
 
 private:
-    std::vector<std::string_view> _diagnostics;
+    std::vector<std::string> _diagnostics;
     ExpressionSyntax &_root;
     SyntaxToken _endOfFileToken;
 };
@@ -44,6 +48,8 @@ public:
     SyntaxKind getKind() const override;
 
     const SyntaxToken &getToken() const;
+
+    const std::any &getValue() const;
 
     const std::vector<SyntaxNode *> &getChildren() const override;
 
