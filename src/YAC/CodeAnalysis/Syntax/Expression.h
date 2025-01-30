@@ -1,6 +1,6 @@
 #ifndef EXPRESSION_H
 #define EXPRESSION_H
-#include "CodeAnalysis/Syntax/SyntaxTree.h"
+#include "SyntaxTree.h"
 
 
 // abstract class

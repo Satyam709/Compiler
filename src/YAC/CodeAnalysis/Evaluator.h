@@ -2,7 +2,7 @@
 #ifndef EVALUATOR_H
 #define EVALUATOR_H
 #include "Binding/Binder.h"
-#include "CodeAnalysis/Syntax/Expression.h"
+#include "Syntax/Expression.h"
 
 class Evaluator {
 public:

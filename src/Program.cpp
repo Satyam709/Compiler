@@ -2,9 +2,9 @@
 #include <string>
 #include <vector>
 
-#include "CodeAnalysis/Evaluator.h"
-#include "CodeAnalysis/Syntax/SyntaxTree.h"
-#include "CodeAnalysis/Utils/Caster.h"
+#include "YAC/CodeAnalysis/Evaluator.h"
+#include "YAC//CodeAnalysis/Syntax/SyntaxTree.h"
+#include "YAC//Utils/Caster.h"
 
 
 int main() {

@@ -3,8 +3,8 @@
 //
 
 
-#include "CodeAnalysis/Binding/BoundOperators.h"
-#include "CodeAnalysis/Binding/Binder.h"
+#include "BoundOperators.h"
+#include "Binder.h"
 
 
 

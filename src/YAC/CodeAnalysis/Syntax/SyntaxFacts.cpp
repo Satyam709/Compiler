@@ -2,7 +2,7 @@
 // Created by satya on 01-01-2025.
 //
 
-#include "CodeAnalysis/Syntax/SyntaxFacts.h"
+#include "SyntaxFacts.h"
 
 #include <unordered_map>
 

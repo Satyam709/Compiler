@@ -1,8 +1,8 @@
-#include "CodeAnalysis/Syntax/Lexer.h"
+#include "Lexer.h"
 #include <cctype>
 #include <iostream>
 
-#include "CodeAnalysis/Syntax/SyntaxFacts.h"
+#include "SyntaxFacts.h"
 
 Lexer::Lexer(const std::string inputText)
     : _inputText(inputText), _position(0), _len(inputText.size()) {

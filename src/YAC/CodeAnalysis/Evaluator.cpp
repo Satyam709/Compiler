@@ -1,9 +1,9 @@
-#include "CodeAnalysis/Evaluator.h"
+#include "Evaluator.h"
 #include <format>
 #include <sstream>
 
-#include "CodeAnalysis/Binding/Binder.h"
-#include "CodeAnalysis/Syntax/Expression.h"
+#include "Binding/Binder.h"
+#include "Syntax/Expression.h"
 
 
 Evaluator::Evaluator(const BoundExpression &root): _root(root) {

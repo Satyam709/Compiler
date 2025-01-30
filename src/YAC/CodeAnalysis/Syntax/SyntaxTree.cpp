@@ -1,6 +1,6 @@
-#include "CodeAnalysis/Syntax/SyntaxTree.h"
-#include "CodeAnalysis/Syntax/Parser.h"
-#include "CodeAnalysis/Syntax/Syntax.h"
+#include "SyntaxTree.h"
+#include "Parser.h"
+#include "Syntax.h"
 #include "iostream"
 
 SyntaxTree::SyntaxTree(std::vector<std::string> diagnostics,

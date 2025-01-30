@@ -3,30 +3,30 @@ project(Compiler)
 
 set(CMAKE_CXX_STANDARD 20)
 
-# Include directories for headers
-include_directories(include)
+include_directories(${CMAKE_SOURCE_DIR}/src)
+
 
 # Add source files
 set(SOURCES
-        src/CodeAnalysis/Syntax/Syntax.cpp
-        include/CodeAnalysis/Syntax/Lexer.h
-        include/CodeAnalysis/Syntax/Syntax.h
-        src/CodeAnalysis/Syntax/Lexer.cpp
-        src/CodeAnalysis/Syntax/Parser.cpp
-        include/CodeAnalysis/Syntax/Parser.h
-        src/CodeAnalysis/Syntax/Expression.cpp
-        src/CodeAnalysis/Evaluator.cpp
-        include/CodeAnalysis/Evaluator.h
-        include/CodeAnalysis/Syntax/Expression.h
-        src/CodeAnalysis/Syntax/SyntaxTree.cpp
-        include/CodeAnalysis/Syntax/SyntaxTree.h
+        src/YAC/CodeAnalysis/Syntax/Syntax.cpp
+        src/YAC/CodeAnalysis/Syntax/Lexer.h
+        src/YAC/CodeAnalysis/Syntax/Syntax.h
+        src/YAC/CodeAnalysis/Syntax/Lexer.cpp
+        src/YAC/CodeAnalysis/Syntax/Parser.cpp
+        src/YAC/CodeAnalysis/Syntax/Parser.h
+        src/YAC/CodeAnalysis/Syntax/Expression.cpp
+        src/YAC/CodeAnalysis/Evaluator.cpp
+        src/YAC/CodeAnalysis/Evaluator.h
+        src/YAC/CodeAnalysis/Syntax/Expression.h
+        src/YAC/CodeAnalysis/Syntax/SyntaxTree.cpp
+        src/YAC/CodeAnalysis/Syntax/SyntaxTree.h
         src/Program.cpp
-        src/CodeAnalysis/Syntax/SyntaxFacts.cpp
-        include/CodeAnalysis/Syntax/SyntaxFacts.h
-        include/CodeAnalysis/Binding/Binder.h
-        include/CodeAnalysis/Utils/Caster.h
-        include/CodeAnalysis/Binding/BoundOperators.h
-        src/CodeAnalysis/Binding/BoundOperators.cpp
+        src/YAC/CodeAnalysis/Syntax/SyntaxFacts.cpp
+        src/YAC/CodeAnalysis/Syntax/SyntaxFacts.h
+        src/YAC/CodeAnalysis/Binding/Binder.h
+        src/YAC/Utils/Caster.h
+        src/YAC/CodeAnalysis/Binding/BoundOperators.h
+        src/YAC/CodeAnalysis/Binding/BoundOperators.cpp
 )
 
 # Create the executable

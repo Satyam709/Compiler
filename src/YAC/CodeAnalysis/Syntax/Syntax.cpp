@@ -1,4 +1,4 @@
-#include "CodeAnalysis/Syntax/Syntax.h"
+#include "Syntax.h"
 #include <iostream>
 
 SyntaxToken::SyntaxToken()

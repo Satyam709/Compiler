@@ -7,7 +7,7 @@
 #include <typeinfo>
 #include <memory>
 #include <vector>
-#include "CodeAnalysis/Syntax/Syntax.h"
+#include "../Syntax/Syntax.h"
 
 enum class BoundUnaryOperatorKind;
 enum class BoundBinaryOperatorKind;

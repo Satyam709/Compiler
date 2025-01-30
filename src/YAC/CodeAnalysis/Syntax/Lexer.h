@@ -2,7 +2,7 @@
 #define LEXER_H
 #include <list>
 #include <string>
-#include "CodeAnalysis/Syntax/Syntax.h"
+#include "Syntax.h"
 
 class Lexer {
 public:

@@ -6,9 +6,9 @@
 #include <utility>
 
 #include "BoundOperators.h"
-#include "CodeAnalysis/Syntax/Expression.h"
-#include "CodeAnalysis/Syntax/Syntax.h"
-#include "CodeAnalysis/Utils/Caster.h"
+#include "../Syntax/Expression.h"
+#include "../Syntax/Syntax.h"
+#include "../../Utils/Caster.h"
 
 enum class BoundNodeKind {
     UnaryExpression,

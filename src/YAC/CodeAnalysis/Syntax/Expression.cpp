@@ -1,6 +1,6 @@
 #include <vector>
-#include "CodeAnalysis/Syntax/Syntax.h"
-#include "CodeAnalysis/Syntax/Expression.h"
+#include "Syntax.h"
+#include "Expression.h"
 
 // sealed classes for diff types of expression
 
