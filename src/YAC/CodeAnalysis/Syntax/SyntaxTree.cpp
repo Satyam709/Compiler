@@ -17,7 +17,7 @@ const std::vector<std::string> SyntaxTree::diagnostics() const {
     return _diagnostics;
 }
 
-ExpressionSyntax &SyntaxTree::root() {
+const ExpressionSyntax &SyntaxTree::root() const{
     return _root;
 }
 

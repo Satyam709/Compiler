@@ -3,9 +3,9 @@
 #include <vector>
 
 #include "YAC/CodeAnalysis/Evaluator.h"
-#include "YAC//CodeAnalysis/Syntax/SyntaxTree.h"
-#include "YAC//Utils/Caster.h"
-
+#include "YAC/CodeAnalysis/Syntax/SyntaxTree.h"
+#include "YAC/Utils/Caster.h"
+#include "YAC/CodeAnalysis/Compilation.h"
 
 int main() {
     bool showTree = true;
@@ -25,29 +25,27 @@ int main() {
             continue;
         }
 
-
         const auto syntaxTree = SyntaxTree::parseToken(line);
-
-        const auto binder = new Binder();
-        const auto boundExpression = binder->bindExpression(syntaxTree->root());
 
         if (showTree) {
             SyntaxTree::prettyPrint(syntaxTree->root());
         }
-        auto all_diag = std::vector<std::string>(syntaxTree->diagnostics());
-        all_diag.insert(all_diag.end(), binder->diagnostics().begin(), binder->diagnostics().end());
 
-        if (all_diag.empty()) {
-            Evaluator e(*boundExpression);
-            const auto result = e.evaluate();
-            try {
-                printAnyValue(result);
-            } catch (const std::bad_any_cast& e) {
-                std::cerr << "Cannot cast final result to int !!" << std::endl;
+        // Use the Compilation class to handle binding and evaluation
+        Compilation compilation(*syntaxTree);
+        EvaluationResult result = compilation.evaluate();
+
+        // Check for diagnostics
+        if (!result.diagnostics().empty()) {
+            for (const auto& diagnostic : result.diagnostics()) {
+                std::cerr << diagnostic << std::endl;
             }
         } else {
-            for (const auto &diagnostic: all_diag) {
-                std::cerr << diagnostic << std::endl;
+            // Output the evaluation result
+            try {
+                printAnyValue(result.value());
+            } catch (const std::bad_any_cast& e) {
+                std::cerr << "Cannot cast final result to int !!" << std::endl;
             }
         }
     }

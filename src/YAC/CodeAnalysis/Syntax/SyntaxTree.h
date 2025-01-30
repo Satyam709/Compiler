@@ -16,7 +16,7 @@ public:
 
     const std::vector<std::string> diagnostics() const;
 
-    ExpressionSyntax &root();
+    const ExpressionSyntax &root() const;
 
     const SyntaxToken &endOfFileToken() const;
 

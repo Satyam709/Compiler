@@ -27,6 +27,10 @@ set(SOURCES
         src/YAC/Utils/Caster.h
         src/YAC/CodeAnalysis/Binding/BoundOperators.h
         src/YAC/CodeAnalysis/Binding/BoundOperators.cpp
+        src/YAC/CodeAnalysis/Compilation.h
+        src/YAC/CodeAnalysis/Compilation.cpp
+        src/YAC/CodeAnalysis/EvaluationResult.h
+        src/YAC/CodeAnalysis/EvaluationResult.cpp
 )
 
 # Create the executable
