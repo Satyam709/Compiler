@@ -33,7 +33,10 @@ private:
     // Helper function to get the next token from input text
     SyntaxToken nextToken();
 
-
+public:
+    [[nodiscard]] DiagnosticBag * diagnostic_bag() const {
+        return diagnosticBag;
+    }
 };
 
 #endif // LEXER_H

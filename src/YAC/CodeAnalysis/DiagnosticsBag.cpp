@@ -1,4 +1,6 @@
 #include "DiagnosticsBag.h"
+
+#include <iostream>
 #include <sstream>
 
 void DiagnosticBag::addRange(DiagnosticBag &diagnostics) {
@@ -7,7 +9,8 @@ void DiagnosticBag::addRange(DiagnosticBag &diagnostics) {
 }
 
 void DiagnosticBag::report(const TextSpan& span, const std::string& message) {
-    m_diagnostics.emplace_back(span, message);
+    const Diagnostic diag = {span,message};
+    m_diagnostics.push_back(diag);
 }
 
 void DiagnosticBag::reportInvalidNumber(const TextSpan& span, const std::string& text, const std::string& type) {

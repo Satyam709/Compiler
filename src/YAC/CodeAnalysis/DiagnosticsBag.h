@@ -1,6 +1,7 @@
 #ifndef DIAGNOSTIC_BAG_H
 #define DIAGNOSTIC_BAG_H
 
+#include <iostream>
 #include <vector>
 #include <string>
 #include "Diagnostics.h"
@@ -9,6 +10,8 @@
 
 class DiagnosticBag {
 public:
+    DiagnosticBag() : m_diagnostics(std::vector<Diagnostic>()) {}
+
     void addRange(DiagnosticBag& diagnostics);
     void reportInvalidNumber(const TextSpan& span, const std::string& text, const std::string& type);
     void reportBadCharacter(int position, char character);

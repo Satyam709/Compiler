@@ -15,7 +15,7 @@ EvaluationResult Compilation::evaluate() {
     diagnostic_bag->addRange(*_syntaxTree.diagnostics());
     diagnostic_bag->addRange(*binder.diagnostics());
 
-    // std::cout << diagnostic_bag->isEmpty();
+     // std::cout << diagnostic_bag->isEmpty();
 
     // If there are diagnostics, return them with an empty value
     if (!diagnostic_bag->isEmpty()) {

@@ -14,7 +14,8 @@ Parser::Parser(const std::string input) {
     Lexer lexer(input);
     auto tokenList = lexer.tokenize();
     _tokens = std::vector(tokenList.begin(), tokenList.end()); // Convert list to vector
-    _diagnostics=new DiagnosticBag();
+    const auto lex_diag = lexer.diagnostic_bag();
+    _diagnostics =lex_diag;
 
     // std::cout << "tokenized string !"<<std::endl;
     // for (auto token : _tokens) {

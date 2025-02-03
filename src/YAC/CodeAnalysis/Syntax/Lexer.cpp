@@ -8,8 +8,7 @@
 
 
 Lexer::Lexer(const std::string inputText)
-    : _inputText(inputText), _position(0), _len(inputText.size()) {
-    // diagnosticBag(new DiagnosticBag());
+    : _inputText(inputText), _position(0), _len(inputText.size()) , diagnosticBag(new DiagnosticBag()) {
 }
 
 std::list<SyntaxToken> Lexer::tokenize() {

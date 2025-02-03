@@ -6,7 +6,7 @@
 SyntaxTree::SyntaxTree(DiagnosticBag *diagnostics,
                        ExpressionSyntax &root,
                        SyntaxToken endOfFileToken)
-    : _diagnostics(std::move(diagnostics))
+    : _diagnostics(diagnostics)
       , _root(root)
       , _endOfFileToken(std::move(endOfFileToken)) {
 }
