@@ -31,6 +31,12 @@ set(SOURCES
         src/YAC/CodeAnalysis/Compilation.cpp
         src/YAC/CodeAnalysis/EvaluationResult.h
         src/YAC/CodeAnalysis/EvaluationResult.cpp
+        src/YAC/CodeAnalysis/Text/TextSpan.cpp
+        src/YAC/CodeAnalysis/Text/TextSpan.h
+        src/YAC/CodeAnalysis/Diagnostics.h
+        src/YAC/CodeAnalysis/Diagnostics.cpp
+        src/YAC/CodeAnalysis/DiagnosticsBag.h
+        src/YAC/CodeAnalysis/DiagnosticsBag.cpp
 )
 
 # Create the executable

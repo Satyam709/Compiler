@@ -9,6 +9,7 @@
 #include "../Syntax/Expression.h"
 #include "../Syntax/Syntax.h"
 #include "../../Utils/Caster.h"
+#include "YAC/CodeAnalysis/DiagnosticsBag.h"
 
 enum class BoundNodeKind {
     UnaryExpression,
@@ -190,12 +191,15 @@ private:
 
 class Binder {
 private:
-    std::vector<std::string> _diagnostics;
+    // std::vector<std::string> _diagnostics;
+    DiagnosticBag* _diagnostic;
 
 public:
-    [[nodiscard]] const std::vector<std::string> &diagnostics() {
-        return _diagnostics;
+    Binder(): _diagnostic(new DiagnosticBag()) {};
+    DiagnosticBag *diagnostics() const {
+        return _diagnostic;
     }
+
 
     const BoundExpression *BindLiteralExpression(const ExpressionSyntax &syntax) {
         if (const auto *exp = dynamic_cast<const LiteralExpressionSyntax *>(&syntax)) {
@@ -243,10 +247,10 @@ public:
             const auto boundOperand = bindExpression(*(exp->operand()));
             const auto boundOperator = BoundUnaryOperator::Bind(exp->operatorToken().kind, boundOperand->getType());
             if (boundOperator == nullptr) {
-                std::ostringstream os;
-                os << "Unary operator: " << syntaxKindToString(exp->operatorToken().kind)
-                        << " is not defined for type " << getTypeName(boundOperand->getType());
-                _diagnostics.push_back(os.str());
+                // std::ostringstream os;
+                // os << "Unary operator: " << syntaxKindToString(exp->operatorToken().kind)
+                //         << " is not defined for type " << getTypeName(boundOperand->getType());
+                _diagnostic->reportUndefinedUnaryOperator(exp->operatorToken().getSpan(),exp->operatorToken().text,getTypeName(boundOperand->getType()));
 
                 // for avoiding cascading type error or null returns
                 return boundOperand;
@@ -292,10 +296,10 @@ public:
 
             if (op == nullptr) {
                 std::ostringstream os;
-                os << "Binary operator: " << syntaxKindToString(exp->operator_token().kind)
-                        << " is not defined for type " << getTypeName(left->getType()) << " and " << getTypeName(
-                            right->getType());
-                _diagnostics.push_back(os.str());
+                // os << "Binary operator: " << syntaxKindToString(exp->operator_token().kind)
+                //         << " is not defined for type " << getTypeName(left->getType()) << " and " << getTypeName(
+                //             right->getType());
+                _diagnostic->reportUndefinedBinaryOperator(exp->operator_token().getSpan(),exp->operator_token().text,getTypeName(left->getType()),getTypeName(right->getType()));
 
                 // for avoiding cascading type error or null returns
                 return left;

@@ -41,7 +41,9 @@ std::string syntaxKindToString(const SyntaxKind kind) {
 }
 
 
-
+TextSpan SyntaxToken::getSpan() const {
+    return {position, text.length()};
+}
 
 std::ostream &operator<<(std::ostream &out, const SyntaxToken &token) {
     out << "text: " << token.text

@@ -3,7 +3,7 @@
 #include "Syntax.h"
 #include "iostream"
 
-SyntaxTree::SyntaxTree(std::vector<std::string> diagnostics,
+SyntaxTree::SyntaxTree(DiagnosticBag *diagnostics,
                        ExpressionSyntax &root,
                        SyntaxToken endOfFileToken)
     : _diagnostics(std::move(diagnostics))
@@ -13,7 +13,7 @@ SyntaxTree::SyntaxTree(std::vector<std::string> diagnostics,
 
 SyntaxTree::~SyntaxTree() = default;
 
-const std::vector<std::string> SyntaxTree::diagnostics() const {
+ DiagnosticBag *SyntaxTree::diagnostics() const {
     return _diagnostics;
 }
 

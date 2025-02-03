@@ -38,7 +38,7 @@ int main() {
         // Check for diagnostics
         if (!result.diagnostics().empty()) {
             for (const auto& diagnostic : result.diagnostics()) {
-                std::cerr << diagnostic << std::endl;
+                std::cerr << diagnostic.getMessage() << std::endl;
             }
         } else {
             // Output the evaluation result

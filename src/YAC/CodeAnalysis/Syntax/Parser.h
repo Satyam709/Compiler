@@ -2,6 +2,7 @@
 #define PARSER_H
 #include <vector>
 #include "Syntax.h"
+#include "YAC/CodeAnalysis/DiagnosticsBag.h"
 class SyntaxTree;
 class ExpressionSyntax;
 
@@ -11,7 +12,7 @@ public:
     SyntaxTree *parse();
 private:
     std::vector<SyntaxToken> _tokens;
-    std::vector<std::string> _diagnostics;
+    DiagnosticBag *_diagnostics;
     int _position;
 
     SyntaxToken peek(const int offset);

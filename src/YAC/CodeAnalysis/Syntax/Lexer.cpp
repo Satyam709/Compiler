@@ -3,9 +3,13 @@
 #include <iostream>
 
 #include "SyntaxFacts.h"
+#include "YAC/CodeAnalysis/DiagnosticsBag.h"
+#include "YAC/Utils/Caster.h"
+
 
 Lexer::Lexer(const std::string inputText)
     : _inputText(inputText), _position(0), _len(inputText.size()) {
+    // diagnosticBag(new DiagnosticBag());
 }
 
 std::list<SyntaxToken> Lexer::tokenize() {
@@ -47,7 +51,14 @@ SyntaxToken Lexer::nextToken() {
             advance();
         }
         std::string tokenText = _inputText.substr(start, _position - start);
-        return {start,SyntaxKind:: NumberToken, tokenText, std::stoi(std::string(tokenText))};
+        SyntaxToken token={start,SyntaxKind:: NumberToken, tokenText,nullptr};
+        if (int a=std::stoi(tokenText)) {
+            token.val = a;
+            return token;
+        }
+        else {
+            diagnosticBag->reportInvalidNumber(token.getSpan(),token.text,"int");
+        }
     }
     if (std::isspace(current)) {
         int start = _position;
@@ -111,6 +122,7 @@ SyntaxToken Lexer::nextToken() {
         return {start, SyntaxKind::EqualEqualToken, "==", nullptr};
 
     }
-
-    return {_position++, SyntaxKind::BadToken, std::string(&current, 1), nullptr};
+    SyntaxToken bad_token = {_position++, SyntaxKind::BadToken, std::string(&current, 1), nullptr};
+    diagnosticBag->reportBadCharacter(bad_token.position,bad_token.text[0]);
+    return bad_token;
 }

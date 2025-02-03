@@ -14,6 +14,7 @@ Parser::Parser(const std::string input) {
     Lexer lexer(input);
     auto tokenList = lexer.tokenize();
     _tokens = std::vector(tokenList.begin(), tokenList.end()); // Convert list to vector
+    _diagnostics=new DiagnosticBag();
 
     // std::cout << "tokenized string !"<<std::endl;
     // for (auto token : _tokens) {
@@ -40,10 +41,7 @@ SyntaxToken Parser::nextToken() {
 SyntaxToken Parser::match(SyntaxKind kind) {
     const auto token = current();
     if (token.kind == kind)return nextToken();
-    std::ostringstream os;
-    os << "ERROR: Unexpected token <" << token
-            << ">, expected <" << syntaxKindToString(kind) << ">";
-    _diagnostics.push_back(os.str());
+    _diagnostics->reportUnexpectedToken(token.getSpan(), token.kind,kind);
     return {_position, kind, "", nullptr};
 }
 
