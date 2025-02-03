@@ -14,6 +14,7 @@ enum class SyntaxKind {
     MinusToken,
     StarToken,
     SlashToken,
+    EqualsToken,
     OpenParenthesisToken,
     CloseParenthesisToken,
 
@@ -30,6 +31,8 @@ enum class SyntaxKind {
     BinaryExpression,
     ParenthesizedExpression,
     UnaryExpression,
+    NameExpression,
+    AssignmentExpression,
 
     // keywords
 

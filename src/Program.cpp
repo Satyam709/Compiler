@@ -9,6 +9,7 @@
 
 int main() {
     bool showTree = true;
+    std::unordered_map<std::string, std::any> variables;
 
     while (true) {
         std::cout << "> ";
@@ -33,7 +34,7 @@ int main() {
 
         // Use the Compilation class to handle binding and evaluation
         Compilation compilation(*syntaxTree);
-        EvaluationResult result = compilation.evaluate();
+        EvaluationResult result = compilation.evaluate(variables);
 
         // Check for diagnostics
         if (!result.diagnostics().empty()) {

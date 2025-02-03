@@ -18,6 +18,7 @@ public:
     void reportUnexpectedToken(const TextSpan& span, SyntaxKind actualKind, SyntaxKind expectedKind);
     void reportUndefinedUnaryOperator(const TextSpan& span, const std::string& operatorText, const std::string& operandType);
     void reportUndefinedBinaryOperator(const TextSpan& span, const std::string& operatorText, const std::string& leftType, const std::string& rightType);
+    void reportUndefinedName(const TextSpan& span, const std::string& name);
     bool isEmpty() const ;
     const std::vector<Diagnostic>& getDiagnostics() const { return m_diagnostics; }
 

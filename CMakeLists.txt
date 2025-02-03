@@ -37,6 +37,7 @@ set(SOURCES
         src/YAC/CodeAnalysis/Diagnostics.cpp
         src/YAC/CodeAnalysis/DiagnosticsBag.h
         src/YAC/CodeAnalysis/DiagnosticsBag.cpp
+        src/YAC/CodeAnalysis/Binding/Binder.cpp
 )
 
 # Create the executable

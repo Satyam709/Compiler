@@ -16,17 +16,13 @@ private:
     int _position;
 
     SyntaxToken peek(const int offset);
-
     SyntaxToken current();
-
     SyntaxToken nextToken();
-
     SyntaxToken match(SyntaxKind kind);
 
-    ExpressionSyntax *parseExpression(int parentPrecedence = 0);
-
+    ExpressionSyntax *parseExpression();
+    ExpressionSyntax *parseAssignmentExpression();
+    ExpressionSyntax *parseBinaryExpression(int parentPrecedence = 0);
     ExpressionSyntax *parsePrimaryExpression();
-
-
 };
 #endif //PARSER_H

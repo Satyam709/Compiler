@@ -115,10 +115,18 @@ SyntaxToken Lexer::nextToken() {
         _position+=2;
         return {start, SyntaxKind::PipePipeToken, "||", nullptr};
     }
-    if (current == '=' && peek(1)== '=') {
-        int start = _position;
-        _position+=2;
-        return {start, SyntaxKind::EqualEqualToken, "==", nullptr};
+    if (current == '=' ) {
+        if (peek(1)=='=') {
+            int start = _position;
+            _position+=2;
+            return {start, SyntaxKind::EqualEqualToken, "==", nullptr};
+        }
+        else {
+            int start=_position;
+            _position+=1;
+            return {start, SyntaxKind::EqualsToken, "=", nullptr};
+        }
+
 
     }
     SyntaxToken bad_token = {_position++, SyntaxKind::BadToken, std::string(&current, 1), nullptr};

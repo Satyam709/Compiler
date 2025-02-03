@@ -92,4 +92,40 @@ private:
     std::vector<SyntaxNode *> _children;
 };
 
+class NameExpressionSyntax final : public ExpressionSyntax {
+public:
+    explicit NameExpressionSyntax(const SyntaxToken& identifierToken);
+
+    SyntaxKind getKind() const override;
+    const std::vector<SyntaxNode*>& getChildren() const override;
+    const SyntaxToken& getIdentifierToken() const;
+
+private:
+    NameExpressionSyntax() = default;
+
+    SyntaxToken _identifierToken;
+    std::vector<SyntaxNode*> _children;
+};
+
+class AssignmentExpressionSyntax final : public ExpressionSyntax {
+public:
+    AssignmentExpressionSyntax(const SyntaxToken& identifierToken,
+                              const SyntaxToken& equalsToken,
+                              ExpressionSyntax& expression);
+
+    SyntaxKind getKind() const override;
+    const std::vector<SyntaxNode*>& getChildren() const override;
+    const SyntaxToken& getIdentifierToken() const;
+    const SyntaxToken& getEqualsToken() const;
+    ExpressionSyntax& expression() const;
+
+private:
+    AssignmentExpressionSyntax() = default;
+
+    SyntaxToken _identifierToken;
+    SyntaxToken _equalsToken;
+    ExpressionSyntax& _expression;
+    std::vector<SyntaxNode*> _children;
+};
+
 #endif //EXPRESSION_H

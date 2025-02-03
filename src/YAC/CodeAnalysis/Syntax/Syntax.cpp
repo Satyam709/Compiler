@@ -35,11 +35,13 @@ std::string syntaxKindToString(const SyntaxKind kind) {
         case SyntaxKind::PipePipeToken: return "PipePipeToken";
         case SyntaxKind::AmpersandAmpersandToken: return "AmpersandAmpersandToken";
         case SyntaxKind::EqualEqualToken: return "EqualEqualToken";
-        case SyntaxKind::NotEqualToken:return "NotEqualToken";
+        case SyntaxKind::NotEqualToken: return "NotEqualToken";
+        case SyntaxKind::EqualsToken: return "EqualsToken";                // Added
+        case SyntaxKind::NameExpression: return "NameExpression";         // Added
+        case SyntaxKind::AssignmentExpression: return "AssignmentExpression"; // Added
         default: return "UnknownToken";
     }
 }
-
 
 TextSpan SyntaxToken::getSpan() const {
     int len = text.length();

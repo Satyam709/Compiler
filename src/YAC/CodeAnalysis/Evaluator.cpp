@@ -5,8 +5,8 @@
 #include "Binding/Binder.h"
 #include "Syntax/Expression.h"
 
-
-Evaluator::Evaluator(const BoundExpression &root): _root(root) {
+Evaluator::Evaluator(const BoundExpression &root, std::unordered_map<std::string, std::any>& variables)
+    : _root(root), _variables(variables) {
 }
 
 std::any Evaluator::evaluateExpression(const BoundExpression *node) {
@@ -33,6 +33,16 @@ std::any Evaluator::evaluateExpression(const BoundExpression *node) {
         }
     }
 
+    if (const auto variableNode = dynamic_cast<const BoundVariableExpression *>(node)) {
+        return _variables[variableNode->getName()];
+    }
+
+    if (const auto assignmentNode = dynamic_cast<const BoundAssignmentExpression *>(node)) {
+        auto value = evaluateExpression(assignmentNode->getExpression());
+        _variables[assignmentNode->getName()] = value;
+        return value;
+    }
+
     if (const auto binaryNode = dynamic_cast<const BoundBinaryExpression *>(node)) {
         const auto leftResult = evaluateExpression(&binaryNode->left());
         const auto rightResult = evaluateExpression(&binaryNode->right());
@@ -53,26 +63,21 @@ std::any Evaluator::evaluateExpression(const BoundExpression *node) {
                     } else if (leftResult.type() == typeid(bool)) {
                         return std::any_cast<bool>(leftResult) == std::any_cast<bool>(rightResult);
                     }
-                    // Add more type checks if needed
                 }
                 throw std::runtime_error("Type mismatch or unsupported type for equality comparison");
             }
 
             case BoundBinaryOperatorKind::NotEquals: {
-                // Check if both types are the same
                 if (leftResult.type() == rightResult.type()) {
                     if (leftResult.type() == typeid(int)) {
                         return std::any_cast<int>(leftResult) != std::any_cast<int>(rightResult);
                     } else if (leftResult.type() == typeid(bool)) {
                         return std::any_cast<bool>(leftResult) != std::any_cast<bool>(rightResult);
                     }
-                    // Add more type checks if needed
                 }
                 throw std::runtime_error("Type mismatch or unsupported type for equality comparison");
             }
 
-
-            // Evaluate algebraic operations
             case BoundBinaryOperatorKind::Addition: {
                 const auto left = std::any_cast<int>(leftResult);
                 const auto right = std::any_cast<int>(rightResult);
@@ -105,9 +110,6 @@ std::any Evaluator::evaluateExpression(const BoundExpression *node) {
         }
     }
 
-    // if (const auto parenthesisNode = dynamic_cast<ParenthesizedExpressionSyntax *>(node)) {
-    //     return evaluateExpression(&parenthesisNode->expression());
-    // }
     std::stringstream ss;
     ss << "Unexpected node <" << boundKindsToString(node->getKind()) << ">";
     throw std::runtime_error(ss.str());
