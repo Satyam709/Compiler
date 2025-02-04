@@ -5,7 +5,7 @@
 #include "Binding/Binder.h"
 #include "Syntax/Expression.h"
 
-Evaluator::Evaluator(const BoundExpression &root, std::unordered_map<std::string, std::any>& variables)
+Evaluator::Evaluator(const BoundExpression &root, std::unordered_map<VariableSymbol, std::any>& variables)
     : _root(root), _variables(variables) {
 }
 
@@ -34,12 +34,18 @@ std::any Evaluator::evaluateExpression(const BoundExpression *node) {
     }
 
     if (const auto variableNode = dynamic_cast<const BoundVariableExpression *>(node)) {
-        return _variables[variableNode->getName()];
+        const VariableSymbol& symbol = variableNode->getVariable();
+        auto it = _variables.find(symbol);
+        if (it != _variables.end()) {
+            return it->second;
+        }
+        throw std::runtime_error("Undefined variable: " + variableNode->getName());
     }
 
     if (const auto assignmentNode = dynamic_cast<const BoundAssignmentExpression *>(node)) {
         auto value = evaluateExpression(assignmentNode->getExpression());
-        _variables[assignmentNode->getName()] = value;
+        const VariableSymbol& symbol = assignmentNode->getVariable();
+        _variables[symbol] = value;
         return value;
     }
 
@@ -99,6 +105,9 @@ std::any Evaluator::evaluateExpression(const BoundExpression *node) {
             case BoundBinaryOperatorKind::Division: {
                 const auto left = std::any_cast<int>(leftResult);
                 const auto right = std::any_cast<int>(rightResult);
+                if (right == 0) {
+                    throw std::runtime_error("Division by zero");
+                }
                 return left / right;
             }
 

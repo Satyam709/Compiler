@@ -1,40 +1,46 @@
 #include "Compilation.h"
 
-// Constructor to initialize the Compilation with a syntax tree
 Compilation::Compilation(const SyntaxTree& syntaxTree)
     : _syntaxTree(syntaxTree) {
 }
 
-// Method to evaluate the syntax tree
-EvaluationResult Compilation::evaluate(std::unordered_map<std::string, std::any>& variables) {
-    // Create a Binder to bind the syntax tree
-    Binder binder(variables);
+EvaluationResult Compilation::evaluate(std::unordered_map<VariableSymbol, std::any>& variables) {
+    // Create a Binder with the existing variables
+    Binder binder(variables);  // Make sure Binder constructor takes variables by reference
     const auto boundExpression = binder.bindExpression(_syntaxTree.root());
 
-    // Create a vector to store all diagnostics
+    // Collect diagnostics
     std::vector<Diagnostic> diagnostics;
 
-    // Collect diagnostics from the syntax tree
     auto syntaxDiagnostics = _syntaxTree.diagnostics()->getDiagnostics();
     diagnostics.insert(diagnostics.end(),
                       syntaxDiagnostics.begin(),
                       syntaxDiagnostics.end());
 
-    // Collect diagnostics from the binder
     auto binderDiagnostics = binder.diagnostics()->getDiagnostics();
     diagnostics.insert(diagnostics.end(),
                       binderDiagnostics.begin(),
                       binderDiagnostics.end());
 
-    // If there are diagnostics, return them with an empty value
     if (!diagnostics.empty()) {
         return EvaluationResult(diagnostics, nullptr);
     }
 
-    // Create an Evaluator to evaluate the bound expression
-    Evaluator evaluator(*boundExpression, variables);
+    // Create Evaluator with the variables
+    Evaluator evaluator(*boundExpression, variables);  // Make sure Evaluator uses the same variables
     const auto value = evaluator.evaluate();
 
-    // Return the evaluation result with the value and empty diagnostics
+    // Debug output (temporary)
+    std::cout << "Variables in Compilation after evaluation:" << std::endl;
+    for(const auto& [var, val] : variables) {
+        std::cout << var.getName() << " = ";
+        if (val.type() == typeid(int)) {
+            std::cout << std::any_cast<int>(val);
+        } else if (val.type() == typeid(bool)) {
+            std::cout << std::boolalpha << std::any_cast<bool>(val);
+        }
+        std::cout << std::endl;
+    }
+
     return EvaluationResult(std::vector<Diagnostic>{}, value);
 }

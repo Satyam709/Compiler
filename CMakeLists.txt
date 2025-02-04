@@ -38,6 +38,8 @@ set(SOURCES
         src/YAC/CodeAnalysis/DiagnosticsBag.h
         src/YAC/CodeAnalysis/DiagnosticsBag.cpp
         src/YAC/CodeAnalysis/Binding/Binder.cpp
+        src/YAC/CodeAnalysis/Symbols/VariableSymbol.cpp
+        src/YAC/CodeAnalysis/Symbols/VariableSymbol.h
 )
 
 # Create the executable

@@ -15,6 +15,7 @@
 #include "../../Utils/Caster.h"
 #include "YAC/CodeAnalysis/DiagnosticsBag.h"
 #include "unordered_map"
+#include "YAC/CodeAnalysis/Symbols/VariableSymbol.h"
 
 enum class BoundNodeKind {
     UnaryExpression,
@@ -99,38 +100,39 @@ private:
 
 class BoundVariableExpression : public BoundExpression {
 public:
-    BoundVariableExpression(std::string name, const std::type_info& type);
+    explicit BoundVariableExpression(const VariableSymbol& variable);
 
     BoundNodeKind getKind() const override;
     const std::type_info& getType() const override;
     const std::string& getName() const;
+    const VariableSymbol& getVariable() const;
 
 private:
-    std::string _name;
-    const std::type_info& _type;
+    VariableSymbol _variable;
 };
 
 class BoundAssignmentExpression : public BoundExpression {
 public:
-    BoundAssignmentExpression(std::string name, const BoundExpression* expression);
+    BoundAssignmentExpression(const VariableSymbol& variable, const BoundExpression* expression);
 
     BoundNodeKind getKind() const override;
     const std::type_info& getType() const override;
     const std::string& getName() const;
     const BoundExpression* getExpression() const;
+    const VariableSymbol& getVariable() const;
 
 private:
-    std::string _name;
+    VariableSymbol _variable;
     const BoundExpression* _expression;
 };
 
 class Binder {
 private:
     DiagnosticBag* _diagnostic;
-    std::unordered_map<std::string, std::any> _variables;
+    std::unordered_map<VariableSymbol, std::any> _variables;
 
 public:
-    Binder(std::unordered_map<std::string, std::any> variables);
+    explicit Binder(std::unordered_map<VariableSymbol, std::any> variables);
 
     DiagnosticBag *diagnostics() const;
     const BoundExpression *BindLiteralExpression(const ExpressionSyntax &syntax);

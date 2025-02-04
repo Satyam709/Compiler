@@ -9,7 +9,7 @@
 
 int main() {
     bool showTree = true;
-    std::unordered_map<std::string, std::any> variables;
+    std::unordered_map<VariableSymbol, std::any> variables;
 
     while (true) {
         std::cout << "> ";

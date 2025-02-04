@@ -69,8 +69,8 @@ BoundUnaryOperatorKind BoundUnaryExpression::getOperatorKind() const {
 }
 
 // BoundVariableExpression Implementation
-BoundVariableExpression::BoundVariableExpression(std::string name, const std::type_info& type)
-    : _name(std::move(name)), _type(type) {
+BoundVariableExpression::BoundVariableExpression(const VariableSymbol& variable)
+    : _variable(variable) {
 }
 
 BoundNodeKind BoundVariableExpression::getKind() const {
@@ -78,16 +78,20 @@ BoundNodeKind BoundVariableExpression::getKind() const {
 }
 
 const std::type_info& BoundVariableExpression::getType() const {
-    return _type;
+    return _variable.getType();
 }
 
 const std::string& BoundVariableExpression::getName() const {
-    return _name;
+    return _variable.getName();
+}
+
+const VariableSymbol& BoundVariableExpression::getVariable() const {
+    return _variable;
 }
 
 // BoundAssignmentExpression Implementation
-BoundAssignmentExpression::BoundAssignmentExpression(std::string name, const BoundExpression* expression)
-    : _name(std::move(name)), _expression(expression) {
+BoundAssignmentExpression::BoundAssignmentExpression(const VariableSymbol& variable, const BoundExpression* expression)
+    : _variable(variable), _expression(expression) {
 }
 
 BoundNodeKind BoundAssignmentExpression::getKind() const {
@@ -99,15 +103,19 @@ const std::type_info& BoundAssignmentExpression::getType() const {
 }
 
 const std::string& BoundAssignmentExpression::getName() const {
-    return _name;
+    return _variable.getName();
 }
 
 const BoundExpression* BoundAssignmentExpression::getExpression() const {
     return _expression;
 }
 
+const VariableSymbol& BoundAssignmentExpression::getVariable() const {
+    return _variable;
+}
+
 // Binder Implementation
-Binder::Binder(std::unordered_map<std::string, std::any> variables)
+Binder::Binder(std::unordered_map<VariableSymbol, std::any> variables)
     : _diagnostic(new DiagnosticBag()), _variables(std::move(variables)) {
 }
 
@@ -172,13 +180,17 @@ const BoundExpression *Binder::BindBinaryExpression(const ExpressionSyntax &synt
 const BoundExpression* Binder::BindNameExpression(const ExpressionSyntax& syntax) {
     if (const auto* exp = dynamic_cast<const NameExpressionSyntax*>(&syntax)) {
         const std::string& name = exp->getIdentifierToken().text;
-        auto it = _variables.find(name);
-        if (it == _variables.end()) {
-            _diagnostic->reportUndefinedName(exp->getIdentifierToken().getSpan(), name);
-            return new BoundLiteralExpression(0);
+
+        // Search for the variable by name
+        for (const auto& [symbol, value] : _variables) {
+            if (symbol.getName() == name) {
+                // Return existing variable symbol
+                return new BoundVariableExpression(symbol);
+            }
         }
 
-        return new BoundVariableExpression(name, it->second.type());
+        _diagnostic->reportUndefinedName(exp->getIdentifierToken().getSpan(), name);
+        return new BoundLiteralExpression(0);
     }
     throw std::invalid_argument("Invalid expression: expression failed to bound");
 }
@@ -187,23 +199,30 @@ const BoundExpression* Binder::BindAssignmentExpression(const ExpressionSyntax& 
     if (const auto* exp = dynamic_cast<const AssignmentExpressionSyntax*>(&syntax)) {
         const std::string& name = exp->getIdentifierToken().text;
         const BoundExpression* boundExpression = bindExpression(exp->expression());
-
         const std::type_info& exprType = boundExpression->getType();
 
         if (exprType != typeid(int) && exprType != typeid(bool)) {
             throw std::runtime_error("Unsupported variable type: " + getTypeName(exprType));
         }
 
-        // Initialize variable if it doesn't exist
-        if (_variables.find(name) == _variables.end()) {
-            if (exprType == typeid(int)) {
-                _variables[name] = 0;
-            } else if (exprType == typeid(bool)) {
-                _variables[name] = false;
+        // Look for existing variable
+        VariableSymbol* existingSymbol = nullptr;
+        for (const auto& [symbol, value] : _variables) {
+            if (symbol.getName() == name) {
+                existingSymbol = const_cast<VariableSymbol*>(&symbol);
+                break;
             }
         }
 
-        return new BoundAssignmentExpression(name, boundExpression);
+        if (existingSymbol) {
+            // Use existing symbol
+            return new BoundAssignmentExpression(*existingSymbol, boundExpression);
+        } else {
+            // Create new symbol
+            VariableSymbol newSymbol(name, exprType);
+            _variables[newSymbol] = (exprType == typeid(int)) ? 0 : false;
+            return new BoundAssignmentExpression(newSymbol, boundExpression);
+        }
     }
     throw std::invalid_argument("Invalid expression: expression failed to bound");
 }
