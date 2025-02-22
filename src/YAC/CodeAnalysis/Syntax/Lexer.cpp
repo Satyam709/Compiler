@@ -46,19 +46,21 @@ SyntaxToken Lexer::nextToken() {
 
     if (std::isdigit(current)) {
         int start = _position;
+        std::cout << "crnt" << current;
         while (std::isdigit(getCurrentChar())) {
             advance();
         }
         std::string tokenText = _inputText.substr(start, _position - start);
-        SyntaxToken token={start,SyntaxKind:: NumberToken, tokenText,nullptr};
-        if (int a=std::stoi(tokenText)) {
-            token.val = a;
+        SyntaxToken token = {start, SyntaxKind::NumberToken, tokenText, nullptr};
+
+        try {
+            token.val = std::stoi(tokenText);
             return token;
-        }
-        else {
-            diagnosticBag->reportInvalidNumber(token.getSpan(),token.text,"int");
+        } catch (const std::exception &e) {
+            diagnosticBag->reportInvalidNumber(token.getSpan(), token.text, "int");
         }
     }
+
     if (std::isspace(current)) {
         int start = _position;
         while (std::isspace(getCurrentChar())) {
