@@ -69,7 +69,7 @@ BoundUnaryOperatorKind BoundUnaryExpression::getOperatorKind() const {
 }
 
 // BoundVariableExpression Implementation
-BoundVariableExpression::BoundVariableExpression(const VariableSymbol& variable)
+BoundVariableExpression::BoundVariableExpression(const VariableSymbol &variable)
     : _variable(variable) {
 }
 
@@ -77,20 +77,20 @@ BoundNodeKind BoundVariableExpression::getKind() const {
     return BoundNodeKind::VariableExpression;
 }
 
-const std::type_info& BoundVariableExpression::getType() const {
+const std::type_info &BoundVariableExpression::getType() const {
     return _variable.getType();
 }
 
-const std::string& BoundVariableExpression::getName() const {
+const std::string &BoundVariableExpression::getName() const {
     return _variable.getName();
 }
 
-const VariableSymbol& BoundVariableExpression::getVariable() const {
+const VariableSymbol &BoundVariableExpression::getVariable() const {
     return _variable;
 }
 
 // BoundAssignmentExpression Implementation
-BoundAssignmentExpression::BoundAssignmentExpression(const VariableSymbol& variable, const BoundExpression* expression)
+BoundAssignmentExpression::BoundAssignmentExpression(const VariableSymbol &variable, const BoundExpression *expression)
     : _variable(variable), _expression(expression) {
 }
 
@@ -98,19 +98,19 @@ BoundNodeKind BoundAssignmentExpression::getKind() const {
     return BoundNodeKind::AssignmentExpression;
 }
 
-const std::type_info& BoundAssignmentExpression::getType() const {
+const std::type_info &BoundAssignmentExpression::getType() const {
     return _expression->getType();
 }
 
-const std::string& BoundAssignmentExpression::getName() const {
+const std::string &BoundAssignmentExpression::getName() const {
     return _variable.getName();
 }
 
-const BoundExpression* BoundAssignmentExpression::getExpression() const {
+const BoundExpression *BoundAssignmentExpression::getExpression() const {
     return _expression;
 }
 
-const VariableSymbol& BoundAssignmentExpression::getVariable() const {
+const VariableSymbol &BoundAssignmentExpression::getVariable() const {
     return _variable;
 }
 
@@ -177,52 +177,37 @@ const BoundExpression *Binder::BindBinaryExpression(const ExpressionSyntax &synt
     throw std::invalid_argument("Invalid expression: expression failed to bound");
 }
 
-const BoundExpression* Binder::BindNameExpression(const ExpressionSyntax& syntax) {
-    if (const auto* exp = dynamic_cast<const NameExpressionSyntax*>(&syntax)) {
-        const std::string& name = exp->getIdentifierToken().text;
+const BoundExpression *Binder::BindNameExpression(const ExpressionSyntax &syntax) {
+    if (const auto *exp = dynamic_cast<const NameExpressionSyntax *>(&syntax)) {
+        const std::string &name = exp->getIdentifierToken().text;
+        const auto target = VariableSymbol(name, typeid(int));
+        // just for searching as only name is hashed,type is of no use
 
-        // Search for the variable by name
-        for (const auto& [symbol, value] : _variables) {
-            if (symbol.getName() == name) {
-                // Return existing variable symbol
-                return new BoundVariableExpression(symbol);
-            }
+        // if exists just bound the value of it to a literal exp
+        const auto it = _variables.find(target);
+        if (it != _variables.end()) {
+            return new BoundLiteralExpression(it->second);
         }
-
         _diagnostic->reportUndefinedName(exp->getIdentifierToken().getSpan(), name);
         return new BoundLiteralExpression(0);
     }
     throw std::invalid_argument("Invalid expression: expression failed to bound");
 }
 
-const BoundExpression* Binder::BindAssignmentExpression(const ExpressionSyntax& syntax) {
-    if (const auto* exp = dynamic_cast<const AssignmentExpressionSyntax*>(&syntax)) {
-        const std::string& name = exp->getIdentifierToken().text;
-        const BoundExpression* boundExpression = bindExpression(exp->expression());
-        const std::type_info& exprType = boundExpression->getType();
+const BoundExpression *Binder::BindAssignmentExpression(const ExpressionSyntax &syntax) {
+    if (const auto *exp = dynamic_cast<const AssignmentExpressionSyntax *>(&syntax)) {
+        const std::string &name = exp->getIdentifierToken().text;
+        const BoundExpression *boundExpression = bindExpression(exp->expression());
+        const std::type_info &exprType = boundExpression->getType();
+        const auto crnt_var = VariableSymbol(name, exprType);
 
         if (exprType != typeid(int) && exprType != typeid(bool)) {
             throw std::runtime_error("Unsupported variable type: " + getTypeName(exprType));
         }
 
-        // Look for existing variable
-        VariableSymbol* existingSymbol = nullptr;
-        for (const auto& [symbol, value] : _variables) {
-            if (symbol.getName() == name) {
-                existingSymbol = const_cast<VariableSymbol*>(&symbol);
-                break;
-            }
-        }
-
-        if (existingSymbol) {
-            // Use existing symbol
-            return new BoundAssignmentExpression(*existingSymbol, boundExpression);
-        } else {
-            // Create new symbol
-            VariableSymbol newSymbol(name, exprType);
-            _variables[newSymbol] = (exprType == typeid(int)) ? 0 : false;
-            return new BoundAssignmentExpression(newSymbol, boundExpression);
-        }
+        // insert into variable map
+        _variables[crnt_var] = exp->getIdentifierToken().val;
+        return new BoundAssignmentExpression(crnt_var, boundExpression);
     }
     throw std::invalid_argument("Invalid expression: expression failed to bound");
 }
@@ -236,7 +221,7 @@ const BoundExpression *Binder::bindExpression(const ExpressionSyntax &syntax) {
         case SyntaxKind::BinaryExpression:
             return BindBinaryExpression(syntax);
         case SyntaxKind::ParenthesizedExpression: {
-            if (const auto* exp = dynamic_cast<const ParenthesizedExpressionSyntax *>(&syntax)) {
+            if (const auto *exp = dynamic_cast<const ParenthesizedExpressionSyntax *>(&syntax)) {
                 return bindExpression(exp->expression());
             }
         }
