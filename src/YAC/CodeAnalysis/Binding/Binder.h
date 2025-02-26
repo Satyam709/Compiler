@@ -68,7 +68,7 @@ enum class BoundBinaryOperatorKind {
 
 class BoundBinaryExpression : public BoundExpression {
 public:
-    BoundBinaryExpression(const BoundExpression &left, const BoundBinaryOperator op,
+    BoundBinaryExpression(const BoundExpression &left, const BoundBinaryOperator &op,
                           const BoundExpression &right);
 
     BoundNodeKind getKind() const override;

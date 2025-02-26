@@ -18,9 +18,9 @@ const std::any &BoundLiteralExpression::getValue() const {
 }
 
 // BoundBinaryExpression Implementation
-BoundBinaryExpression::BoundBinaryExpression(const BoundExpression &left, const BoundBinaryOperator op,
+BoundBinaryExpression::BoundBinaryExpression(const BoundExpression &left, const BoundBinaryOperator &op,
                                              const BoundExpression &right)
-    : _left(left), _operator(op), _right(right) {
+    : _left(left), _right(right), _operator(op) {
 }
 
 BoundNodeKind BoundBinaryExpression::getKind() const {
