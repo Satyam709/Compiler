@@ -46,7 +46,6 @@ SyntaxToken Lexer::nextToken() {
 
     if (std::isdigit(current)) {
         int start = _position;
-        std::cout << "crnt" << current;
         while (std::isdigit(getCurrentChar())) {
             advance();
         }

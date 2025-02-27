@@ -1,6 +1,5 @@
 #ifndef EVALUATOR_H
 #define EVALUATOR_H
-
 #include "Binding/Binder.h"
 #include "Syntax/Expression.h"
 #include <unordered_map>
