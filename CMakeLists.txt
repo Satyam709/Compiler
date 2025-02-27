@@ -5,6 +5,18 @@ set(CMAKE_CXX_STANDARD 20)
 
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
+# Fetch GoogleTest
+include(FetchContent)
+FetchContent_Declare(
+        googletest
+        URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
+)
+FetchContent_MakeAvailable(googletest)
+
+enable_testing()
+
+# Add test directory (Do not define `my_tests` here)
+add_subdirectory(src/Tests)
 
 # Add source files
 set(SOURCES
@@ -42,5 +54,5 @@ set(SOURCES
         src/YAC/CodeAnalysis/Symbols/VariableSymbol.h
 )
 
-# Create the executable
+# Create the main executable
 add_executable(${PROJECT_NAME} ${SOURCES})

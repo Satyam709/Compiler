@@ -4,13 +4,7 @@
 
 #ifndef LEXERTESTS_H
 #define LEXERTESTS_H
-
-
-
 class LexerTests {
-
 };
-
-
 
 #endif //LEXERTESTS_H
