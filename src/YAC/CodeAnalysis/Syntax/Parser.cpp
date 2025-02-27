@@ -9,7 +9,7 @@
 #include "Syntax.h"
 #include "SyntaxFacts.h"
 
-Parser::Parser(const std::string input) {
+Parser::Parser(const std::string& input) {
     Lexer lexer(input);
     auto tokenList = lexer.tokenize();
     _tokens = std::vector(tokenList.begin(), tokenList.end()); // Convert list to vector
@@ -49,9 +49,9 @@ ExpressionSyntax *Parser::parseExpression() {
 ExpressionSyntax *Parser::parseAssignmentExpression() {
     if (peek(0).kind == SyntaxKind::IdentifierToken &&
         peek(1).kind == SyntaxKind::EqualsToken) {
-        auto identifierToken = nextToken();
-        auto operatorToken = nextToken();
-        auto right = parseAssignmentExpression();
+        const auto identifierToken = nextToken();
+        const auto operatorToken = nextToken();
+        const auto right = parseAssignmentExpression();
         return new AssignmentExpressionSyntax(identifierToken, operatorToken, *right);
     }
 
@@ -110,4 +110,11 @@ SyntaxTree *Parser::parse() {
     const auto expression = parseExpression();
     const auto endOfFileToken = match(SyntaxKind::EndOfFileToken);
     return new SyntaxTree(_diagnostics, *expression, endOfFileToken);
+}
+
+std::vector<SyntaxToken> Parser::getTokens(const std::string &input) {
+    Lexer lexer(input);
+    auto tokenList = lexer.tokenize();
+    const auto tokens = std::vector(tokenList.begin(), tokenList.end()); // Convert list to vector
+    return tokens;
 }

@@ -2,11 +2,7 @@
 // Created by satya on 26-02-2025.
 //
 
-#include "LexerTests.h"
-
-#include <string>
-#include <gtest/gtest.h>  // Ensure GTest is included
-
+#include <gtest/gtest.h>
 // Basic Math Test
 TEST(MathTest, Addition) {
     EXPECT_EQ(2 + 3, 5);
