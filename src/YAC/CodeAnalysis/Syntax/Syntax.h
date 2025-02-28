@@ -46,10 +46,17 @@ enum class SyntaxKind {
     EqualEqualToken,
     NotEqualToken,
 
+
+
+    // auxiliary kind to mark enum end
+    ENDS
 };
 
 // just a helper method to convert enum class kind from int to respective value
 std::string syntaxKindToString(SyntaxKind kind);
+
+// converts a kind to its actual representation  e.g. PlusToken -> "+"
+std::string getKindText(const SyntaxKind& kind);
 
 class SyntaxToken {
 public:

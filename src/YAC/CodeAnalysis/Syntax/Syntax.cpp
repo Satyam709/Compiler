@@ -43,6 +43,41 @@ std::string syntaxKindToString(const SyntaxKind kind) {
     }
 }
 
+std::string getKindText(const SyntaxKind& kind) {
+    switch (kind) {
+        case SyntaxKind::PlusToken:
+            return "+";
+        case SyntaxKind::MinusToken:
+            return "-";
+        case SyntaxKind::StarToken:
+            return "*";
+        case SyntaxKind::SlashToken:
+            return "/";
+        case SyntaxKind::BangToken:
+            return "!";
+        case SyntaxKind::EqualsToken:
+            return "=";
+        case SyntaxKind::AmpersandAmpersandToken:
+            return "&&";
+        case SyntaxKind::PipePipeToken:
+            return "||";
+        case SyntaxKind::EqualEqualToken:
+            return "==";
+        case SyntaxKind::NotEqualToken:
+            return "!=";
+        case SyntaxKind::OpenParenthesisToken:
+            return "(";
+        case SyntaxKind::CloseParenthesisToken:
+            return ")";
+        case SyntaxKind::FalseKeyword:
+            return "false";
+        case SyntaxKind::TrueKeyword:
+            return "true";
+        default:
+            return "";
+    }
+}
+
 TextSpan SyntaxToken::getSpan() const {
     int len = text.length();
     return {position, len};
