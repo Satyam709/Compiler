@@ -115,8 +115,8 @@ const VariableSymbol &BoundAssignmentExpression::getVariable() const {
 }
 
 // Binder Implementation
-Binder::Binder(std::unordered_map<VariableSymbol, std::any> variables)
-    : _diagnostic(new DiagnosticBag()), _variables(std::move(variables)) {
+Binder::Binder(std::unordered_map<VariableSymbol, std::any>& variables)
+    : _diagnostic(new DiagnosticBag()), _variables(variables) {
 }
 
 DiagnosticBag *Binder::diagnostics() const {
@@ -183,10 +183,10 @@ const BoundExpression *Binder::BindNameExpression(const ExpressionSyntax &syntax
         const auto target = VariableSymbol(name, typeid(int));
         // just for searching as only name is hashed,type is of no use
 
-        // if exists just bound the value of it to a literal exp
+        // if exists just bound the value of it to a bound variable
         const auto it = _variables.find(target);
         if (it != _variables.end()) {
-            return new BoundLiteralExpression(it->second);
+            return new BoundVariableExpression(it->first);
         }
         _diagnostic->reportUndefinedName(exp->getIdentifierToken().getSpan(), name);
         return new BoundLiteralExpression(0);
@@ -204,9 +204,10 @@ const BoundExpression *Binder::BindAssignmentExpression(const ExpressionSyntax &
         if (exprType != typeid(int) && exprType != typeid(bool)) {
             throw std::runtime_error("Unsupported variable type: " + getTypeName(exprType));
         }
-
+        _variables.erase(crnt_var);
+        std::any val = exprType == typeid(int) ? 0 : false;
+        _variables.insert({crnt_var,val});
         // insert into variable map
-        _variables[crnt_var] = exp->getIdentifierToken().val;
         return new BoundAssignmentExpression(crnt_var, boundExpression);
     }
     throw std::invalid_argument("Invalid expression: expression failed to bound");

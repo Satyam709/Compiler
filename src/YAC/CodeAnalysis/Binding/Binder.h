@@ -129,10 +129,10 @@ private:
 class Binder {
 private:
     DiagnosticBag* _diagnostic;
-    std::unordered_map<VariableSymbol, std::any> _variables;
+    std::unordered_map<VariableSymbol, std::any>& _variables;
 
 public:
-    explicit Binder(std::unordered_map<VariableSymbol, std::any> variables);
+    explicit Binder(std::unordered_map<VariableSymbol, std::any>& variables);
 
     DiagnosticBag *diagnostics() const;
     const BoundExpression *BindLiteralExpression(const ExpressionSyntax &syntax);
