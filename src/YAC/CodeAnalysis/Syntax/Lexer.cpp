@@ -3,9 +3,12 @@
 #include <iostream>
 
 #include "SyntaxFacts.h"
+#include "YAC/CodeAnalysis/DiagnosticsBag.h"
+#include "YAC/Utils/Caster.h"
 
-Lexer::Lexer(const std::string inputText)
-    : _inputText(inputText), _position(0), _len(inputText.size()) {
+
+Lexer::Lexer(const std::string& inputText)
+    : _inputText(inputText), _len(inputText.size()), _position(0) , diagnosticBag(new DiagnosticBag()) {
 }
 
 std::list<SyntaxToken> Lexer::tokenize() {
@@ -46,9 +49,17 @@ SyntaxToken Lexer::nextToken() {
         while (std::isdigit(getCurrentChar())) {
             advance();
         }
-        std::string tokenText = _inputText.substr(start, _position - start);
-        return {start,SyntaxKind:: NumberToken, tokenText, std::stoi(std::string(tokenText))};
+        const std::string tokenText = _inputText.substr(start, _position - start);
+        SyntaxToken token = {start, SyntaxKind::NumberToken, tokenText, nullptr};
+
+        try {
+            token.val = std::stoi(tokenText);
+            return token;
+        } catch (const std::exception &e) {
+            diagnosticBag->reportInvalidNumber(token.getSpan(), token.text, "int");
+        }
     }
+
     if (std::isspace(current)) {
         int start = _position;
         while (std::isspace(getCurrentChar())) {
@@ -105,12 +116,21 @@ SyntaxToken Lexer::nextToken() {
         _position+=2;
         return {start, SyntaxKind::PipePipeToken, "||", nullptr};
     }
-    if (current == '=' && peek(1)== '=') {
-        int start = _position;
-        _position+=2;
-        return {start, SyntaxKind::EqualEqualToken, "==", nullptr};
+    if (current == '=' ) {
+        if (peek(1)=='=') {
+            int start = _position;
+            _position+=2;
+            return {start, SyntaxKind::EqualEqualToken, "==", nullptr};
+        }
+        else {
+            int start=_position;
+            _position+=1;
+            return {start, SyntaxKind::EqualsToken, "=", nullptr};
+        }
+
 
     }
-
-    return {_position++, SyntaxKind::BadToken, std::string(&current, 1), nullptr};
+    SyntaxToken bad_token = {_position++, SyntaxKind::BadToken, std::string(&current, 1), nullptr};
+    diagnosticBag->reportBadCharacter(bad_token.position,bad_token.text[0]);
+    return bad_token;
 }

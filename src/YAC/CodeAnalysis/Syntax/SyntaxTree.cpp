@@ -3,21 +3,21 @@
 #include "Syntax.h"
 #include "iostream"
 
-SyntaxTree::SyntaxTree(std::vector<std::string> diagnostics,
+SyntaxTree::SyntaxTree(DiagnosticBag *diagnostics,
                        ExpressionSyntax &root,
                        SyntaxToken endOfFileToken)
-    : _diagnostics(std::move(diagnostics))
+    : _diagnostics(diagnostics)
       , _root(root)
       , _endOfFileToken(std::move(endOfFileToken)) {
 }
 
 SyntaxTree::~SyntaxTree() = default;
 
-const std::vector<std::string> SyntaxTree::diagnostics() const {
+ DiagnosticBag *SyntaxTree::diagnostics() const {
     return _diagnostics;
 }
 
-ExpressionSyntax &SyntaxTree::root() {
+ExpressionSyntax &SyntaxTree::root() const{
     return _root;
 }
 

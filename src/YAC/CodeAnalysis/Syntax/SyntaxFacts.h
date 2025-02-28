@@ -3,6 +3,8 @@
 //
 #ifndef SYNTAXFACTS_H
 #define SYNTAXFACTS_H
+#include <vector>
+
 #include "Syntax.h"
 
 
@@ -11,6 +13,8 @@ public:
     static int getPrecedence(const SyntaxKind &kind);
     static int getUnaryPrecedence(const SyntaxKind &kind);
     static SyntaxKind getKeywordKind(const std::string& text);
+    static std::vector<SyntaxKind> GetUnaryOperatorKinds();
+    static std::vector<SyntaxKind> GetBinaryOperatorKinds();
 };
 
 

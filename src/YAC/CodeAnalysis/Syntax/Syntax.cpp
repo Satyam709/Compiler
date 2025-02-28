@@ -35,13 +35,53 @@ std::string syntaxKindToString(const SyntaxKind kind) {
         case SyntaxKind::PipePipeToken: return "PipePipeToken";
         case SyntaxKind::AmpersandAmpersandToken: return "AmpersandAmpersandToken";
         case SyntaxKind::EqualEqualToken: return "EqualEqualToken";
-        case SyntaxKind::NotEqualToken:return "NotEqualToken";
+        case SyntaxKind::NotEqualToken: return "NotEqualToken";
+        case SyntaxKind::EqualsToken: return "EqualsToken";                // Added
+        case SyntaxKind::NameExpression: return "NameExpression";         // Added
+        case SyntaxKind::AssignmentExpression: return "AssignmentExpression"; // Added
         default: return "UnknownToken";
     }
 }
 
+std::string getKindText(const SyntaxKind& kind) {
+    switch (kind) {
+        case SyntaxKind::PlusToken:
+            return "+";
+        case SyntaxKind::MinusToken:
+            return "-";
+        case SyntaxKind::StarToken:
+            return "*";
+        case SyntaxKind::SlashToken:
+            return "/";
+        case SyntaxKind::BangToken:
+            return "!";
+        case SyntaxKind::EqualsToken:
+            return "=";
+        case SyntaxKind::AmpersandAmpersandToken:
+            return "&&";
+        case SyntaxKind::PipePipeToken:
+            return "||";
+        case SyntaxKind::EqualEqualToken:
+            return "==";
+        case SyntaxKind::NotEqualToken:
+            return "!=";
+        case SyntaxKind::OpenParenthesisToken:
+            return "(";
+        case SyntaxKind::CloseParenthesisToken:
+            return ")";
+        case SyntaxKind::FalseKeyword:
+            return "false";
+        case SyntaxKind::TrueKeyword:
+            return "true";
+        default:
+            return "";
+    }
+}
 
-
+TextSpan SyntaxToken::getSpan() const {
+    int len = text.length();
+    return {position, len};
+}
 
 std::ostream &operator<<(std::ostream &out, const SyntaxToken &token) {
     out << "text: " << token.text
