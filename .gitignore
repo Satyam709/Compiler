@@ -10,6 +10,7 @@ CMakeFiles/
 cmake-build/
 CMakeCache.txt
 Makefile
+Testing/
 cmake_install.cmake
 
 # Ignore OS-specific files
