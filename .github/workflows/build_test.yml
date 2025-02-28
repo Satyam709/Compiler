@@ -1,0 +1,27 @@
+name: build_test.yml
+on:
+  push:
+    branches:
+      - main
+defaults:
+  run:
+    shell : bash
+    working-directory: ./builds
+jobs:
+  build:
+    name: "Building the project..."
+    runs-on: ubuntu-latest
+    steps:
+      - name: "generate cmake build files"
+        run: cmake build -S ../ -B .
+      - name: "build the project"
+        run: cmake --build .
+
+  tests:
+    needs: build
+    name : "Run tests on the build"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name : "Executing tests.."
+        run : ./src/Tests/YacTests
