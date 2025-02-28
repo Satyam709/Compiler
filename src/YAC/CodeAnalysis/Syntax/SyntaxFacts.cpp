@@ -1,5 +1,6 @@
 #include "SyntaxFacts.h"
 #include <unordered_map>
+#include <vector>
 
 int SyntaxFacts::getUnaryPrecedence(const SyntaxKind &kind) {
     switch (kind) {
@@ -49,4 +50,26 @@ SyntaxKind SyntaxFacts::getKeywordKind(const std::string &text) {
 
     const auto it = keywords.find(text);
     return it != keywords.end() ? it->second : SyntaxKind::IdentifierToken;
+}
+
+std::vector<SyntaxKind> SyntaxFacts::GetUnaryOperatorKinds() {
+    std::vector<SyntaxKind> result;
+    for (int i = 0; i < static_cast<int>(SyntaxKind::ENDS); i++) {
+        const auto kind = static_cast<SyntaxKind>(i);
+        if (getUnaryPrecedence(kind) > 0) {
+            result.push_back(kind);
+        }
+    }
+    return result;
+}
+
+std::vector<SyntaxKind> SyntaxFacts::GetBinaryOperatorKinds() {
+    std::vector<SyntaxKind> result;
+    for (int i = 0; i < static_cast<int>(SyntaxKind::ENDS); i++) {
+        const auto kind = static_cast<SyntaxKind>(i);
+        if (getPrecedence(kind) > 0) {
+            result.push_back(kind);
+        }
+    }
+    return result;
 }
