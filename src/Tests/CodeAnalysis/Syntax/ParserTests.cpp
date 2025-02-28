@@ -117,3 +117,87 @@ INSTANTIATE_TEST_SUITE_P(
     }
 );
 
+
+// Test fixture for unary operator precedence tests
+struct ParserUnaryExpressionTests : public ::testing::TestWithParam<std::pair<SyntaxKind, SyntaxKind>> {
+};
+
+// Generate all pairs of unary and binary operators
+std::vector<std::pair<SyntaxKind, SyntaxKind>> GetUnaryOperatorPairsData() {
+    std::vector<std::pair<SyntaxKind, SyntaxKind>> pairs;
+
+    auto unaryKinds = SyntaxFacts::GetUnaryOperatorKinds();
+    auto binaryKinds = SyntaxFacts::GetBinaryOperatorKinds();
+
+    for (const auto& unary : unaryKinds) {
+        for (const auto& binary : binaryKinds) {
+            pairs.emplace_back(unary, binary);
+        }
+    }
+
+    return pairs;
+}
+
+// Parameterized test for unary expression precedence
+TEST_P(ParserUnaryExpressionTests, UnaryExpression_HonorsPrecedences) {
+    const auto& [unaryKind, binaryKind] = GetParam();
+
+    const int unaryPrecedence = SyntaxFacts::getUnaryPrecedence(unaryKind);
+    const int binaryPrecedence = SyntaxFacts::getPrecedence(binaryKind);
+    const std::string unaryText = getKindText(unaryKind);
+    const std::string binaryText = getKindText(binaryKind);
+
+    const std::string text = unaryText + " a " + binaryText + " b";
+    const auto parser = new Parser(text);
+    const auto tree = parser->parse();
+    ExpressionSyntax& expression = tree->root();
+
+    if (unaryPrecedence >= binaryPrecedence) {
+        // Higher precedence tree:
+        //   binary
+        //   /    \
+        // unary   b
+        //   |
+        //   a
+
+        AssertingEnumerator e(&expression);
+        e.AssertNode(SyntaxKind::BinaryExpression);
+        e.AssertNode(SyntaxKind::UnaryExpression);
+        e.AssertToken(unaryKind, unaryText);
+        e.AssertNode(SyntaxKind::NameExpression);
+        e.AssertToken(SyntaxKind::IdentifierToken, "a");
+        e.AssertToken(binaryKind, binaryText);
+        e.AssertNode(SyntaxKind::NameExpression);
+        e.AssertToken(SyntaxKind::IdentifierToken, "b");
+    } else {
+        // Lower precedence tree:
+        //  unary
+        //    |
+        //  binary
+        //  /   \
+        // a     b
+
+        AssertingEnumerator e(&expression);
+        e.AssertNode(SyntaxKind::UnaryExpression);
+        e.AssertToken(unaryKind, unaryText);
+        e.AssertNode(SyntaxKind::BinaryExpression);
+        e.AssertNode(SyntaxKind::NameExpression);
+        e.AssertToken(SyntaxKind::IdentifierToken, "a");
+        e.AssertToken(binaryKind, binaryText);
+        e.AssertNode(SyntaxKind::NameExpression);
+        e.AssertToken(SyntaxKind::IdentifierToken, "b");
+    }
+}
+
+// Instantiate the test cases
+INSTANTIATE_TEST_SUITE_P(
+    ParserTests,
+    ParserUnaryExpressionTests,
+    ::testing::ValuesIn(GetUnaryOperatorPairsData()),
+    [](const testing::TestParamInfo<std::pair<SyntaxKind, SyntaxKind>>& info) {
+        std::string unary = syntaxKindToString(info.param.first);
+        std::string binary = syntaxKindToString(info.param.second);
+        return "Unary_" + unary + "_Binary_" + binary;
+    }
+);
+
