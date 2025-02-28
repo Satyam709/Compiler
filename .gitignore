@@ -1,10 +1,12 @@
 # Ignore CLion project files
 .idea/
+.vscode/
 
 # Ignore build directories
 cmake-build-debug/
 cmake-build-release/
 CMakeFiles/
+cmake-build/
 CMakeCache.txt
 Makefile
 cmake_install.cmake
