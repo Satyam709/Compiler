@@ -3,25 +3,38 @@ on:
   push:
     branches:
       - main
-defaults:
-  run:
-    shell : bash
-    working-directory: ./builds
+
 jobs:
   build:
     name: "Building the project..."
     runs-on: ubuntu-latest
     steps:
-      - name: "generate cmake build files"
-        run: cmake build -S ../ -B .
-      - name: "build the project"
-        run: cmake --build .
+      - name: "Checkout repository"
+        uses: actions/checkout@v3
+
+      - name: "Create build directory"
+        run: mkdir -p builds
+
+      - name: "Generate CMake build files"
+        run: cmake -S . -B builds
+
+      - name: "Build the project"
+        run: cmake --build builds
 
   tests:
     needs: build
-    name : "Run tests on the build"
+    name: "Run tests on the build"
     runs-on: ubuntu-latest
-
     steps:
-      - name : "Executing tests.."
-        run : ./src/Tests/YacTests
+      - name: "Checkout repository"
+        uses: actions/checkout@v3
+
+      - name: "Rebuild the project for tests"
+        run: |
+          mkdir -p builds
+          cmake -S . -B builds
+          cmake --build builds
+
+      - name: "Run tests"
+        run: ./src/Tests/YacTests
+        working-directory: builds
