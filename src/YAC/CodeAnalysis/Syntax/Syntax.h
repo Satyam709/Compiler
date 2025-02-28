@@ -45,6 +45,7 @@ enum class SyntaxKind {
     IdentifierToken,
     EqualEqualToken,
     NotEqualToken,
+
 };
 
 // just a helper method to convert enum class kind from int to respective value
@@ -66,5 +67,11 @@ public:
 
 // Overload operator<< for SyntaxToken
 std::ostream &operator<<(std::ostream &out, const SyntaxToken &token);
+
+// Overload operator<< for SyntaxKind
+inline std::ostream& operator<<(std::ostream &out, const SyntaxKind kind) {
+    out << syntaxKindToString(kind);
+    return out;
+}
 
 #endif //SYNTAX_H
