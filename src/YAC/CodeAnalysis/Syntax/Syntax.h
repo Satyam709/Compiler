@@ -4,6 +4,8 @@
 #include <string>
 #include <ostream>
 
+#include "YAC/CodeAnalysis/Text/TextSpan.h"
+
 enum class SyntaxKind {
 
     NumberToken,
@@ -12,6 +14,7 @@ enum class SyntaxKind {
     MinusToken,
     StarToken,
     SlashToken,
+    EqualsToken,
     OpenParenthesisToken,
     CloseParenthesisToken,
 
@@ -28,6 +31,8 @@ enum class SyntaxKind {
     BinaryExpression,
     ParenthesizedExpression,
     UnaryExpression,
+    NameExpression,
+    AssignmentExpression,
 
     // keywords
 
@@ -54,6 +59,8 @@ public:
     SyntaxKind kind;
     std::string text{};
     std::any val;
+    TextSpan getSpan() const ;
+
 };
 
 

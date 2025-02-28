@@ -8,14 +8,11 @@
 LiteralExpressionSyntax::LiteralExpressionSyntax(const SyntaxToken &token): _token(token) {
     _children.push_back(new SyntaxNodeToken(token));
 }
+
 LiteralExpressionSyntax::LiteralExpressionSyntax(const SyntaxToken &token,const std::any& value): _token(token) {
     _token.val = value;
     _children.push_back(new SyntaxNodeToken(token));
 }
-
-// LiteralExpressionSyntax::LiteralExpressionSyntax(const SyntaxToken &token): _token(token) {
-//     _children.push_back(new SyntaxNodeToken(token));
-// }
 
 SyntaxKind LiteralExpressionSyntax::getKind() const {
     return SyntaxKind::LiteralExpression;
@@ -61,7 +58,7 @@ ExpressionSyntax &BinaryExpressionSyntax::right() const {
     return _right;
 }
 
-
+// Parenthesized expression
 ParenthesizedExpressionSyntax::ParenthesizedExpressionSyntax(SyntaxToken openParenthesisToken,
                                                              ExpressionSyntax &expression,
                                                              SyntaxToken closeParenthesisToken): _openParenthesisToken(
@@ -93,13 +90,12 @@ ExpressionSyntax &ParenthesizedExpressionSyntax::expression() const {
     return _expression;
 }
 
-
+// Unary expression
 UnaryExpressionSyntax::UnaryExpressionSyntax(const SyntaxToken &operatorToken,
                                              ExpressionSyntax &operand) : _token(operatorToken), _operand(operand) {
     _children.push_back(new SyntaxNodeToken(operatorToken));
     _children.push_back(&_operand);
 }
-
 
 SyntaxKind UnaryExpressionSyntax::getKind() const {
     return SyntaxKind::UnaryExpression;
@@ -115,4 +111,54 @@ SyntaxToken UnaryExpressionSyntax::operatorToken() const {
 
 ExpressionSyntax *UnaryExpressionSyntax::operand() const {
     return &_operand;
+}
+
+// NameExpressionSyntax Implementation
+NameExpressionSyntax::NameExpressionSyntax(const SyntaxToken& identifierToken)
+    : _identifierToken(identifierToken) {
+    _children.push_back(new SyntaxNodeToken(identifierToken));
+}
+
+SyntaxKind NameExpressionSyntax::getKind() const {
+    return SyntaxKind::NameExpression;
+}
+
+const std::vector<SyntaxNode*>& NameExpressionSyntax::getChildren() const {
+    return _children;
+}
+
+const SyntaxToken& NameExpressionSyntax::getIdentifierToken() const {
+    return _identifierToken;
+}
+
+// AssignmentExpressionSyntax Implementation
+AssignmentExpressionSyntax::AssignmentExpressionSyntax(const SyntaxToken& identifierToken,
+                                                      const SyntaxToken& equalsToken,
+                                                      ExpressionSyntax& expression)
+    : _identifierToken(identifierToken)
+    , _equalsToken(equalsToken)
+    , _expression(expression) {
+    _children.push_back(new SyntaxNodeToken(identifierToken));
+    _children.push_back(new SyntaxNodeToken(equalsToken));
+    _children.push_back(&expression);
+}
+
+SyntaxKind AssignmentExpressionSyntax::getKind() const {
+    return SyntaxKind::AssignmentExpression;
+}
+
+const std::vector<SyntaxNode*>& AssignmentExpressionSyntax::getChildren() const {
+    return _children;
+}
+
+const SyntaxToken& AssignmentExpressionSyntax::getIdentifierToken() const {
+    return _identifierToken;
+}
+
+const SyntaxToken& AssignmentExpressionSyntax::getEqualsToken() const {
+    return _equalsToken;
+}
+
+ExpressionSyntax& AssignmentExpressionSyntax::expression() const {
+    return _expression;
 }

@@ -7,6 +7,18 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
+# Fetch GoogleTest
+include(FetchContent)
+FetchContent_Declare(
+        googletest
+        URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
+)
+FetchContent_MakeAvailable(googletest)
+
+enable_testing()
+
+# Add test directory (Do not define `my_tests` here)
+add_subdirectory(src/Tests)
 
 # Add source files
 set(SOURCES
@@ -29,7 +41,20 @@ set(SOURCES
         src/YAC/Utils/Caster.h
         src/YAC/CodeAnalysis/Binding/BoundOperators.h
         src/YAC/CodeAnalysis/Binding/BoundOperators.cpp
+        src/YAC/CodeAnalysis/Compilation.h
+        src/YAC/CodeAnalysis/Compilation.cpp
+        src/YAC/CodeAnalysis/EvaluationResult.h
+        src/YAC/CodeAnalysis/EvaluationResult.cpp
+        src/YAC/CodeAnalysis/Text/TextSpan.cpp
+        src/YAC/CodeAnalysis/Text/TextSpan.h
+        src/YAC/CodeAnalysis/Diagnostics.h
+        src/YAC/CodeAnalysis/Diagnostics.cpp
+        src/YAC/CodeAnalysis/DiagnosticsBag.h
+        src/YAC/CodeAnalysis/DiagnosticsBag.cpp
+        src/YAC/CodeAnalysis/Binding/Binder.cpp
+        src/YAC/CodeAnalysis/Symbols/VariableSymbol.cpp
+        src/YAC/CodeAnalysis/Symbols/VariableSymbol.h
 )
 
-# Create the executable
+# Create the main executable
 add_executable(${PROJECT_NAME} ${SOURCES})

@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 #include "Syntax.h"
+#include "YAC/CodeAnalysis/Diagnostics.h"
+#include "YAC/CodeAnalysis/DiagnosticsBag.h"
 
 class SyntaxNode;
 
@@ -10,13 +12,13 @@ class ExpressionSyntax;
 
 class SyntaxTree final {
 public:
-    SyntaxTree(std::vector<std::string> diagnostics, ExpressionSyntax &root, SyntaxToken endOfFileToken);
+    SyntaxTree(DiagnosticBag *diagnostics, ExpressionSyntax &root, SyntaxToken endOfFileToken);
 
     ~SyntaxTree();
 
-    const std::vector<std::string> diagnostics() const;
+    DiagnosticBag *diagnostics() const;
 
-    ExpressionSyntax &root();
+    const ExpressionSyntax &root() const;
 
     const SyntaxToken &endOfFileToken() const;
 
@@ -25,7 +27,7 @@ public:
     static void prettyPrint(const SyntaxNode &node, std::string indent = "", bool isLast = false);
 
 private:
-    std::vector<std::string> _diagnostics;
+    DiagnosticBag *_diagnostics;
     ExpressionSyntax &_root;
     SyntaxToken _endOfFileToken;
 };

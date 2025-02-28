@@ -3,6 +3,7 @@
 #include <list>
 #include <string>
 #include "Syntax.h"
+#include "YAC/CodeAnalysis/DiagnosticsBag.h"
 
 class Lexer {
 public:
@@ -19,6 +20,7 @@ private:
     std::string _inputText;  // The input text to tokenize
     const unsigned _len;          // Length of input text
     int _position;                // Current position in inputText
+    DiagnosticBag  *diagnosticBag;  //Creating a diagnosticBag
 
     // Helper function to increase the position
     void advance();
@@ -30,6 +32,11 @@ private:
 
     // Helper function to get the next token from input text
     SyntaxToken nextToken();
+
+public:
+    [[nodiscard]] DiagnosticBag * diagnostic_bag() const {
+        return diagnosticBag;
+    }
 };
 
 #endif // LEXER_H

@@ -26,6 +26,7 @@ inline void printAnyValue(const std::any& val) {
         std::cout << "Unknown type with type ID: " << val.type().name() << std::endl;
     }
 }
+
 inline void printAnyType(const std::type_info& type) {
     if (type == typeid(int)) {
         std::cout << "int" << std::endl;
@@ -43,6 +44,7 @@ inline void printAnyType(const std::type_info& type) {
         std::cout << "Unknown type: " << type.name() << std::endl;
     }
 }
+
 
 inline std::string getTypeName(const std::type_info& type) {
     if (type == typeid(int)) {
