@@ -1,7 +1,11 @@
 file(GLOB_RECURSE TEST_SOURCES *.cpp)  # Find all .cpp files recursively
 
 # Link the test executable with the found sources
-add_executable(YacTests ${TEST_SOURCES})
+add_executable(YacTests ${TEST_SOURCES}
+        CodeAnalysis/Syntax/AssertingEnumerator.cpp
+        CodeAnalysis/Syntax/AssertingEnumerator.cpp
+        CodeAnalysis/Syntax/AssertingEnumerator.h
+        CodeAnalysis/Syntax/ParserTests.cpp)
 
 
 # Link test executable with Google Test and CompilerLib

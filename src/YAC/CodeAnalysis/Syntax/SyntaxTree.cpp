@@ -17,7 +17,7 @@ SyntaxTree::~SyntaxTree() = default;
     return _diagnostics;
 }
 
-const ExpressionSyntax &SyntaxTree::root() const{
+ExpressionSyntax &SyntaxTree::root() const{
     return _root;
 }
 

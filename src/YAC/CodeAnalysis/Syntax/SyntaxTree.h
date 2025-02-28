@@ -18,7 +18,7 @@ public:
 
     DiagnosticBag *diagnostics() const;
 
-    const ExpressionSyntax &root() const;
+    ExpressionSyntax &root() const;
 
     const SyntaxToken &endOfFileToken() const;
 
