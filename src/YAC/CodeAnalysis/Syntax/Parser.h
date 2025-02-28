@@ -19,7 +19,7 @@ private:
     DiagnosticBag *_diagnostics;
     int _position;
 
-    SyntaxToken peek(const int offset);
+    SyntaxToken peek(int offset);
     SyntaxToken current();
     SyntaxToken nextToken();
     SyntaxToken match(SyntaxKind kind);

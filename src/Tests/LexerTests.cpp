@@ -1,43 +1,59 @@
-//
-// Created by satya on 26-02-2025.
-//
-
 #include <gtest/gtest.h>
-// Basic Math Test
-TEST(MathTest, Addition) {
-    EXPECT_EQ(2 + 3, 5);
-    EXPECT_NE(2 + 3, 6);
-}
+#include <utility>
+#include "YAC/CodeAnalysis/Syntax/Parser.h"
+#include "YAC/CodeAnalysis/Syntax/Syntax.h"
 
-// String Test
-TEST(StringTest, Compare) {
-    std::string str1 = "hello";
-    std::string str2 = "hello";
-    std::string str3 = "world";
+struct TokenInfo {
+    std::string text;
+    SyntaxKind kind;
 
-    EXPECT_EQ(str1, str2);
-    EXPECT_NE(str1, str3);
-}
-
-// Fixture-Based Test (Reusing Setup)
-class SampleFixture : public ::testing::Test {
-protected:
-    void SetUp() override {
-        data = 10;
+    TokenInfo(const SyntaxKind kind, std::string text) : text(std::move(text)), kind(kind) {
     }
-    int data;
 };
 
-TEST_F(SampleFixture, CheckData) {
-    EXPECT_EQ(data, 10);
+
+static std::vector<TokenInfo> GetTokens() {
+    return
+    {
+        {SyntaxKind::PlusToken, "+"},
+        {SyntaxKind::StarToken, "*"},
+        {SyntaxKind::MinusToken, "-"},
+        {SyntaxKind::SlashToken, "/"},
+        {SyntaxKind::BangToken, "!"},
+        {SyntaxKind::EqualsToken, "="},
+        {SyntaxKind::AmpersandAmpersandToken, "&&"},
+        {SyntaxKind::PipePipeToken, "||"},
+        {SyntaxKind::EqualEqualToken, "=="},
+        {SyntaxKind::NotEqualToken, "!="},
+        {SyntaxKind::OpenParenthesisToken, "("},
+        {SyntaxKind::CloseParenthesisToken, ")"},
+        {SyntaxKind::FalseKeyword, "false"},
+        {SyntaxKind::TrueKeyword, "true"},
+        {SyntaxKind::NumberToken, "1"},
+        {SyntaxKind::NumberToken, "123"},
+        {SyntaxKind::IdentifierToken, "a"},
+        {SyntaxKind::IdentifierToken, "abc"},
+    };
 }
 
-// Parameterized Test
-class ParamTest : public ::testing::TestWithParam<int> {};
 
-TEST_P(ParamTest, IsEven) {
-    int value = GetParam();
-    EXPECT_EQ(value % 2, 0);
+// parameterized fixture
+struct LexerTests : testing::TestWithParam<TokenInfo> {};
+
+
+TEST_P(LexerTests, LexerLexesTokens) {
+    const auto text = GetParam().text;
+    const auto kind = GetParam().kind;
+
+    const auto tokens = Parser::getTokens(text);
+    const auto& lexed = tokens.front(); //get the top element as it contains 'EOF' token too
+    EXPECT_TRUE(tokens.size()==2); // {token,eof}
+    EXPECT_EQ(lexed.text, text);
+    EXPECT_EQ(lexed.kind, kind);
 }
 
-INSTANTIATE_TEST_SUITE_P(Values, ParamTest, ::testing::Values(2, 4, 6, 8));
+INSTANTIATE_TEST_SUITE_P(
+    LexerLexesTokens, // Test suite name
+    LexerTests, // Test fixture
+    ::testing::ValuesIn(GetTokens()) // Pass each token as a test case
+);
