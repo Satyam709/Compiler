@@ -69,7 +69,3 @@ INSTANTIATE_TEST_SUITE_P(
     ::testing::ValuesIn(GetTokens()) // Pass each token as a test case
 );
 
-int main(int argc, char **argv) {
-    testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
