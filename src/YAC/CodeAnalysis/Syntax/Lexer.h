@@ -8,7 +8,7 @@
 class Lexer {
 public:
     // Constructor to initialize the Lexer with input text
-    Lexer(const std::string inputText);
+    Lexer(const std::string& inputText);
 
     // Destructor
     ~Lexer() = default;

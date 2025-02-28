@@ -7,8 +7,8 @@
 #include "YAC/Utils/Caster.h"
 
 
-Lexer::Lexer(const std::string inputText)
-    : _inputText(inputText), _position(0), _len(inputText.size()) , diagnosticBag(new DiagnosticBag()) {
+Lexer::Lexer(const std::string& inputText)
+    : _inputText(inputText), _len(inputText.size()), _position(0) , diagnosticBag(new DiagnosticBag()) {
 }
 
 std::list<SyntaxToken> Lexer::tokenize() {
@@ -49,7 +49,7 @@ SyntaxToken Lexer::nextToken() {
         while (std::isdigit(getCurrentChar())) {
             advance();
         }
-        std::string tokenText = _inputText.substr(start, _position - start);
+        const std::string tokenText = _inputText.substr(start, _position - start);
         SyntaxToken token = {start, SyntaxKind::NumberToken, tokenText, nullptr};
 
         try {
