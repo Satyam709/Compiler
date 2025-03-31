@@ -5,6 +5,7 @@
 
 #include "YAC/CodeAnalysis/Syntax/Parser.h"
 #include "YAC/CodeAnalysis/Syntax/Syntax.h"
+#include "YAC/CodeAnalysis/Syntax/SyntaxFacts.h"
 
 struct TokenInfo {
     std::string text;
@@ -26,28 +27,39 @@ void PrintTo(const TokenInfo &token, std::ostream *os) {
     *os << token; // Use the operator<< we just defined
 }
 
-static std::vector<TokenInfo> GetTokens() {
-    return
-    {
-        {SyntaxKind::PlusToken, "+"},
-        {SyntaxKind::StarToken, "*"},
-        {SyntaxKind::MinusToken, "-"},
-        {SyntaxKind::SlashToken, "/"},
-        {SyntaxKind::BangToken, "!"},
-        {SyntaxKind::EqualsToken, "="},
-        {SyntaxKind::AmpersandAmpersandToken, "&&"},
-        {SyntaxKind::PipePipeToken, "||"},
-        {SyntaxKind::EqualEqualToken, "=="},
-        {SyntaxKind::NotEqualToken, "!="},
-        {SyntaxKind::OpenParenthesisToken, "("},
-        {SyntaxKind::CloseParenthesisToken, ")"},
-        {SyntaxKind::FalseKeyword, "false"},
-        {SyntaxKind::TrueKeyword, "true"},
+static std::vector<std::tuple<SyntaxKind, std::string>> GetTokens() {
+    // Get fixed tokens
+    std::vector<std::tuple<SyntaxKind, std::string>> fixedTokens;
+
+    // Manually list all SyntaxKind values or use a similar approach if possible
+    std::vector<SyntaxKind> kinds = {
+        SyntaxKind::PlusToken, SyntaxKind::StarToken, SyntaxKind::MinusToken,
+        SyntaxKind::SlashToken, SyntaxKind::BangToken, SyntaxKind::EqualsToken,
+        SyntaxKind::AmpersandAmpersandToken, SyntaxKind::PipePipeToken,
+        SyntaxKind::EqualEqualToken, SyntaxKind::NotEqualToken,
+        SyntaxKind::OpenParenthesisToken, SyntaxKind::CloseParenthesisToken,
+        SyntaxKind::FalseKeyword, SyntaxKind::TrueKeyword,
+        // Add other SyntaxKind values as needed
+    };
+
+    for (const auto& kind : kinds) {
+        std::string text = SyntaxFacts::getText(kind);
+        if (!text.empty()) {
+            fixedTokens.emplace_back(kind, text);
+        }
+    }
+
+    // Get dynamic tokens
+    std::vector<std::tuple<SyntaxKind, std::string>> dynamicTokens = {
         {SyntaxKind::NumberToken, "1"},
         {SyntaxKind::NumberToken, "123"},
         {SyntaxKind::IdentifierToken, "a"},
         {SyntaxKind::IdentifierToken, "abc"},
     };
+
+    // Combine fixed and dynamic tokens
+    fixedTokens.insert(fixedTokens.end(), dynamicTokens.begin(), dynamicTokens.end());
+    return fixedTokens;
 }
 
 static bool isKeyword(const SyntaxKind kind) {

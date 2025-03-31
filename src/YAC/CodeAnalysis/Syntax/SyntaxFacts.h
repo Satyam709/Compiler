@@ -15,6 +15,7 @@ public:
     static SyntaxKind getKeywordKind(const std::string& text);
     static std::vector<SyntaxKind> GetUnaryOperatorKinds();
     static std::vector<SyntaxKind> GetBinaryOperatorKinds();
+    static std::string getText(const SyntaxKind &kind);
 };
 
 
