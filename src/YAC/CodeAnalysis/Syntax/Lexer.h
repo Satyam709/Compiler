@@ -2,13 +2,15 @@
 #define LEXER_H
 #include <list>
 #include <string>
+#include <YAC/CodeAnalysis/Text/SourceText.h>
 #include "Syntax.h"
 #include "YAC/CodeAnalysis/DiagnosticsBag.h"
+
 
 class Lexer {
 public:
     // Constructor to initialize the Lexer with input text
-    Lexer(const std::string& inputText);
+    Lexer(const SourceText& text);
 
     // Destructor
     ~Lexer() = default;
@@ -17,8 +19,7 @@ public:
     std::list<SyntaxToken> tokenize();
 
 private:
-    std::string _inputText;  // The input text to tokenize
-    const unsigned _len;          // Length of input text
+    SourceText _text;   // The input text to tokenize
     int _position;                // Current position in inputText
     DiagnosticBag  *diagnosticBag;  //Creating a diagnosticBag
 

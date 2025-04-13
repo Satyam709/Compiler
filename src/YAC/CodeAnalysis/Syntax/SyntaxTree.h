@@ -2,9 +2,12 @@
 #define SYNTAXTREE_H
 #include <string>
 #include <vector>
+#include <YAC/CodeAnalysis/Text/SourceText.h>
+
 #include "Syntax.h"
 #include "YAC/CodeAnalysis/Diagnostics.h"
 #include "YAC/CodeAnalysis/DiagnosticsBag.h"
+#include "YAC/CodeAnalysis/Text/TextSpan.h"
 
 class SyntaxNode;
 
@@ -12,9 +15,11 @@ class ExpressionSyntax;
 
 class SyntaxTree final {
 public:
-    SyntaxTree(DiagnosticBag *diagnostics, ExpressionSyntax &root, SyntaxToken endOfFileToken);
+    SyntaxTree(const SourceText& text,DiagnosticBag *diagnostics, ExpressionSyntax &root, SyntaxToken endOfFileToken);
 
     ~SyntaxTree();
+
+    const SourceText& text() const { return _text; }
 
     DiagnosticBag *diagnostics() const;
 
@@ -22,11 +27,16 @@ public:
 
     const SyntaxToken &endOfFileToken() const;
 
-    static SyntaxTree* parseToken(std::string text);
+    static SyntaxTree* parse(const std::string& text);
+    static SyntaxTree* parse(const SourceText& text);
+    static std::vector<SyntaxToken> parseTokens(const std::string& text);
+    static std::vector<SyntaxToken> parseTokens(const SourceText& text);
+
 
     static void prettyPrint(const SyntaxNode &node, std::string indent = "", bool isLast = false);
 
 private:
+    const SourceText _text;
     DiagnosticBag *_diagnostics;
     ExpressionSyntax &_root;
     SyntaxToken _endOfFileToken;
@@ -37,7 +47,19 @@ class SyntaxNode {
 public:
     virtual SyntaxKind getKind() const = 0;
 
-    virtual const std::vector<SyntaxNode *> &getChildren() const = 0;
+    virtual const std::vector<SyntaxNode*>& getChildren() const = 0;
+
+    // Add virtual Span method
+    virtual TextSpan getSpan() const {
+        const auto& children = getChildren();
+        if (children.empty()) {
+            return TextSpan(0, 0); // Or handle empty case as needed
+        }
+
+        TextSpan firstSpan = children.front()->getSpan();
+        TextSpan lastSpan = children.back()->getSpan();
+        return TextSpan::FromBounds(firstSpan.Start(), lastSpan.End());
+    }
 
     virtual ~SyntaxNode() = default;
 };

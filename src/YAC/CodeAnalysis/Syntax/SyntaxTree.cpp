@@ -3,17 +3,20 @@
 #include "Syntax.h"
 #include "iostream"
 
-SyntaxTree::SyntaxTree(DiagnosticBag *diagnostics,
+// New constructor with SourceText
+SyntaxTree::SyntaxTree(const SourceText& text,
+                       DiagnosticBag *diagnostics,
                        ExpressionSyntax &root,
                        SyntaxToken endOfFileToken)
-    : _diagnostics(diagnostics)
-      , _root(root)
-      , _endOfFileToken(std::move(endOfFileToken)) {
+    : _text(text)
+    , _diagnostics(diagnostics)
+    , _root(root)
+    , _endOfFileToken(std::move(endOfFileToken)) {
 }
 
 SyntaxTree::~SyntaxTree() = default;
 
- DiagnosticBag *SyntaxTree::diagnostics() const {
+DiagnosticBag *SyntaxTree::diagnostics() const {
     return _diagnostics;
 }
 
@@ -25,11 +28,27 @@ const SyntaxToken &SyntaxTree::endOfFileToken() const {
     return _endOfFileToken;
 }
 
-SyntaxTree *SyntaxTree::parseToken(std::string text) {
+// New parse methods
+SyntaxTree* SyntaxTree::parse(const std::string& text) {
+    auto sourceText = SourceText::From(text);
+    return parse(sourceText);
+}
+
+SyntaxTree* SyntaxTree::parse(const SourceText& text) {
     Parser parser(text);
     return parser.parse();
 }
 
+// New parseTokens methods
+std::vector<SyntaxToken> SyntaxTree::parseTokens(const std::string& text) {
+    auto sourceText = SourceText::From(text);
+    return parseTokens(sourceText);
+}
+
+std::vector<SyntaxToken> SyntaxTree::parseTokens(const SourceText& text) {
+    Parser parser(text);
+    return parser.getTokens(text);
+}
 
 SyntaxNodeToken::SyntaxNodeToken(const SyntaxToken &token)
     : _token(token) {
@@ -38,7 +57,6 @@ SyntaxNodeToken::SyntaxNodeToken(const SyntaxToken &token)
 const std::any &SyntaxNodeToken::getValue() const {
     return _token.val;
 }
-
 
 SyntaxKind SyntaxNodeToken::getKind() const {
     return _token.kind;
@@ -61,13 +79,7 @@ void SyntaxTree::prettyPrint(const SyntaxNode &node, std::string indent, const b
     std::cout << syntaxKindToString(node.getKind());
 
     if (auto *token = dynamic_cast<const SyntaxNodeToken *>(&node)) {
-
-            std::cout << " " << token->getToken().text;
-
-
-        // if (token->getKind() == SyntaxKind::NumberToken) {
-        //     std::cout << " " << std::any_cast<int>(token->getToken().val);
-        // }
+        std::cout << " " << token->getToken().text;
     }
     std::cout << std::endl;
 

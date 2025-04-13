@@ -1,5 +1,5 @@
-#ifndef TEXT_SPAN_H
-#define TEXT_SPAN_H
+#ifndef TEXTSPAN_H
+#define TEXTSPAN_H
 
 #include <cstdint>
 
@@ -7,13 +7,21 @@ class TextSpan {
 public:
     TextSpan(int start, int length);
 
-    int Start() const;
-    int Length() const;
-    int End() const;
+    // Existing methods
+    [[nodiscard]] int32_t Start() const;
+    [[nodiscard]] int32_t Length() const;
+    [[nodiscard]] int32_t End() const;
+
+    // New static method
+    static TextSpan FromBounds(int32_t start, int32_t end);
+
+    // Optional utility methods
+    [[nodiscard]] bool Contains(int32_t position) const;
+    [[nodiscard]] bool OverlapsWith(const TextSpan& span) const;
 
 private:
-    int m_start;
-    int m_length;
+    int32_t m_start;
+    int32_t m_length;
 };
 
-#endif // TEXT_SPAN_H
+#endif // TEXTSPAN_H
