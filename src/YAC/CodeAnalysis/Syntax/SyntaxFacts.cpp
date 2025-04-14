@@ -74,29 +74,3 @@ std::vector<SyntaxKind> SyntaxFacts::GetBinaryOperatorKinds() {
     return result;
 }
 
-#include "SyntaxFacts.h"
-#include <unordered_map>
-#include <vector>
-
-// New method to get the text representation of a SyntaxKind
-std::string SyntaxFacts::getText(const SyntaxKind &kind) {
-    switch (kind) {
-        case SyntaxKind::PlusToken: return "+";
-        case SyntaxKind::StarToken: return "*";
-        case SyntaxKind::MinusToken: return "-";
-        case SyntaxKind::SlashToken: return "/";
-        case SyntaxKind::BangToken: return "!";
-        case SyntaxKind::EqualsToken: return "=";
-        case SyntaxKind::AmpersandAmpersandToken: return "&&";
-        case SyntaxKind::PipePipeToken: return "||";
-        case SyntaxKind::EqualEqualToken: return "==";
-        case SyntaxKind::NotEqualToken: return "!=";
-        case SyntaxKind::OpenParenthesisToken: return "(";
-        case SyntaxKind::CloseParenthesisToken: return ")";
-        case SyntaxKind::FalseKeyword: return "false";
-        case SyntaxKind::TrueKeyword: return "true";
-        // Add other cases as needed
-        default: return ""; // Return empty string for undefined tokens
-    }
-}
-

@@ -43,7 +43,7 @@ static std::vector<std::tuple<SyntaxKind, std::string>> GetTokens() {
     };
 
     for (const auto& kind : kinds) {
-        std::string text = SyntaxFacts::getText(kind);
+        std::string text = getKindText(kind);
         if (!text.empty()) {
             fixedTokens.emplace_back(kind, text);
         }
