@@ -47,6 +47,7 @@ void DiagnosticBag::reportUndefinedBinaryOperator(const TextSpan& span, const st
 void DiagnosticBag::reportUndefinedName(const TextSpan& span, const std::string& name) {
     std::stringstream ss;
     ss << "Variable '" << name << "' does not exist.";
+    report(span, ss.str());
 }
 
 

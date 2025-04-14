@@ -10,20 +10,16 @@ EvaluationResult Compilation::evaluate(std::unordered_map<VariableSymbol, std::a
     const auto boundExpression = binder.bindExpression(_syntaxTree.root());
 
     // Collect diagnostics
-    std::vector<Diagnostic> diagnostics;
+    DiagnosticBag* diagnostic_bag = binder.diagnostics();
+    std::cout <<"binder bag " <<diagnostic_bag->isEmpty();
+    const auto syntaxDiagnostics = _syntaxTree.diagnostics();
+    diagnostic_bag->addRange(*syntaxDiagnostics);
 
-    auto syntaxDiagnostics = _syntaxTree.diagnostics()->getDiagnostics();
-    diagnostics.insert(diagnostics.end(),
-                      syntaxDiagnostics.begin(),
-                      syntaxDiagnostics.end());
+    const auto binderDiagnostics = binder.diagnostics();
+    diagnostic_bag->addRange(*binderDiagnostics);
 
-    auto binderDiagnostics = binder.diagnostics()->getDiagnostics();
-    diagnostics.insert(diagnostics.end(),
-                      binderDiagnostics.begin(),
-                      binderDiagnostics.end());
-
-    if (!diagnostics.empty()) {
-        return EvaluationResult(diagnostics, nullptr);
+    if (!diagnostic_bag->isEmpty()) {
+        return EvaluationResult(diagnostic_bag->getDiagnostics(), nullptr);
     }
 
     // Create Evaluator with the variables
