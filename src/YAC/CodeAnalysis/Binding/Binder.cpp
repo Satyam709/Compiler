@@ -185,6 +185,7 @@ const BoundExpression *Binder::BindNameExpression(const ExpressionSyntax &syntax
 
         // if exists just bound the value of it to a bound variable
         const auto it = _variables.find(target);
+
         if (it != _variables.end()) {
             return new BoundVariableExpression(it->first);
         }
@@ -204,9 +205,12 @@ const BoundExpression *Binder::BindAssignmentExpression(const ExpressionSyntax &
         if (exprType != typeid(int) && exprType != typeid(bool)) {
             throw std::runtime_error("Unsupported variable type: " + getTypeName(exprType));
         }
-        _variables.erase(crnt_var);
         std::any val = exprType == typeid(int) ? 0 : false;
-        _variables.insert({crnt_var,val});
+
+        if (_diagnostic->isEmpty()) {
+            _variables.erase(crnt_var);
+            _variables.insert({crnt_var,val});
+        }
         // insert into variable map
         return new BoundAssignmentExpression(crnt_var, boundExpression);
     }

@@ -5,18 +5,17 @@ Compilation::Compilation(const SyntaxTree& syntaxTree)
 }
 
 EvaluationResult Compilation::evaluate(std::unordered_map<VariableSymbol, std::any>& variables) {
-    // Create a Binder with the existing variables
-    Binder binder(variables);  // Make sure Binder constructor takes variables by reference
+    // Create a Binder with the copy of existing variables
+
+    Binder binder(variables);
     const auto boundExpression = binder.bindExpression(_syntaxTree.root());
 
     // Collect diagnostics
     DiagnosticBag* diagnostic_bag = binder.diagnostics();
-    std::cout <<"binder bag " <<diagnostic_bag->isEmpty();
+
     const auto syntaxDiagnostics = _syntaxTree.diagnostics();
     diagnostic_bag->addRange(*syntaxDiagnostics);
 
-    const auto binderDiagnostics = binder.diagnostics();
-    diagnostic_bag->addRange(*binderDiagnostics);
 
     if (!diagnostic_bag->isEmpty()) {
         return EvaluationResult(diagnostic_bag->getDiagnostics(), nullptr);
