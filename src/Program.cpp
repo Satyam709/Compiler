@@ -46,8 +46,7 @@ int main() {
             showTree = !showTree;
             std::cout << (showTree ? "Showing parse trees." : "Not showing parse trees") << std::endl;
             continue;
-        }
-        else if (line == "#cls") {
+        } else if (line == "#cls") {
 #ifdef _WIN32
             system("cls");
 #else
@@ -56,41 +55,41 @@ int main() {
             continue;
         }
 
-        const auto syntaxTree = SyntaxTree::parse(line);  // Changed parseToken to parse
+        const auto syntaxTree = SyntaxTree::parse(line); // Changed parseToken to parse
 
         // Compilation and evaluation
         Compilation compilation(*syntaxTree);
         EvaluationResult result = compilation.evaluate(variables);
 
         if (showTree) {
-            setConsoleColor(false);  // Set to dark gray
+            setConsoleColor(false); // Set to dark gray
             SyntaxTree::prettyPrint(syntaxTree->root());
-            setConsoleColor();  // Reset color
+            setConsoleColor(); // Reset color
         }
 
         if (!result.diagnostics().empty()) {
-            const auto& text = syntaxTree->text();
+            const auto &text = syntaxTree->text();
 
-            for (const auto& diagnostic : result.diagnostics()) {
+            for (const auto &diagnostic: result.diagnostics()) {
                 std::cout << std::endl;
 
-                int lineIndex = text.GetLineIndex(diagnostic.getSpan().Start());
-                int lineNumber = lineIndex + 1;
-                int character = diagnostic.getSpan().Start() - text.GetLines()[lineIndex].Start() + 1;
+                const int lineIndex = text.GetLineIndex(diagnostic.getSpan().Start());
+                const int lineNumber = lineIndex + 1;
+                const int character = diagnostic.getSpan().Start() - text.GetLines()[lineIndex].Start() + 1;
 
-                setConsoleColor(true);  // Set to dark red
+                setConsoleColor(true); // Set to dark red
                 std::cout << "(" << lineNumber << ", " << character << "): ";
                 std::cout << diagnostic.getMessage() << std::endl;
-                setConsoleColor();  // Reset color
+                setConsoleColor(); // Reset color
 
                 auto prefix = line.substr(0, diagnostic.getSpan().Start());
                 auto error = line.substr(diagnostic.getSpan().Start(), diagnostic.getSpan().Length());
                 auto suffix = line.substr(diagnostic.getSpan().End());
 
                 std::cout << "    " << prefix;
-                setConsoleColor(true);  // Set to dark red
+                setConsoleColor(true); // Set to dark red
                 std::cout << error;
-                setConsoleColor();  // Reset color
+                setConsoleColor(); // Reset color
                 std::cout << suffix << std::endl;
             }
             std::cout << std::endl;
@@ -98,8 +97,8 @@ int main() {
             try {
                 printAnyValue(result.value());
                 std::cout << std::endl;
-            } catch (const std::bad_any_cast& e) {
-                std::cerr << "Cannot cast final result to int !!" << std::endl;
+            } catch (const std::bad_any_cast &e) {
+                std::cerr << "Cannot cast final result to int !!" <<e.what()<<std::endl;
             }
         }
     }

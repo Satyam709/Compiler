@@ -27,10 +27,7 @@ public:
 
     const SyntaxToken &endOfFileToken() const;
 
-    static SyntaxTree* parse(const std::string& text);
     static SyntaxTree* parse(const SourceText& text);
-    static std::vector<SyntaxToken> parseTokens(const std::string& text);
-    static std::vector<SyntaxToken> parseTokens(const SourceText& text);
 
 
     static void prettyPrint(const SyntaxNode &node, std::string indent = "", bool isLast = false);

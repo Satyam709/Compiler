@@ -28,26 +28,9 @@ const SyntaxToken &SyntaxTree::endOfFileToken() const {
     return _endOfFileToken;
 }
 
-// New parse methods
-SyntaxTree* SyntaxTree::parse(const std::string& text) {
-    auto sourceText = SourceText::From(text);
-    return parse(sourceText);
-}
-
 SyntaxTree* SyntaxTree::parse(const SourceText& text) {
     Parser parser(text);
     return parser.parse();
-}
-
-// New parseTokens methods
-std::vector<SyntaxToken> SyntaxTree::parseTokens(const std::string& text) {
-    auto sourceText = SourceText::From(text);
-    return parseTokens(sourceText);
-}
-
-std::vector<SyntaxToken> SyntaxTree::parseTokens(const SourceText& text) {
-    Parser parser(text);
-    return parser.getTokens(text);
 }
 
 SyntaxNodeToken::SyntaxNodeToken(const SyntaxToken &token)

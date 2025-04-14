@@ -2,34 +2,33 @@
 #define PARSER_H
 #include <list>
 #include <vector>
-#include <YAC/CodeAnalysis/Text/SourceText.h>
-
 #include "Syntax.h"
 #include "YAC/CodeAnalysis/DiagnosticsBag.h"
+#include "YAC/CodeAnalysis/Text/SourceText.h"
 class SyntaxTree;
 class ExpressionSyntax;
 
 class Parser {
 public:
     explicit Parser(const SourceText& input);
-    SyntaxTree *parse() const;
+    SyntaxTree *parse();
 
-    static std::vector<SyntaxToken> getTokens(const SourceText &input);
+    static std::vector<SyntaxToken> getTokens(const std::string &input);
 
 private:
     std::vector<SyntaxToken> _tokens;
     DiagnosticBag *_diagnostics;
     int _position;
-    SourceText _text;
+    SourceText _input;
 
-    SyntaxToken peek(int offset) const;
-    SyntaxToken current() const;
+    SyntaxToken peek(int offset);
+    SyntaxToken current();
     SyntaxToken nextToken();
     SyntaxToken match(SyntaxKind kind);
 
-    ExpressionSyntax *parseExpression() const;
-    ExpressionSyntax *parseAssignmentExpression() const;
-    ExpressionSyntax *parseBinaryExpression(int parentPrecedence = 0) const;
-    ExpressionSyntax *parsePrimaryExpression() const;
+    ExpressionSyntax *parseExpression();
+    ExpressionSyntax *parseAssignmentExpression();
+    ExpressionSyntax *parseBinaryExpression(int parentPrecedence = 0);
+    ExpressionSyntax *parsePrimaryExpression();
 };
 #endif //PARSER_H
