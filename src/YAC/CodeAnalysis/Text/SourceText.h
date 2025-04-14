@@ -6,6 +6,7 @@
 class SourceText {
 public:
     static SourceText From(const std::string& text);
+    SourceText(const std::string& text);
 
     // Accessors
     char operator[](int index) const;
@@ -19,7 +20,6 @@ public:
     std::string ToString(const TextSpan& span) const;
 
 private:
-    SourceText(const std::string& text);
 
     static std::vector<TextLine> ParseLines(SourceText* sourceText, const std::string& text);
     static void AddLine(std::vector<TextLine>& result, SourceText* sourceText,
