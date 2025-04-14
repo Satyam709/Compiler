@@ -4,12 +4,13 @@
 #include <vector>
 #include "Syntax.h"
 #include "YAC/CodeAnalysis/DiagnosticsBag.h"
+#include "YAC/CodeAnalysis/Text/SourceText.h"
 class SyntaxTree;
 class ExpressionSyntax;
 
 class Parser {
 public:
-    explicit Parser(const std::string& input);
+    explicit Parser(const SourceText& input);
     SyntaxTree *parse();
 
     static std::vector<SyntaxToken> getTokens(const std::string &input);
@@ -18,6 +19,7 @@ private:
     std::vector<SyntaxToken> _tokens;
     DiagnosticBag *_diagnostics;
     int _position;
+    SourceText _input;
 
     SyntaxToken peek(int offset);
     SyntaxToken current();

@@ -34,6 +34,10 @@ set(SOURCES
         src/YAC/CodeAnalysis/EvaluationResult.cpp
         src/YAC/CodeAnalysis/Text/TextSpan.cpp
         src/YAC/CodeAnalysis/Text/TextSpan.h
+        src/YAC/CodeAnalysis/Text/SourceText.cpp
+        src/YAC/CodeAnalysis/Text/SourceText.h
+        src/YAC/CodeAnalysis/Text/TextLine.cpp
+        src/YAC/CodeAnalysis/Text/TextLine.h
         src/YAC/CodeAnalysis/Diagnostics.h
         src/YAC/CodeAnalysis/Diagnostics.cpp
         src/YAC/CodeAnalysis/DiagnosticsBag.h

@@ -73,3 +73,4 @@ std::vector<SyntaxKind> SyntaxFacts::GetBinaryOperatorKinds() {
     }
     return result;
 }
+

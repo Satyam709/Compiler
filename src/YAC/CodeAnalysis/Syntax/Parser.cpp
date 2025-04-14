@@ -6,7 +6,7 @@
 #include "Syntax.h"
 #include "SyntaxFacts.h"
 
-Parser::Parser(const std::string& input) {
+Parser::Parser(const SourceText &input): _input(input) {
     Lexer lexer(input);
     auto tokenList = lexer.tokenize();
     _tokens = std::vector(tokenList.begin(), tokenList.end()); // Convert list to vector
@@ -106,7 +106,7 @@ ExpressionSyntax *Parser::parsePrimaryExpression() {
 SyntaxTree *Parser::parse() {
     const auto expression = parseExpression();
     const auto endOfFileToken = match(SyntaxKind::EndOfFileToken);
-    return new SyntaxTree(_diagnostics, *expression, endOfFileToken);
+    return new SyntaxTree(_input, _diagnostics, *expression, endOfFileToken);
 }
 
 std::vector<SyntaxToken> Parser::getTokens(const std::string &input) {
