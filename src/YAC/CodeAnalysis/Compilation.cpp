@@ -1,14 +1,16 @@
 #include "Compilation.h"
+#include "Syntax/CompilationUnit.h"
+
 
 Compilation::Compilation(const SyntaxTree& syntaxTree)
     : _syntaxTree(syntaxTree) {
 }
 
-EvaluationResult Compilation::evaluate(std::unordered_map<VariableSymbol, std::any>& variables) {
+EvaluationResult Compilation::evaluate(std::unordered_map<VariableSymbol, std::any>& variables) const{
     // Create a Binder with the copy of existing variables
 
     Binder binder(variables);
-    const auto boundExpression = binder.bindExpression(_syntaxTree.root());
+    const auto boundExpression = binder.bindExpression(_syntaxTree.root()->exp());
 
     // Collect diagnostics
     DiagnosticBag* diagnostic_bag = binder.diagnostics();

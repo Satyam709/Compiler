@@ -7,6 +7,7 @@
 #include "YAC/CodeAnalysis/Syntax/SyntaxTree.h"
 #include "YAC/Utils/Caster.h"
 #include "YAC/CodeAnalysis/Compilation.h"
+#include "YAC/CodeAnalysis/Syntax/CompilationUnit.h"
 
 // For Windows color support
 #ifdef _WIN32
@@ -69,7 +70,7 @@ int main() {
 
         if (showTree) {
             setConsoleColor(false); // Set to dark gray
-            SyntaxTree::prettyPrint(syntaxTree->root());
+            SyntaxTree::prettyPrint(syntaxTree->root()->exp());
             setConsoleColor(); // Reset color
         }
 

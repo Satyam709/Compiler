@@ -3,40 +3,36 @@
 #include <string>
 #include <vector>
 #include <YAC/CodeAnalysis/Text/SourceText.h>
-
 #include "Syntax.h"
-#include "YAC/CodeAnalysis/Diagnostics.h"
 #include "YAC/CodeAnalysis/DiagnosticsBag.h"
 #include "YAC/CodeAnalysis/Text/TextSpan.h"
 
+class CompilationUnit;
 class SyntaxNode;
-
 class ExpressionSyntax;
 
 class SyntaxTree final {
 public:
-    SyntaxTree(const SourceText& text,DiagnosticBag *diagnostics, ExpressionSyntax &root, SyntaxToken endOfFileToken);
+    explicit SyntaxTree(SourceText text);
 
     ~SyntaxTree();
 
-    const SourceText& text() const { return _text; }
+    [[nodiscard]] const SourceText& text() const { return _text; }
 
-    DiagnosticBag *diagnostics() const;
-
-    ExpressionSyntax &root() const;
-
-    const SyntaxToken &endOfFileToken() const;
+    [[nodiscard]] DiagnosticBag *diagnostics() const;
 
     static SyntaxTree* parse(const SourceText& text);
 
-
     static void prettyPrint(const SyntaxNode &node, std::string indent = "", bool isLast = false);
+
+    [[nodiscard]] CompilationUnit * root() const {
+        return _root;
+    }
 
 private:
     const SourceText _text;
     DiagnosticBag *_diagnostics;
-    ExpressionSyntax &_root;
-    SyntaxToken _endOfFileToken;
+    CompilationUnit * _root;
 };
 
 // syntax node interface

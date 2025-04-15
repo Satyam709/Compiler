@@ -15,7 +15,7 @@ public:
 
     const SyntaxTree& getSyntaxTree() const { return _syntaxTree; }
 
-    EvaluationResult evaluate(std::unordered_map<VariableSymbol, std::any>& variables);
+    EvaluationResult evaluate(std::unordered_map<VariableSymbol, std::any>& variables) const;
 
 private:
     const SyntaxTree& _syntaxTree;

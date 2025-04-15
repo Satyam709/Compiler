@@ -26,6 +26,8 @@ enum class SyntaxKind {
     BadToken,
     EndOfFileToken,
 
+    CompilationUnit,
+
     // expressions
     LiteralExpression,
     BinaryExpression,
@@ -49,7 +51,7 @@ enum class SyntaxKind {
 
 
     // auxiliary kind to mark enum end
-    ENDS
+    ENDS,
 };
 
 // just a helper method to convert enum class kind from int to respective value

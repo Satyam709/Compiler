@@ -1,17 +1,16 @@
 #include "SyntaxTree.h"
+
+#include <utility>
 #include "Parser.h"
 #include "Syntax.h"
 #include "iostream"
 
 // New constructor with SourceText
-SyntaxTree::SyntaxTree(const SourceText& text,
-                       DiagnosticBag *diagnostics,
-                       ExpressionSyntax &root,
-                       SyntaxToken endOfFileToken)
-    : _text(text)
-    , _diagnostics(diagnostics)
-    , _root(root)
-    , _endOfFileToken(std::move(endOfFileToken)) {
+SyntaxTree::SyntaxTree(SourceText text)
+    : _text(std::move(text)) {
+    Parser parser(_text);
+    _root = parser.parse();
+    _diagnostics = parser.diagnostics();
 }
 
 SyntaxTree::~SyntaxTree() = default;
@@ -20,17 +19,8 @@ DiagnosticBag *SyntaxTree::diagnostics() const {
     return _diagnostics;
 }
 
-ExpressionSyntax &SyntaxTree::root() const{
-    return _root;
-}
-
-const SyntaxToken &SyntaxTree::endOfFileToken() const {
-    return _endOfFileToken;
-}
-
-SyntaxTree* SyntaxTree::parse(const SourceText& text) {
-    Parser parser(text);
-    return parser.parse();
+SyntaxTree *SyntaxTree::parse(const SourceText &text) {
+    return new SyntaxTree(text);
 }
 
 SyntaxNodeToken::SyntaxNodeToken(const SyntaxToken &token)
