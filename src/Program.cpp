@@ -35,18 +35,24 @@ int main() {
 
     while (true) {
         std::cout << "> ";
-        std::string line;
-        std::getline(std::cin, line);
+        std::string inputText;
 
-        if (line.empty()) {
+        while (true) {
+            std::string line;
+            std::getline(std::cin, line);
+            if (line.empty())break;
+            inputText.append(line).append("\r\n");
+        }
+
+        if (inputText.empty()) {
             break;
         }
 
-        if (line == "#showTree") {
+        if (inputText == "#showTree") {
             showTree = !showTree;
             std::cout << (showTree ? "Showing parse trees." : "Not showing parse trees") << std::endl;
             continue;
-        } else if (line == "#cls") {
+        } else if (inputText == "#cls") {
 #ifdef _WIN32
             system("cls");
 #else
@@ -55,7 +61,7 @@ int main() {
             continue;
         }
 
-        const auto syntaxTree = SyntaxTree::parse(line); // Changed parseToken to parse
+        const auto syntaxTree = SyntaxTree::parse(inputText); // Changed parseToken to parse
 
         // Compilation and evaluation
         Compilation compilation(*syntaxTree);
@@ -82,9 +88,9 @@ int main() {
                 std::cout << diagnostic.getMessage() << std::endl;
                 setConsoleColor(); // Reset color
 
-                auto prefix = line.substr(0, diagnostic.getSpan().Start());
-                auto error = line.substr(diagnostic.getSpan().Start(), diagnostic.getSpan().Length());
-                auto suffix = line.substr(diagnostic.getSpan().End());
+                auto prefix = inputText.substr(0, diagnostic.getSpan().Start());
+                auto error = inputText.substr(diagnostic.getSpan().Start(), diagnostic.getSpan().Length());
+                auto suffix = inputText.substr(diagnostic.getSpan().End());
 
                 std::cout << "    " << prefix;
                 setConsoleColor(true); // Set to dark red
@@ -98,7 +104,7 @@ int main() {
                 printAnyValue(result.value());
                 std::cout << std::endl;
             } catch (const std::bad_any_cast &e) {
-                std::cerr << "Cannot cast final result to int !!" <<e.what()<<std::endl;
+                std::cerr << "Cannot cast final result to int !!" << e.what() << std::endl;
             }
         }
     }
