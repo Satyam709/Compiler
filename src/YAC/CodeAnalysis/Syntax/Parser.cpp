@@ -5,7 +5,7 @@
 #include "Lexer.h"
 #include "Syntax.h"
 #include "SyntaxFacts.h"
-#include "CompilationUnit.h"
+#include "CompilationUnitSyntax.h"
 
 Parser::Parser(const SourceText &input): _input(input) {
     Lexer lexer(input);
@@ -104,10 +104,10 @@ ExpressionSyntax *Parser::parsePrimaryExpression() {
     }
 }
 
-CompilationUnit *Parser::parse() {
+CompilationUnitSyntax *Parser::parse() {
     const auto expression = parseExpression();
     const auto endOfFileToken = match(SyntaxKind::EndOfFileToken);
-    return new CompilationUnit(*expression, endOfFileToken);
+    return new CompilationUnitSyntax(*expression, endOfFileToken);
 }
 
 std::vector<SyntaxToken> Parser::getTokens(const std::string &input) {

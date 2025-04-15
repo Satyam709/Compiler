@@ -2,7 +2,7 @@
 #define PARSER_H
 #include <vector>
 
-#include "CompilationUnit.h"
+#include "CompilationUnitSyntax.h"
 #include "Syntax.h"
 #include "YAC/CodeAnalysis/DiagnosticsBag.h"
 #include "YAC/CodeAnalysis/Text/SourceText.h"
@@ -13,7 +13,7 @@ class Parser {
 public:
     explicit Parser(const SourceText& input);
 
-    CompilationUnit *parse();
+    CompilationUnitSyntax *parse();
 
     static std::vector<SyntaxToken> getTokens(const std::string &input);
 

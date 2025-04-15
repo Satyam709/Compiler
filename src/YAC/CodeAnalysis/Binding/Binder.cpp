@@ -1,5 +1,12 @@
 #include "Binder.h"
 
+#include <stack>
+#include <stack>
+
+#include "BoundGlobalScope.h"
+#include "BoundScope.h"
+#include "YAC/CodeAnalysis/Syntax/CompilationUnitSyntax.h"
+
 // BoundLiteralExpression Implementation
 BoundLiteralExpression::BoundLiteralExpression(std::any value)
     : _value(std::move(value)) {
@@ -115,12 +122,48 @@ const VariableSymbol &BoundAssignmentExpression::getVariable() const {
 }
 
 // Binder Implementation
-Binder::Binder(std::unordered_map<VariableSymbol, std::any>& variables)
-    : _diagnostic(new DiagnosticBag()), _variables(variables) {
+Binder::Binder(BoundScope &parent) : _diagnostic(new DiagnosticBag()), _scope(parent) {
 }
+
 
 DiagnosticBag *Binder::diagnostics() const {
     return _diagnostic;
+}
+
+BoundGlobalScope *Binder::BindGlobalScope(BoundGlobalScope *previous, CompilationUnitSyntax *syntax) {
+    const auto parentScope = CreateParentScope(previous);
+    const auto binder = new Binder(*parentScope);
+    auto expression = binder->bindExpression(syntax->exp());
+    const auto variables = binder->_scope.getDeclaredVariables();
+    auto diagnostics = binder->diagnostics()->getDiagnostics();
+
+    if (previous != nullptr) {
+        auto previousDiagnostics = previous->diagnostics();
+        diagnostics.insert(diagnostics.end(), previousDiagnostics.begin(),previousDiagnostics.end());
+    }
+
+    return new BoundGlobalScope(previous,diagnostics,variables,expression);
+}
+
+BoundScope *Binder::CreateParentScope(BoundGlobalScope *previous) {
+    const auto stack = new std::stack<BoundGlobalScope *>();
+
+    while (previous != nullptr) {
+        stack->push(previous);
+        previous = previous->previous();
+    }
+
+    BoundScope *parent = nullptr;
+
+    while (!stack->empty()) {
+        previous = stack->top();
+        const auto scope = new BoundScope(*parent);
+        for (auto var: previous->variables()) {
+            scope->tryDeclare(var);
+        }
+        parent = scope;
+    }
+    return parent;
 }
 
 const BoundExpression *Binder::BindLiteralExpression(const ExpressionSyntax &syntax) {
@@ -179,39 +222,37 @@ const BoundExpression *Binder::BindBinaryExpression(const ExpressionSyntax &synt
 
 const BoundExpression *Binder::BindNameExpression(const ExpressionSyntax &syntax) {
     if (const auto *exp = dynamic_cast<const NameExpressionSyntax *>(&syntax)) {
-        const std::string &name = exp->getIdentifierToken().text;
-        const auto target = VariableSymbol(name, typeid(int));
+        std::string name = exp->getIdentifierToken().text;
+        auto target = VariableSymbol(name, typeid(int));
         // just for searching as only name is hashed,type is of no use
 
-        // if exists just bound the value of it to a bound variable
-        const auto it = _variables.find(target);
-
-        if (it != _variables.end()) {
-            return new BoundVariableExpression(it->first);
+        // if exists -> updates by reference '&target'
+        if (!_scope.tryLookup(name,target)) {
+            _diagnostic->reportUndefinedName(exp->getIdentifierToken().getSpan(), name);
+            return new BoundLiteralExpression(0);
         }
-        _diagnostic->reportUndefinedName(exp->getIdentifierToken().getSpan(), name);
-        return new BoundLiteralExpression(0);
+        return new BoundVariableExpression(target);
     }
     throw std::invalid_argument("Invalid expression: expression failed to bound");
 }
 
 const BoundExpression *Binder::BindAssignmentExpression(const ExpressionSyntax &syntax) {
     if (const auto *exp = dynamic_cast<const AssignmentExpressionSyntax *>(&syntax)) {
-        const std::string &name = exp->getIdentifierToken().text;
+        std::string name = exp->getIdentifierToken().text;
         const BoundExpression *boundExpression = bindExpression(exp->expression());
         const std::type_info &exprType = boundExpression->getType();
-        const auto crnt_var = VariableSymbol(name, exprType);
+        auto crnt_var = VariableSymbol(name, exprType);
 
         if (exprType != typeid(int) && exprType != typeid(bool)) {
             throw std::runtime_error("Unsupported variable type: " + getTypeName(exprType));
         }
         std::any val = exprType == typeid(int) ? 0 : false;
-
-        if (_diagnostic->isEmpty()) {
-            _variables.erase(crnt_var);
-            _variables.insert({crnt_var,val});
+        if (!_scope.tryLookup(name,crnt_var)) {
+            _scope.tryDeclare(crnt_var);
         }
-        // insert into variable map
+        if (exprType != crnt_var.getType()) {
+            _diagnostic->reportCannotConvert(exp->getSpan(),exprType, crnt_var.getType());
+        }
         return new BoundAssignmentExpression(crnt_var, boundExpression);
     }
     throw std::invalid_argument("Invalid expression: expression failed to bound");

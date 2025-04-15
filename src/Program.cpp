@@ -7,7 +7,7 @@
 #include "YAC/CodeAnalysis/Syntax/SyntaxTree.h"
 #include "YAC/Utils/Caster.h"
 #include "YAC/CodeAnalysis/Compilation.h"
-#include "YAC/CodeAnalysis/Syntax/CompilationUnit.h"
+#include "YAC/CodeAnalysis/Syntax/CompilationUnitSyntax.h"
 
 // For Windows color support
 #ifdef _WIN32
@@ -33,6 +33,7 @@ void setConsoleColor(bool isError = false) {
 int main() {
     bool showTree = true;
     std::unordered_map<VariableSymbol, std::any> variables;
+    Compilation* previous = nullptr;
 
     while (true) {
         std::cout << "> ";
@@ -47,6 +48,11 @@ int main() {
 
         if (inputText.empty()) {
             break;
+        }
+
+        if (inputText == "#reset") {
+            previous = nullptr;
+            variables.clear();
         }
 
         if (inputText == "#showTree") {
@@ -65,14 +71,15 @@ int main() {
         const auto syntaxTree = SyntaxTree::parse(inputText); // Changed parseToken to parse
 
         // Compilation and evaluation
-        Compilation compilation(*syntaxTree);
-        EvaluationResult result = compilation.evaluate(variables);
+        Compilation* compilation = previous == nullptr? new Compilation(*syntaxTree):previous->continuwWith(syntaxTree);
+        EvaluationResult result = compilation->evaluate(variables);
 
         if (showTree) {
             setConsoleColor(false); // Set to dark gray
             SyntaxTree::prettyPrint(syntaxTree->root()->exp());
             setConsoleColor(); // Reset color
         }
+
 
         if (!result.diagnostics().empty()) {
             const auto &text = syntaxTree->text();
@@ -104,6 +111,7 @@ int main() {
             try {
                 printAnyValue(result.value());
                 std::cout << std::endl;
+                previous = compilation;
             } catch (const std::bad_any_cast &e) {
                 std::cerr << "Cannot cast final result to int !!" << e.what() << std::endl;
             }

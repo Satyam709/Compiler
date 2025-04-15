@@ -7,7 +7,7 @@
 #include "YAC/CodeAnalysis/DiagnosticsBag.h"
 #include "YAC/CodeAnalysis/Text/TextSpan.h"
 
-class CompilationUnit;
+class CompilationUnitSyntax;
 class SyntaxNode;
 class ExpressionSyntax;
 
@@ -25,14 +25,14 @@ public:
 
     static void prettyPrint(const SyntaxNode &node, std::string indent = "", bool isLast = false);
 
-    [[nodiscard]] CompilationUnit * root() const {
+    [[nodiscard]] CompilationUnitSyntax * root() const {
         return _root;
     }
 
 private:
     const SourceText _text;
     DiagnosticBag *_diagnostics;
-    CompilationUnit * _root;
+    CompilationUnitSyntax * _root;
 };
 
 // syntax node interface

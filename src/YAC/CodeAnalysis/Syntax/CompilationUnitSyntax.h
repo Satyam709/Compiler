@@ -12,9 +12,9 @@
 class SyntaxToken;
 class ExpressionSyntax;
 
-class CompilationUnit final : public SyntaxNode {
+class CompilationUnitSyntax final : public SyntaxNode {
 public:
-    CompilationUnit(ExpressionSyntax &root, SyntaxToken endOfFileToken);
+    CompilationUnitSyntax(ExpressionSyntax &root, SyntaxToken endOfFileToken);
 
     [[nodiscard]] SyntaxKind getKind() const override;
 

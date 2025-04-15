@@ -32,7 +32,7 @@ public:
 
 private:
     std::string _name;
-    const std::type_info &_type;
+    const std::type_info *_type;
 };
 
 // Add hash function specialization

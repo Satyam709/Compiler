@@ -9,6 +9,7 @@
 #include <typeinfo>
 #include <memory>
 
+#include "BoundGlobalScope.h"
 #include "BoundOperators.h"
 #include "../Syntax/Expression.h"
 #include "../Syntax/Syntax.h"
@@ -16,6 +17,8 @@
 #include "YAC/CodeAnalysis/DiagnosticsBag.h"
 #include "unordered_map"
 #include "YAC/CodeAnalysis/Symbols/VariableSymbol.h"
+
+class BoundScope;
 
 enum class BoundNodeKind {
     UnaryExpression,
@@ -129,12 +132,17 @@ private:
 class Binder {
 private:
     DiagnosticBag* _diagnostic;
-    std::unordered_map<VariableSymbol, std::any>& _variables;
+    BoundScope& _scope;
 
 public:
-    explicit Binder(std::unordered_map<VariableSymbol, std::any>& variables);
+    explicit Binder(BoundScope& parent);
 
     DiagnosticBag *diagnostics() const;
+
+    static BoundGlobalScope *BindGlobalScope(BoundGlobalScope *previous, CompilationUnitSyntax *compilation_unit);
+
+    static BoundScope *CreateParentScope(BoundGlobalScope *previous);
+
     const BoundExpression *BindLiteralExpression(const ExpressionSyntax &syntax);
     const BoundExpression *BindUnaryExpression(const ExpressionSyntax &syntax);
     const BoundExpression *BindBinaryExpression(const ExpressionSyntax &syntax);

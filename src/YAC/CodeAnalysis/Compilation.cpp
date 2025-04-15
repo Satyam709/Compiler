@@ -1,43 +1,52 @@
 #include "Compilation.h"
-#include "Syntax/CompilationUnit.h"
+#include "Syntax/CompilationUnitSyntax.h"
 
 
-Compilation::Compilation(const SyntaxTree& syntaxTree)
-    : _syntaxTree(syntaxTree) {
+Compilation::Compilation(SyntaxTree &syntaxTree): _syntaxTree(syntaxTree),_previous(nullptr) {
 }
 
-EvaluationResult Compilation::evaluate(std::unordered_map<VariableSymbol, std::any>& variables) const{
-    // Create a Binder with the copy of existing variables
+Compilation::Compilation(Compilation *previous, SyntaxTree *syntaxTree): _syntaxTree(*syntaxTree), _previous(previous) {
+}
 
-    Binder binder(variables);
-    const auto boundExpression = binder.bindExpression(_syntaxTree.root()->exp());
+BoundGlobalScope* Compilation::boundGlobalScope() const {
+    if (_boundGlobalScope == nullptr) {
+        std::lock_guard<std::mutex> lock(_mutex);  // Ensure thread safety
+        if (_boundGlobalScope == nullptr) {
+            BoundGlobalScope* previousScope = _previous ? _previous->boundGlobalScope() : nullptr;
+            _boundGlobalScope = Binder::BindGlobalScope(previousScope, _syntaxTree.root());
+        }
+    }
+    return _boundGlobalScope;
+}
 
-    // Collect diagnostics
-    DiagnosticBag* diagnostic_bag = binder.diagnostics();
 
-    const auto syntaxDiagnostics = _syntaxTree.diagnostics();
-    diagnostic_bag->addRange(*syntaxDiagnostics);
+EvaluationResult Compilation::evaluate(std::unordered_map<VariableSymbol, std::any>& variables) const {
+    const BoundGlobalScope* scope = boundGlobalScope();
 
+    auto* diagnostics = new DiagnosticBag();
+    diagnostics->addRange(*_syntaxTree.diagnostics());
+    diagnostics->addRange(scope->diagnostics());
 
-    if (!diagnostic_bag->isEmpty()) {
-        return EvaluationResult(diagnostic_bag->getDiagnostics(), nullptr);
+    if (!diagnostics->isEmpty()) {
+        return EvaluationResult(diagnostics->getDiagnostics(), nullptr);
     }
 
-    // Create Evaluator with the variables
-    Evaluator evaluator(*boundExpression, variables);  // Make sure Evaluator uses the same variables
-    const auto value = evaluator.evaluate();
+    Evaluator evaluator(*scope->expression(), variables);
+    const std::any value = evaluator.evaluate();
 
-    // Debug output (temporary)
-    std::cout << "Variables in Compilation after evaluation:" << std::endl;
-    for(const auto& [var, val] : variables) {
+    // Debug output
+    std::cout << "Variables in Compilation after evaluation:\n";
+    for (const auto& [var, val] : variables) {
         std::cout << var.getName() << " = ";
         if (val.type() == typeid(int)) {
             std::cout << std::any_cast<int>(val);
         } else if (val.type() == typeid(bool)) {
             std::cout << std::boolalpha << std::any_cast<bool>(val);
+        } else {
+            std::cout << "[unknown type]";
         }
         std::cout << std::endl;
     }
 
-    return EvaluationResult(std::vector<Diagnostic>{}, value);
+    return EvaluationResult({}, value);
 }
