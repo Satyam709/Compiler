@@ -50,12 +50,13 @@ int main() {
             break;
         }
 
-        if (inputText == "#reset") {
+        if (inputText == "#reset\r\n") {
             previous = nullptr;
             variables.clear();
+            continue;
         }
 
-        if (inputText == "#showTree") {
+        if (inputText == "#showTree\r\n") {
             showTree = !showTree;
             std::cout << (showTree ? "Showing parse trees." : "Not showing parse trees") << std::endl;
             continue;
