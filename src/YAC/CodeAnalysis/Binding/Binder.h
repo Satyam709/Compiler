@@ -17,6 +17,8 @@
 #include "YAC/CodeAnalysis/DiagnosticsBag.h"
 #include "unordered_map"
 #include "YAC/CodeAnalysis/Symbols/VariableSymbol.h"
+#include "YAC/CodeAnalysis/Syntax/BlockStatementSyntax.h"
+#include "YAC/CodeAnalysis/Syntax/ExpressionStatementSyntax.h"
 
 class BoundScope;
 
@@ -148,6 +150,13 @@ public:
     const BoundExpression *BindBinaryExpression(const ExpressionSyntax &syntax);
     const BoundExpression* BindNameExpression(const ExpressionSyntax& syntax);
     const BoundExpression* BindAssignmentExpression(const ExpressionSyntax& syntax);
+
+    BoundStatement *bindStatement(StatementSyntax *syntax);
+
+    BoundStatement *bindBlockStatement(BlockStatementSyntax *syntax);
+
+    BoundStatement *bindExpressionStatement(ExpressionStatementSyntax *syntax);
+
     const BoundExpression *bindExpression(const ExpressionSyntax &syntax);
 };
 

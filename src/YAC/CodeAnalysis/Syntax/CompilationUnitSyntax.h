@@ -9,19 +9,19 @@
 #include "Syntax.h"
 #include "SyntaxTree.h"
 
+class StatementSyntax;
 class SyntaxToken;
-class ExpressionSyntax;
 
 class CompilationUnitSyntax final : public SyntaxNode {
 public:
-    CompilationUnitSyntax(ExpressionSyntax &root, SyntaxToken endOfFileToken);
+    CompilationUnitSyntax(StatementSyntax &root, SyntaxToken endOfFileToken);
 
     [[nodiscard]] SyntaxKind getKind() const override;
 
     [[nodiscard]] const std::vector<SyntaxNode *> & getChildren() const override;
 
-    [[nodiscard]] ExpressionSyntax& exp() const {
-        return _exp;
+    [[nodiscard]] StatementSyntax& statement() const {
+        return _statement;
     }
 
     [[nodiscard]] SyntaxToken eof() const {
@@ -29,7 +29,7 @@ public:
     }
 
 private:
-    ExpressionSyntax &_exp;
+    StatementSyntax &_statement;
     SyntaxToken _eof;
 };
 

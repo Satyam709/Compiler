@@ -3,10 +3,42 @@
 #include <sstream>
 
 #include "Binding/Binder.h"
+#include "Binding/BoundBlockStatement.h"
+#include "Binding/BoundExpressionStatement.h"
 #include "Syntax/Expression.h"
 
-Evaluator::Evaluator(const BoundExpression &root, std::unordered_map<VariableSymbol, std::any>& variables)
+Evaluator::Evaluator(const BoundStatement &root, std::unordered_map<VariableSymbol, std::any> &variables)
     : _root(root), _variables(variables) {
+}
+
+void Evaluator::EvaluateStatement(const BoundStatement *node) {
+    switch (node->getKind()) {
+        case BoundNodeKind::BlockStatement: {
+            if (const auto it = dynamic_cast<const BoundBlockStatement *>(node)) {
+                return EvaluateBlockStatement(it);
+            }
+            break;
+        }
+        case BoundNodeKind::ExpressionStatement: {
+            if (const auto it = dynamic_cast<const BoundExpressionStatement *>(node)) {
+                return EvaluateExpressionStatement(it);
+            }
+            break;
+        }
+        default:
+            throw std::runtime_error("Cannot evaluate: Invalid statement node kind");
+    }
+}
+
+
+void Evaluator::EvaluateBlockStatement(const BoundBlockStatement *node) {
+    for (const auto statement: node->statements()) {
+        EvaluateStatement(statement);
+    }
+}
+
+void Evaluator::EvaluateExpressionStatement(const BoundExpressionStatement *node) {
+    _lastValue = evaluateExpression(node->expression());
 }
 
 std::any Evaluator::evaluateExpression(const BoundExpression *node) {
@@ -34,7 +66,7 @@ std::any Evaluator::evaluateExpression(const BoundExpression *node) {
     }
 
     if (const auto variableNode = dynamic_cast<const BoundVariableExpression *>(node)) {
-        const VariableSymbol& symbol = variableNode->getVariable();
+        const VariableSymbol &symbol = variableNode->getVariable();
         auto it = _variables.find(symbol);
         if (it != _variables.end()) {
             return it->second;
@@ -44,7 +76,7 @@ std::any Evaluator::evaluateExpression(const BoundExpression *node) {
 
     if (const auto assignmentNode = dynamic_cast<const BoundAssignmentExpression *>(node)) {
         auto value = evaluateExpression(assignmentNode->getExpression());
-        const VariableSymbol& symbol = assignmentNode->getVariable();
+        const VariableSymbol &symbol = assignmentNode->getVariable();
         _variables[symbol] = value;
         return value;
     }
@@ -125,5 +157,6 @@ std::any Evaluator::evaluateExpression(const BoundExpression *node) {
 }
 
 std::any Evaluator::evaluate() {
-    return evaluateExpression(&_root);
+    EvaluateStatement(&_root);
+    return _lastValue;
 }

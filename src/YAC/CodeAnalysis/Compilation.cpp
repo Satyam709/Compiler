@@ -31,7 +31,7 @@ EvaluationResult Compilation::evaluate(std::unordered_map<VariableSymbol, std::a
         return EvaluationResult(diagnostics->getDiagnostics(), nullptr);
     }
 
-    Evaluator evaluator(*scope->expression(), variables);
+    Evaluator evaluator(*scope->statement(), variables);
     const std::any value = evaluator.evaluate();
 
     // Debug output

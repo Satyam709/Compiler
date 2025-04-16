@@ -1,11 +1,14 @@
 #include "Parser.h"
 #include <format>
 #include <vector>
+
+#include "BlockStatementSyntax.h"
 #include "Expression.h"
 #include "Lexer.h"
 #include "Syntax.h"
 #include "SyntaxFacts.h"
 #include "CompilationUnitSyntax.h"
+#include "ExpressionStatementSyntax.h"
 
 Parser::Parser(const SourceText &input): _input(input) {
     Lexer lexer(input);
@@ -42,6 +45,34 @@ SyntaxToken Parser::match(SyntaxKind kind) {
 
 ExpressionSyntax *Parser::parseExpression() {
     return parseAssignmentExpression();
+}
+
+StatementSyntax *Parser::parseStatement() {
+    if (current().kind == SyntaxKind::OpenBraceToken)
+        return parseBlockStatement();
+
+    return parseExpressionStatement();
+}
+
+BlockStatementSyntax *Parser::parseBlockStatement() {
+    std::vector<StatementSyntax *> statements;
+
+    const auto openBraceToken = match(SyntaxKind::OpenBraceToken);
+
+    while (current().kind != SyntaxKind::EndOfFileToken &&
+           current().kind != SyntaxKind::CloseBraceToken) {
+        auto statement = parseStatement();
+        statements.push_back(statement);
+    }
+
+    const auto closeBraceToken = match(SyntaxKind::CloseBraceToken);
+
+    return new BlockStatementSyntax(openBraceToken, statements, closeBraceToken);
+}
+
+ExpressionStatementSyntax *Parser::parseExpressionStatement() {
+    const auto expression = parseExpression();
+    return new ExpressionStatementSyntax(*expression);
 }
 
 ExpressionSyntax *Parser::parseAssignmentExpression() {
@@ -104,11 +135,12 @@ ExpressionSyntax *Parser::parsePrimaryExpression() {
     }
 }
 
-CompilationUnitSyntax *Parser::parse() {
-    const auto expression = parseExpression();
+CompilationUnitSyntax *Parser::ParseStatement() {
+    const auto starement = parseStatement();
     const auto endOfFileToken = match(SyntaxKind::EndOfFileToken);
-    return new CompilationUnitSyntax(*expression, endOfFileToken);
+    return new CompilationUnitSyntax(*starement, endOfFileToken);
 }
+
 
 std::vector<SyntaxToken> Parser::getTokens(const std::string &input) {
     Lexer lexer(input);

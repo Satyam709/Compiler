@@ -3,9 +3,13 @@
 #include <stack>
 #include <stack>
 
+#include "BoundBlockStatement.h"
+#include "BoundExpressionStatement.h"
 #include "BoundGlobalScope.h"
 #include "BoundScope.h"
+#include "YAC/CodeAnalysis/Syntax/BlockStatementSyntax.h"
 #include "YAC/CodeAnalysis/Syntax/CompilationUnitSyntax.h"
+#include "YAC/CodeAnalysis/Syntax/ExpressionStatementSyntax.h"
 
 // BoundLiteralExpression Implementation
 BoundLiteralExpression::BoundLiteralExpression(std::any value)
@@ -133,7 +137,7 @@ DiagnosticBag *Binder::diagnostics() const {
 BoundGlobalScope *Binder::BindGlobalScope(BoundGlobalScope *previous, CompilationUnitSyntax *syntax) {
     const auto parentScope = CreateParentScope(previous);
     const auto binder = new Binder(*parentScope);
-    auto expression = binder->bindExpression(syntax->exp());
+    auto expression = binder->bindStatement(&syntax->statement());
     const auto variables = binder->_scope.getDeclaredVariables();
     auto diagnostics = binder->diagnostics()->getDiagnostics();
 
@@ -261,6 +265,38 @@ const BoundExpression *Binder::BindAssignmentExpression(const ExpressionSyntax &
     }
     throw std::invalid_argument("Invalid expression: expression failed to bound");
 }
+
+BoundStatement* Binder::bindStatement(StatementSyntax* syntax) {
+    switch (syntax->getKind()) {
+        case SyntaxKind::BlockStatement:
+            return bindBlockStatement(static_cast<BlockStatementSyntax*>(syntax));
+        case SyntaxKind::ExpressionStatement:
+            return bindExpressionStatement(static_cast<ExpressionStatementSyntax*>(syntax));
+        default:
+            throw std::runtime_error("Unexpected syntax " + syntaxKindToString(syntax->getKind()));
+    }
+}
+
+BoundStatement* Binder::bindBlockStatement(BlockStatementSyntax* syntax) {
+    std::vector<BoundStatement*> statements;
+    auto* parentScope = &_scope;
+    _scope = BoundScope(*parentScope);
+
+    for (auto* statementSyntax : syntax->statements()) {
+        auto* statement = bindStatement(statementSyntax);
+        statements.push_back(statement);
+    }
+
+    _scope = *parentScope;
+
+    return new BoundBlockStatement(statements);
+}
+
+BoundStatement* Binder::bindExpressionStatement(ExpressionStatementSyntax* syntax) {
+    auto* expression = bindExpression(syntax->expression());
+    return new BoundExpressionStatement(expression);
+}
+
 
 const BoundExpression *Binder::bindExpression(const ExpressionSyntax &syntax) {
     switch (syntax.getKind()) {

@@ -60,8 +60,11 @@ TEST_P(ParserBinaryExpressionTests, BinaryExpression_HonorsPrecedences) {
 
     const std::string text = "a " + op1Text + " b " + op2Text + " c";
     const auto parser = new Parser(text);
-    const auto tree = parser->parse();
-    ExpressionSyntax& expression = tree->exp();
+    const auto tree = parser->ParseStatement();
+    auto& statement = tree->statement();
+
+    ExpressionSyntax& expression = dynamic_cast<ExpressionStatementSyntax*>(&statement)->expression();
+
 
     if (op1Precedence >= op2Precedence) {
         // Higher precedence tree:
@@ -149,8 +152,10 @@ TEST_P(ParserUnaryExpressionTests, UnaryExpression_HonorsPrecedences) {
 
     const std::string text = unaryText + " a " + binaryText + " b";
     const auto parser = new Parser(text);
-    const auto tree = parser->parse();
-    ExpressionSyntax& expression = tree->exp();
+    const auto tree = parser->ParseStatement();
+    auto& statement = tree->statement();
+
+    ExpressionSyntax& expression = dynamic_cast<ExpressionStatementSyntax*>(&statement)->expression();
 
     if (unaryPrecedence >= binaryPrecedence) {
         // Higher precedence tree:

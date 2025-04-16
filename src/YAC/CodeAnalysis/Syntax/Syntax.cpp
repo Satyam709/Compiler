@@ -1,6 +1,8 @@
 #include "Syntax.h"
 #include <iostream>
 
+#include "SyntaxTree.h"
+
 SyntaxToken::SyntaxToken()
     : position(0), kind(SyntaxKind::BadToken), text(""), val(nullptr) {
 }
@@ -22,6 +24,8 @@ std::string syntaxKindToString(const SyntaxKind kind) {
         case SyntaxKind::SlashToken: return "SlashToken";
         case SyntaxKind::OpenParenthesisToken: return "OpenParenthesisToken";
         case SyntaxKind::CloseParenthesisToken: return "CloseParenthesisToken";
+        case SyntaxKind::OpenBraceToken: return "OpenBraceToken";
+        case SyntaxKind::CloseBraceToken: return "CloseBraceToken";
         case SyntaxKind::BadToken: return "BadToken";
         case SyntaxKind::EndOfFileToken: return "EndOfFileToken";
         case SyntaxKind::LiteralExpression: return "LiteralExpression";
@@ -39,6 +43,10 @@ std::string syntaxKindToString(const SyntaxKind kind) {
         case SyntaxKind::EqualsToken: return "EqualsToken";                // Added
         case SyntaxKind::NameExpression: return "NameExpression";         // Added
         case SyntaxKind::AssignmentExpression: return "AssignmentExpression"; // Added
+        case SyntaxKind::ExpressionStatement: return "ExpressionStatement";
+        case SyntaxKind::BlockStatement: return "BlockStatement";
+
+
         default: return "UnknownToken";
     }
 }
@@ -69,6 +77,10 @@ std::string getKindText(const SyntaxKind& kind) {
             return "(";
         case SyntaxKind::CloseParenthesisToken:
             return ")";
+        case SyntaxKind::OpenBraceToken:
+            return "{";
+        case SyntaxKind::CloseBraceToken:
+            return "}";
         case SyntaxKind::FalseKeyword:
             return "false";
         case SyntaxKind::TrueKeyword:

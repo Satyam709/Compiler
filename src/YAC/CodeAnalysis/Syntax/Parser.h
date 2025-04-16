@@ -2,7 +2,9 @@
 #define PARSER_H
 #include <vector>
 
+#include "BlockStatementSyntax.h"
 #include "CompilationUnitSyntax.h"
+#include "ExpressionStatementSyntax.h"
 #include "Syntax.h"
 #include "YAC/CodeAnalysis/DiagnosticsBag.h"
 #include "YAC/CodeAnalysis/Text/SourceText.h"
@@ -13,7 +15,7 @@ class Parser {
 public:
     explicit Parser(const SourceText& input);
 
-    CompilationUnitSyntax *parse();
+    CompilationUnitSyntax *ParseStatement();
 
     static std::vector<SyntaxToken> getTokens(const std::string &input);
 
@@ -29,6 +31,13 @@ private:
     SyntaxToken match(SyntaxKind kind);
 
     ExpressionSyntax *parseExpression();
+
+    StatementSyntax *parseStatement();
+
+    BlockStatementSyntax *parseBlockStatement();
+
+    ExpressionStatementSyntax *parseExpressionStatement();
+
     ExpressionSyntax *parseAssignmentExpression();
     ExpressionSyntax *parseBinaryExpression(int parentPrecedence = 0);
     ExpressionSyntax *parsePrimaryExpression();

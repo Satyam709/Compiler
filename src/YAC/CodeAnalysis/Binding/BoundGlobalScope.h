@@ -10,12 +10,12 @@
 #include "YAC/CodeAnalysis/Symbols/VariableSymbol.h"
 
 
-class BoundExpression;
+class BoundStatement;
 
 class BoundGlobalScope final {
 public:
     BoundGlobalScope(BoundGlobalScope* previous, std::vector<Diagnostic> diagnostics,
-                     std::vector<VariableSymbol> variables,const BoundExpression *expression);
+                     std::vector<VariableSymbol> variables,const BoundStatement *expression);
 
     [[nodiscard]] BoundGlobalScope* previous() const {
         return _previous;
@@ -29,15 +29,15 @@ public:
         return _variables;
     }
 
-    [[nodiscard]]const BoundExpression *expression() const {
-        return _expression;
+    [[nodiscard]]const BoundStatement *statement() const {
+        return _statement;
     }
 
 private:
     BoundGlobalScope *_previous;
     std::vector<Diagnostic> _diagnostics;
     std::vector<VariableSymbol> _variables;
-    const BoundExpression *_expression;
+    const BoundStatement *_statement;
 };
 
 

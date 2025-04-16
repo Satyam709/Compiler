@@ -2,10 +2,10 @@
 // Created by satya on 15-04-2025.
 //
 #include "CompilationUnitSyntax.h"
-#include "Expression.h"
+#include "StatementSyntax.h"
 
 
-CompilationUnitSyntax::CompilationUnitSyntax(ExpressionSyntax &root, SyntaxToken endOfFileToken):_exp(root), _eof(endOfFileToken) {
+CompilationUnitSyntax::CompilationUnitSyntax(StatementSyntax &root, SyntaxToken endOfFileToken):_statement(root), _eof(endOfFileToken) {
 }
 
 
@@ -14,5 +14,5 @@ SyntaxKind CompilationUnitSyntax::getKind() const {
 }
 
 const std::vector<SyntaxNode *> &CompilationUnitSyntax::getChildren() const {
-    return _exp.getChildren();
+    return _statement.getChildren();
 }

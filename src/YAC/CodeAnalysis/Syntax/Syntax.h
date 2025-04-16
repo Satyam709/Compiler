@@ -7,7 +7,6 @@
 #include "YAC/CodeAnalysis/Text/TextSpan.h"
 
 enum class SyntaxKind {
-
     NumberToken,
     WhitespaceToken,
     PlusToken,
@@ -17,6 +16,8 @@ enum class SyntaxKind {
     EqualsToken,
     OpenParenthesisToken,
     CloseParenthesisToken,
+    OpenBraceToken,
+    CloseBraceToken,
 
     // logical operators
     BangToken,
@@ -38,6 +39,7 @@ enum class SyntaxKind {
 
     // Statements
     ExpressionStatement,
+    BlockStatement,
 
     // keywords
 
@@ -52,30 +54,30 @@ enum class SyntaxKind {
     NotEqualToken,
 
 
-
     // auxiliary kind to mark enum end
     ENDS,
-
-    BlockStatement,
 };
 
 // just a helper method to convert enum class kind from int to respective value
 std::string syntaxKindToString(SyntaxKind kind);
 
 // converts a kind to its actual representation  e.g. PlusToken -> "+"
-std::string getKindText(const SyntaxKind& kind);
+std::string getKindText(const SyntaxKind &kind);
 
 class SyntaxToken {
 public:
     SyntaxToken();
+
     SyntaxToken(int position, SyntaxKind kind, const std::string &text, std::any val);
+
     ~SyntaxToken();
+
     int position;
     SyntaxKind kind;
     std::string text{};
     std::any val;
-    TextSpan getSpan() const ;
 
+    TextSpan getSpan() const;
 };
 
 
@@ -83,7 +85,7 @@ public:
 std::ostream &operator<<(std::ostream &out, const SyntaxToken &token);
 
 // Overload operator<< for SyntaxKind
-inline std::ostream& operator<<(std::ostream &out, const SyntaxKind kind) {
+inline std::ostream &operator<<(std::ostream &out, const SyntaxKind kind) {
     out << syntaxKindToString(kind);
     return out;
 }

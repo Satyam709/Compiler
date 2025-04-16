@@ -77,7 +77,7 @@ int main() {
 
         if (showTree) {
             setConsoleColor(false); // Set to dark gray
-            SyntaxTree::prettyPrint(syntaxTree->root()->exp());
+            SyntaxTree::prettyPrint(syntaxTree->root()->statement());
             setConsoleColor(); // Reset color
         }
 

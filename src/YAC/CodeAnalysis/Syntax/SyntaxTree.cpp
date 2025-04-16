@@ -9,7 +9,7 @@
 SyntaxTree::SyntaxTree(SourceText text)
     : _text(std::move(text)) {
     Parser parser(_text);
-    _root = parser.parse();
+    _root = parser.ParseStatement();
     _diagnostics = parser.diagnostics();
 }
 

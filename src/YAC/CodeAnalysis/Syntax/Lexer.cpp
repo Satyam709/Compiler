@@ -97,6 +97,12 @@ SyntaxToken Lexer::nextToken() {
     if (current == ')') {
         return {_position++, SyntaxKind::CloseParenthesisToken, ")", nullptr};
     }
+    if (current == '{') {
+        return {_position++, SyntaxKind::OpenBraceToken, "{", nullptr};
+    }
+    if (current == '}') {
+        return {_position++, SyntaxKind::CloseBraceToken, "}", nullptr};
+    }
     if (current == '!') {
         if (peek(1)=='=') {
             int start = _position;
