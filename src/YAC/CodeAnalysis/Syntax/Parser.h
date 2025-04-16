@@ -40,6 +40,9 @@ private:
 
     ExpressionSyntax *parseAssignmentExpression();
     ExpressionSyntax *parseBinaryExpression(int parentPrecedence = 0);
+
+    StatementSyntax *parseVariableDeclaration();
+
     ExpressionSyntax *parsePrimaryExpression();
 
 public:

@@ -10,11 +10,13 @@
 
 class VariableSymbol {
 public:
-    VariableSymbol(std::string name, const std::type_info &type);
+    VariableSymbol(std::string name,bool isReadOnly, const std::type_info &type);
 
     const std::string &getName() const;
 
     const std::type_info &getType() const;
+
+    const bool &isReadOnly() const;
 
     // Add equality operator
     bool operator==(const VariableSymbol &other) const {
@@ -32,6 +34,9 @@ public:
 
 private:
     std::string _name;
+
+private:
+    bool _isReadOnly;
     const std::type_info *_type;
 };
 

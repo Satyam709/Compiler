@@ -70,6 +70,16 @@ void DiagnosticBag::reportCannotConvert(const TextSpan &span, const std::type_in
     report(span, ss.str());
 }
 
+void DiagnosticBag::reportVariableAlreadyDeclared(const TextSpan& span, const std::string& name) {
+    const auto message = "Variable '" + name + "' is already declared.";
+    report(span, message);
+}
+
+void DiagnosticBag::reportCannotAssign(const TextSpan& span, const std::string& name) {
+    const auto message = "Variable '" + name + "' is read-only and cannot be assigned to.";
+    report(span, message);
+}
+
 
 bool DiagnosticBag::isEmpty() const {
     return m_diagnostics.empty();

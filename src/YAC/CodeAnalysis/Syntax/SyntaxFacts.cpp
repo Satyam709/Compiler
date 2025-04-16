@@ -45,7 +45,9 @@ int SyntaxFacts::getPrecedence(const SyntaxKind &kind) {
 SyntaxKind SyntaxFacts::getKeywordKind(const std::string &text) {
     static const std::unordered_map<std::string, SyntaxKind> keywords = {
         {"true", SyntaxKind::TrueKeyword},
-        {"false", SyntaxKind::FalseKeyword}
+        {"false", SyntaxKind::FalseKeyword},
+        {"let",SyntaxKind::LetKeyword},
+        {"var",SyntaxKind::VarKeyword}
     };
 
     const auto it = keywords.find(text);

@@ -59,7 +59,7 @@ std::vector<std::pair<std::string, std::any>> GetEvaluationTestCases() {
         {"false", false},
         {"!true", false},
         {"!false", true},
-        {"(a = 10) * a", 100}
+        {"{ var a = 0 (a = 10) * a }", 100},
     };
 }
 

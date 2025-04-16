@@ -7,9 +7,11 @@
 #include "BoundExpressionStatement.h"
 #include "BoundGlobalScope.h"
 #include "BoundScope.h"
+#include "BoundVariableDeclaration.h"
 #include "YAC/CodeAnalysis/Syntax/BlockStatementSyntax.h"
 #include "YAC/CodeAnalysis/Syntax/CompilationUnitSyntax.h"
 #include "YAC/CodeAnalysis/Syntax/ExpressionStatementSyntax.h"
+#include "YAC/CodeAnalysis/Syntax/VariableDeclarationSyntax.h"
 
 // BoundLiteralExpression Implementation
 BoundLiteralExpression::BoundLiteralExpression(std::any value)
@@ -126,7 +128,7 @@ const VariableSymbol &BoundAssignmentExpression::getVariable() const {
 }
 
 // Binder Implementation
-Binder::Binder(BoundScope &parent) : _diagnostic(new DiagnosticBag()), _scope(parent) {
+Binder::Binder(BoundScope *parent) : _diagnostic(new DiagnosticBag()), _scope(parent) {
 }
 
 
@@ -136,17 +138,17 @@ DiagnosticBag *Binder::diagnostics() const {
 
 BoundGlobalScope *Binder::BindGlobalScope(BoundGlobalScope *previous, CompilationUnitSyntax *syntax) {
     const auto parentScope = CreateParentScope(previous);
-    const auto binder = new Binder(*parentScope);
+    const auto binder = new Binder(parentScope);
     auto expression = binder->bindStatement(&syntax->statement());
-    const auto variables = binder->_scope.getDeclaredVariables();
+    const auto variables = binder->_scope->getDeclaredVariables();
     auto diagnostics = binder->diagnostics()->getDiagnostics();
 
     if (previous != nullptr) {
         auto previousDiagnostics = previous->diagnostics();
-        diagnostics.insert(diagnostics.end(), previousDiagnostics.begin(),previousDiagnostics.end());
+        diagnostics.insert(diagnostics.end(), previousDiagnostics.begin(), previousDiagnostics.end());
     }
 
-    return new BoundGlobalScope(previous,diagnostics,variables,expression);
+    return new BoundGlobalScope(previous, diagnostics, variables, expression);
 }
 
 BoundScope *Binder::CreateParentScope(BoundGlobalScope *previous) {
@@ -231,11 +233,11 @@ const BoundExpression *Binder::BindBinaryExpression(const ExpressionSyntax &synt
 const BoundExpression *Binder::BindNameExpression(const ExpressionSyntax &syntax) {
     if (const auto *exp = dynamic_cast<const NameExpressionSyntax *>(&syntax)) {
         std::string name = exp->getIdentifierToken().text;
-        auto target = VariableSymbol(name, typeid(int));
+        auto target = VariableSymbol(name, true, typeid(int));
         // just for searching as only name is hashed,type is of no use
 
         // if exists -> updates by reference '&target'
-        if (!_scope.tryLookup(name,target)) {
+        if (!_scope->tryLookup(name, target)) {
             _diagnostic->reportUndefinedName(exp->getIdentifierToken().getSpan(), name);
             return new BoundLiteralExpression(0);
         }
@@ -244,56 +246,78 @@ const BoundExpression *Binder::BindNameExpression(const ExpressionSyntax &syntax
     throw std::invalid_argument("Invalid expression: expression failed to bound");
 }
 
+// ... existing code ...
+
+BoundStatement *Binder::BindVariableDeclaration(VariableDeclarationSyntax *syntax) {
+    const auto &name = syntax->getIdentifier().text;
+    const bool isReadOnly = syntax->getKeyword().kind == SyntaxKind::LetKeyword;
+    auto *initializer = bindExpression(syntax->getInitializer());
+    auto *variable = new VariableSymbol(name, isReadOnly, initializer->getType());
+
+    if (!_scope->tryDeclare(*variable)) {
+        _diagnostic->reportVariableAlreadyDeclared(syntax->getIdentifier().getSpan(), name);
+    }
+
+    return new BoundVariableDeclaration(variable, initializer);
+}
+
 const BoundExpression *Binder::BindAssignmentExpression(const ExpressionSyntax &syntax) {
     if (const auto *exp = dynamic_cast<const AssignmentExpressionSyntax *>(&syntax)) {
         std::string name = exp->getIdentifierToken().text;
         const BoundExpression *boundExpression = bindExpression(exp->expression());
         const std::type_info &exprType = boundExpression->getType();
-        auto crnt_var = VariableSymbol(name, exprType);
+
+        // true is temporary
+        auto crnt_var = VariableSymbol(name, true, exprType);
 
         if (exprType != typeid(int) && exprType != typeid(bool)) {
             throw std::runtime_error("Unsupported variable type: " + getTypeName(exprType));
         }
         std::any val = exprType == typeid(int) ? 0 : false;
-        if (!_scope.tryLookup(name,crnt_var)) {
-            _scope.tryDeclare(crnt_var);
+        if (!_scope->tryLookup(name, crnt_var)) {
+            _diagnostic->reportUndefinedName(exp->getIdentifierToken().getSpan(), name);
+            return boundExpression;
+        }
+        if (crnt_var.isReadOnly()) {
+            _diagnostic->reportCannotAssign(exp->getEqualsToken().getSpan(), name);
         }
         if (exprType != crnt_var.getType()) {
-            _diagnostic->reportCannotConvert(exp->getSpan(),exprType, crnt_var.getType());
+            _diagnostic->reportCannotConvert(exp->getSpan(), exprType, crnt_var.getType());
         }
         return new BoundAssignmentExpression(crnt_var, boundExpression);
     }
     throw std::invalid_argument("Invalid expression: expression failed to bound");
 }
 
-BoundStatement* Binder::bindStatement(StatementSyntax* syntax) {
+BoundStatement *Binder::bindStatement(StatementSyntax *syntax) {
     switch (syntax->getKind()) {
         case SyntaxKind::BlockStatement:
-            return bindBlockStatement(static_cast<BlockStatementSyntax*>(syntax));
+            return bindBlockStatement(static_cast<BlockStatementSyntax *>(syntax));
         case SyntaxKind::ExpressionStatement:
-            return bindExpressionStatement(static_cast<ExpressionStatementSyntax*>(syntax));
+            return bindExpressionStatement(static_cast<ExpressionStatementSyntax *>(syntax));
+        case SyntaxKind::VariableDeclaration:
+            return BindVariableDeclaration(static_cast<VariableDeclarationSyntax *>(syntax));
         default:
             throw std::runtime_error("Unexpected syntax " + syntaxKindToString(syntax->getKind()));
     }
 }
 
-BoundStatement* Binder::bindBlockStatement(BlockStatementSyntax* syntax) {
-    std::vector<BoundStatement*> statements;
-    auto* parentScope = &_scope;
-    _scope = BoundScope(*parentScope);
+BoundStatement *Binder::bindBlockStatement(BlockStatementSyntax *syntax) {
+    std::vector<BoundStatement *> statements;
+    const auto parentScope = _scope;
+    _scope = new BoundScope(parentScope);
 
-    for (auto* statementSyntax : syntax->statements()) {
-        auto* statement = bindStatement(statementSyntax);
+    for (auto *statementSyntax: syntax->statements()) {
+        auto *statement = bindStatement(statementSyntax);
         statements.push_back(statement);
     }
 
-    _scope = *parentScope;
-
+    _scope = _scope->parent();
     return new BoundBlockStatement(statements);
 }
 
-BoundStatement* Binder::bindExpressionStatement(ExpressionStatementSyntax* syntax) {
-    auto* expression = bindExpression(syntax->expression());
+BoundStatement *Binder::bindExpressionStatement(ExpressionStatementSyntax *syntax) {
+    auto *expression = bindExpression(syntax->expression());
     return new BoundExpressionStatement(expression);
 }
 

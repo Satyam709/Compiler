@@ -22,6 +22,10 @@ public:
     void reportUndefinedName(const TextSpan& span, const std::string& name);
     void reportCannotConvert(const TextSpan &span, const std::type_info &fromType, const std::type_info &toType);
 
+    void reportVariableAlreadyDeclared(const TextSpan &span, const std::string &name);
+
+    void reportCannotAssign(const TextSpan &span, const std::string &name);
+
     bool isEmpty() const ;
     const std::vector<Diagnostic>& getDiagnostics() const { return m_diagnostics; }
 

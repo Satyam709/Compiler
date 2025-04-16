@@ -9,6 +9,7 @@
 #include "SyntaxFacts.h"
 #include "CompilationUnitSyntax.h"
 #include "ExpressionStatementSyntax.h"
+#include "VariableDeclarationSyntax.h"
 
 Parser::Parser(const SourceText &input): _input(input) {
     Lexer lexer(input);
@@ -48,10 +49,15 @@ ExpressionSyntax *Parser::parseExpression() {
 }
 
 StatementSyntax *Parser::parseStatement() {
-    if (current().kind == SyntaxKind::OpenBraceToken)
-        return parseBlockStatement();
-
-    return parseExpressionStatement();
+    switch (current().kind) {
+        case SyntaxKind::OpenBraceToken:
+            return parseBlockStatement();
+        case SyntaxKind::LetKeyword:
+        case SyntaxKind::VarKeyword:
+            return parseVariableDeclaration();
+        default:
+            return parseExpressionStatement();
+    }
 }
 
 BlockStatementSyntax *Parser::parseBlockStatement() {
@@ -108,6 +114,16 @@ ExpressionSyntax *Parser::parseBinaryExpression(const int parentPrecedence) {
         left = new BinaryExpressionSyntax(*left, operatorToken, *right);
     }
     return left;
+}
+
+StatementSyntax *Parser::parseVariableDeclaration() {
+    const auto expected = current().kind == SyntaxKind::LetKeyword ? SyntaxKind::LetKeyword : SyntaxKind::VarKeyword;
+    const auto keyword = match(expected);
+    const auto identifier = match(SyntaxKind::IdentifierToken);
+    auto equals = match(SyntaxKind::EqualsToken);
+    const auto initializer = parseExpression();
+
+    return new VariableDeclarationSyntax(identifier, identifier, keyword, *initializer);
 }
 
 ExpressionSyntax *Parser::parsePrimaryExpression() {

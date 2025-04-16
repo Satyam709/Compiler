@@ -56,6 +56,9 @@ enum class SyntaxKind {
 
     // auxiliary kind to mark enum end
     ENDS,
+    VariableDeclaration,
+    LetKeyword,
+    VarKeyword,
 };
 
 // just a helper method to convert enum class kind from int to respective value

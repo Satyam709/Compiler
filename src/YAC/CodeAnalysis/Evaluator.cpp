@@ -5,6 +5,7 @@
 #include "Binding/Binder.h"
 #include "Binding/BoundBlockStatement.h"
 #include "Binding/BoundExpressionStatement.h"
+#include "Binding/BoundVariableDeclaration.h"
 #include "Syntax/Expression.h"
 
 Evaluator::Evaluator(const BoundStatement &root, std::unordered_map<VariableSymbol, std::any> &variables)
@@ -25,11 +26,22 @@ void Evaluator::EvaluateStatement(const BoundStatement *node) {
             }
             break;
         }
+        case BoundNodeKind::VariableDeclaration: {
+            if (const auto it = dynamic_cast<const BoundVariableDeclaration *>(node)) {
+                return EvaluateVariableDeclaration(it);
+            }
+            break;
+        }
         default:
             throw std::runtime_error("Cannot evaluate: Invalid statement node kind");
     }
 }
 
+void Evaluator::EvaluateVariableDeclaration(const BoundVariableDeclaration* node) {
+    const auto value = evaluateExpression(node->getInitializer());
+    _variables[*node->getVariable()]= value;
+    _lastValue = value;
+}
 
 void Evaluator::EvaluateBlockStatement(const BoundBlockStatement *node) {
     for (const auto statement: node->statements()) {

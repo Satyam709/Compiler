@@ -19,6 +19,7 @@
 #include "YAC/CodeAnalysis/Symbols/VariableSymbol.h"
 #include "YAC/CodeAnalysis/Syntax/BlockStatementSyntax.h"
 #include "YAC/CodeAnalysis/Syntax/ExpressionStatementSyntax.h"
+#include "YAC/CodeAnalysis/Syntax/VariableDeclarationSyntax.h"
 
 class BoundScope;
 
@@ -27,7 +28,7 @@ enum class BoundNodeKind {
     LiteralExpression,
     BinaryExpression,
     VariableExpression,
-    AssignmentExpression, BlockStatement, ExpressionStatement
+    AssignmentExpression, BlockStatement, ExpressionStatement,VariableDeclaration
 };
 
 class BoundNode {
@@ -134,10 +135,10 @@ private:
 class Binder {
 private:
     DiagnosticBag* _diagnostic;
-    BoundScope& _scope;
+    BoundScope* _scope;
 
 public:
-    explicit Binder(BoundScope& parent);
+    explicit Binder(BoundScope* parent);
 
     DiagnosticBag *diagnostics() const;
 
@@ -149,6 +150,9 @@ public:
     const BoundExpression *BindUnaryExpression(const ExpressionSyntax &syntax);
     const BoundExpression *BindBinaryExpression(const ExpressionSyntax &syntax);
     const BoundExpression* BindNameExpression(const ExpressionSyntax& syntax);
+
+    BoundStatement *BindVariableDeclaration(VariableDeclarationSyntax *syntax);
+
     const BoundExpression* BindAssignmentExpression(const ExpressionSyntax& syntax);
 
     BoundStatement *bindStatement(StatementSyntax *syntax);
