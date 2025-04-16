@@ -1,10 +1,15 @@
 #include "Parser.h"
 #include <format>
 #include <vector>
+
+#include "BlockStatementSyntax.h"
 #include "Expression.h"
 #include "Lexer.h"
 #include "Syntax.h"
 #include "SyntaxFacts.h"
+#include "CompilationUnitSyntax.h"
+#include "ExpressionStatementSyntax.h"
+#include "VariableDeclarationSyntax.h"
 
 Parser::Parser(const SourceText &input): _input(input) {
     Lexer lexer(input);
@@ -43,6 +48,39 @@ ExpressionSyntax *Parser::parseExpression() {
     return parseAssignmentExpression();
 }
 
+StatementSyntax *Parser::parseStatement() {
+    switch (current().kind) {
+        case SyntaxKind::OpenBraceToken:
+            return parseBlockStatement();
+        case SyntaxKind::LetKeyword:
+        case SyntaxKind::VarKeyword:
+            return parseVariableDeclaration();
+        default:
+            return parseExpressionStatement();
+    }
+}
+
+BlockStatementSyntax *Parser::parseBlockStatement() {
+    std::vector<StatementSyntax *> statements;
+
+    const auto openBraceToken = match(SyntaxKind::OpenBraceToken);
+
+    while (current().kind != SyntaxKind::EndOfFileToken &&
+           current().kind != SyntaxKind::CloseBraceToken) {
+        auto statement = parseStatement();
+        statements.push_back(statement);
+    }
+
+    const auto closeBraceToken = match(SyntaxKind::CloseBraceToken);
+
+    return new BlockStatementSyntax(openBraceToken, statements, closeBraceToken);
+}
+
+ExpressionStatementSyntax *Parser::parseExpressionStatement() {
+    const auto expression = parseExpression();
+    return new ExpressionStatementSyntax(*expression);
+}
+
 ExpressionSyntax *Parser::parseAssignmentExpression() {
     if (peek(0).kind == SyntaxKind::IdentifierToken &&
         peek(1).kind == SyntaxKind::EqualsToken) {
@@ -78,6 +116,16 @@ ExpressionSyntax *Parser::parseBinaryExpression(const int parentPrecedence) {
     return left;
 }
 
+StatementSyntax *Parser::parseVariableDeclaration() {
+    const auto expected = current().kind == SyntaxKind::LetKeyword ? SyntaxKind::LetKeyword : SyntaxKind::VarKeyword;
+    const auto keyword = match(expected);
+    const auto identifier = match(SyntaxKind::IdentifierToken);
+    auto equals = match(SyntaxKind::EqualsToken);
+    const auto initializer = parseExpression();
+
+    return new VariableDeclarationSyntax(identifier, identifier, keyword, *initializer);
+}
+
 ExpressionSyntax *Parser::parsePrimaryExpression() {
     switch (current().kind) {
         case SyntaxKind::OpenParenthesisToken: {
@@ -103,11 +151,12 @@ ExpressionSyntax *Parser::parsePrimaryExpression() {
     }
 }
 
-SyntaxTree *Parser::parse() {
-    const auto expression = parseExpression();
+CompilationUnitSyntax *Parser::ParseStatement() {
+    const auto starement = parseStatement();
     const auto endOfFileToken = match(SyntaxKind::EndOfFileToken);
-    return new SyntaxTree(_input, _diagnostics, *expression, endOfFileToken);
+    return new CompilationUnitSyntax(*starement, endOfFileToken);
 }
+
 
 std::vector<SyntaxToken> Parser::getTokens(const std::string &input) {
     Lexer lexer(input);

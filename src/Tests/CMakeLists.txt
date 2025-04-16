@@ -6,7 +6,8 @@ add_executable(YacTests ${TEST_SOURCES}
         CodeAnalysis/Syntax/AssertingEnumerator.cpp
         CodeAnalysis/Syntax/AssertingEnumerator.h
         CodeAnalysis/Syntax/ParserTests.cpp
-        CodeAnalysis/EvaluationTests.cpp)
+        CodeAnalysis/EvaluationTests.cpp
+        CodeAnalysis/Text/SourceTextTests.cpp)
 
 
 # Link test executable with Google Test and CompilerLib

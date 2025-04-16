@@ -18,9 +18,8 @@ struct EvaluationTests : public ::testing::TestWithParam<std::pair<std::string, 
 TEST_P(EvaluationTests, SyntaxFact_GetText_RoundTrips) {
     const auto& [text, expectedValue] = GetParam();
 
-    auto parser = new Parser(text);
-    auto syntaxTree = parser->parse();
-    auto compilation = new Compilation(*syntaxTree);
+    const auto syntaxTree = new SyntaxTree(text);
+    const auto compilation = new Compilation(*syntaxTree);
     std::unordered_map<VariableSymbol, std::any> variables;
     const auto result = compilation->evaluate(variables);
 
@@ -60,7 +59,7 @@ std::vector<std::pair<std::string, std::any>> GetEvaluationTestCases() {
         {"false", false},
         {"!true", false},
         {"!false", true},
-        {"(a = 10) * a", 100}
+        {"{ var a = 0 (a = 10) * a }", 100},
     };
 }
 

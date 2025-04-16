@@ -9,6 +9,7 @@
 #include <typeinfo>
 #include <memory>
 
+#include "BoundGlobalScope.h"
 #include "BoundOperators.h"
 #include "../Syntax/Expression.h"
 #include "../Syntax/Syntax.h"
@@ -16,13 +17,18 @@
 #include "YAC/CodeAnalysis/DiagnosticsBag.h"
 #include "unordered_map"
 #include "YAC/CodeAnalysis/Symbols/VariableSymbol.h"
+#include "YAC/CodeAnalysis/Syntax/BlockStatementSyntax.h"
+#include "YAC/CodeAnalysis/Syntax/ExpressionStatementSyntax.h"
+#include "YAC/CodeAnalysis/Syntax/VariableDeclarationSyntax.h"
+
+class BoundScope;
 
 enum class BoundNodeKind {
     UnaryExpression,
     LiteralExpression,
     BinaryExpression,
     VariableExpression,
-    AssignmentExpression
+    AssignmentExpression, BlockStatement, ExpressionStatement,VariableDeclaration
 };
 
 class BoundNode {
@@ -129,17 +135,32 @@ private:
 class Binder {
 private:
     DiagnosticBag* _diagnostic;
-    std::unordered_map<VariableSymbol, std::any>& _variables;
+    BoundScope* _scope;
 
 public:
-    explicit Binder(std::unordered_map<VariableSymbol, std::any>& variables);
+    explicit Binder(BoundScope* parent);
 
     DiagnosticBag *diagnostics() const;
+
+    static BoundGlobalScope *BindGlobalScope(BoundGlobalScope *previous, CompilationUnitSyntax *compilation_unit);
+
+    static BoundScope *CreateParentScope(BoundGlobalScope *previous);
+
     const BoundExpression *BindLiteralExpression(const ExpressionSyntax &syntax);
     const BoundExpression *BindUnaryExpression(const ExpressionSyntax &syntax);
     const BoundExpression *BindBinaryExpression(const ExpressionSyntax &syntax);
     const BoundExpression* BindNameExpression(const ExpressionSyntax& syntax);
+
+    BoundStatement *BindVariableDeclaration(VariableDeclarationSyntax *syntax);
+
     const BoundExpression* BindAssignmentExpression(const ExpressionSyntax& syntax);
+
+    BoundStatement *bindStatement(StatementSyntax *syntax);
+
+    BoundStatement *bindBlockStatement(BlockStatementSyntax *syntax);
+
+    BoundStatement *bindExpressionStatement(ExpressionStatementSyntax *syntax);
+
     const BoundExpression *bindExpression(const ExpressionSyntax &syntax);
 };
 

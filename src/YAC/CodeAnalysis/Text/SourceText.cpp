@@ -44,7 +44,7 @@ std::vector<TextLine> SourceText::ParseLines(SourceText* sourceText, const std::
     int position = 0;
     int lineStart = 0;
 
-    while (position < text.length()) {
+    while (position <= text.length()) {
         int lineBreakWidth = GetLineBreakWidth(text, position);
 
         if (lineBreakWidth == 0) {

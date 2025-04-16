@@ -1,6 +1,8 @@
 #include "Syntax.h"
 #include <iostream>
 
+#include "SyntaxTree.h"
+
 SyntaxToken::SyntaxToken()
     : position(0), kind(SyntaxKind::BadToken), text(""), val(nullptr) {
 }
@@ -22,6 +24,8 @@ std::string syntaxKindToString(const SyntaxKind kind) {
         case SyntaxKind::SlashToken: return "SlashToken";
         case SyntaxKind::OpenParenthesisToken: return "OpenParenthesisToken";
         case SyntaxKind::CloseParenthesisToken: return "CloseParenthesisToken";
+        case SyntaxKind::OpenBraceToken: return "OpenBraceToken";
+        case SyntaxKind::CloseBraceToken: return "CloseBraceToken";
         case SyntaxKind::BadToken: return "BadToken";
         case SyntaxKind::EndOfFileToken: return "EndOfFileToken";
         case SyntaxKind::LiteralExpression: return "LiteralExpression";
@@ -36,9 +40,15 @@ std::string syntaxKindToString(const SyntaxKind kind) {
         case SyntaxKind::AmpersandAmpersandToken: return "AmpersandAmpersandToken";
         case SyntaxKind::EqualEqualToken: return "EqualEqualToken";
         case SyntaxKind::NotEqualToken: return "NotEqualToken";
-        case SyntaxKind::EqualsToken: return "EqualsToken";                // Added
-        case SyntaxKind::NameExpression: return "NameExpression";         // Added
-        case SyntaxKind::AssignmentExpression: return "AssignmentExpression"; // Added
+        case SyntaxKind::EqualsToken: return "EqualsToken";
+        case SyntaxKind::NameExpression: return "NameExpression";
+        case SyntaxKind::AssignmentExpression: return "AssignmentExpression";
+        case SyntaxKind::ExpressionStatement: return "ExpressionStatement";
+        case SyntaxKind::BlockStatement: return "BlockStatement";
+        case SyntaxKind::VariableDeclaration: return "VariableDeclaration";
+        case SyntaxKind::LetKeyword: return "LetKeyword";
+        case SyntaxKind::VarKeyword:return "VarKeyword";
+
         default: return "UnknownToken";
     }
 }
@@ -69,10 +79,18 @@ std::string getKindText(const SyntaxKind& kind) {
             return "(";
         case SyntaxKind::CloseParenthesisToken:
             return ")";
+        case SyntaxKind::OpenBraceToken:
+            return "{";
+        case SyntaxKind::CloseBraceToken:
+            return "}";
         case SyntaxKind::FalseKeyword:
             return "false";
         case SyntaxKind::TrueKeyword:
             return "true";
+        case SyntaxKind::VarKeyword:
+            return "var";
+        case SyntaxKind::LetKeyword:
+            return "let";
         default:
             return "";
     }

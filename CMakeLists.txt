@@ -21,6 +21,8 @@ set(SOURCES
         src/YAC/CodeAnalysis/Syntax/Expression.h
         src/YAC/CodeAnalysis/Syntax/SyntaxTree.cpp
         src/YAC/CodeAnalysis/Syntax/SyntaxTree.h
+        src/YAC/CodeAnalysis/Syntax/CompilationUnitSyntax.cpp
+        src/YAC/CodeAnalysis/Syntax/CompilationUnitSyntax.h
         src/Program.cpp
         src/YAC/CodeAnalysis/Syntax/SyntaxFacts.cpp
         src/YAC/CodeAnalysis/Syntax/SyntaxFacts.h
@@ -45,6 +47,24 @@ set(SOURCES
         src/YAC/CodeAnalysis/Binding/Binder.cpp
         src/YAC/CodeAnalysis/Symbols/VariableSymbol.cpp
         src/YAC/CodeAnalysis/Symbols/VariableSymbol.h
+        src/YAC/CodeAnalysis/Binding/BoundScope.cpp
+        src/YAC/CodeAnalysis/Binding/BoundScope.h
+        src/YAC/CodeAnalysis/Binding/BoundGlobalScope.cpp
+        src/YAC/CodeAnalysis/Binding/BoundGlobalScope.h
+        src/YAC/CodeAnalysis/Syntax/ExpressionStatementSyntax.cpp
+        src/YAC/CodeAnalysis/Syntax/ExpressionStatementSyntax.h
+        src/YAC/CodeAnalysis/Syntax/BlockStatementSyntax.cpp
+        src/YAC/CodeAnalysis/Syntax/BlockStatementSyntax.h
+        src/YAC/CodeAnalysis/Binding/BoundExpressionStatement.cpp
+        src/YAC/CodeAnalysis/Binding/BoundExpressionStatement.h
+        src/YAC/CodeAnalysis/Binding/BoundBlockStatement.cpp
+        src/YAC/CodeAnalysis/Binding/BoundBlockStatement.h
+        src/YAC/CodeAnalysis/Binding/BoundStatement.h
+        src/YAC/CodeAnalysis/Syntax/StatementSyntax.h
+        src/YAC/CodeAnalysis/Syntax/VariableDeclarationSyntax.cpp
+        src/YAC/CodeAnalysis/Syntax/VariableDeclarationSyntax.h
+        src/YAC/CodeAnalysis/Binding/BoundVariableDeclaration.cpp
+        src/YAC/CodeAnalysis/Binding/BoundVariableDeclaration.h
 )
 
 # Create library from sources
