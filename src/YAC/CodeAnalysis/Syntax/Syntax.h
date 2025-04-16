@@ -36,6 +36,9 @@ enum class SyntaxKind {
     NameExpression,
     AssignmentExpression,
 
+    // Statements
+    ExpressionStatement,
+
     // keywords
 
     // bools
@@ -52,6 +55,8 @@ enum class SyntaxKind {
 
     // auxiliary kind to mark enum end
     ENDS,
+
+    BlockStatement,
 };
 
 // just a helper method to convert enum class kind from int to respective value

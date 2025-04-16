@@ -51,6 +51,16 @@ set(SOURCES
         src/YAC/CodeAnalysis/Binding/BoundScope.h
         src/YAC/CodeAnalysis/Binding/BoundGlobalScope.cpp
         src/YAC/CodeAnalysis/Binding/BoundGlobalScope.h
+        src/YAC/CodeAnalysis/Syntax/ExpressionStatementSyntax.cpp
+        src/YAC/CodeAnalysis/Syntax/ExpressionStatementSyntax.h
+        src/YAC/CodeAnalysis/Syntax/BlockStatementSyntax.cpp
+        src/YAC/CodeAnalysis/Syntax/BlockStatementSyntax.h
+        src/YAC/CodeAnalysis/Binding/BoundExpressionStatement.cpp
+        src/YAC/CodeAnalysis/Binding/BoundExpressionStatement.h
+        src/YAC/CodeAnalysis/Binding/BoundBlockStatement.cpp
+        src/YAC/CodeAnalysis/Binding/BoundBlockStatement.h
+        src/YAC/CodeAnalysis/Binding/BoundStatement.h
+        src/YAC/CodeAnalysis/Syntax/StatementSyntax.h
 )
 
 # Create library from sources

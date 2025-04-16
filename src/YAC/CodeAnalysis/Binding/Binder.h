@@ -25,7 +25,7 @@ enum class BoundNodeKind {
     LiteralExpression,
     BinaryExpression,
     VariableExpression,
-    AssignmentExpression
+    AssignmentExpression, BlockStatement, ExpressionStatement
 };
 
 class BoundNode {
