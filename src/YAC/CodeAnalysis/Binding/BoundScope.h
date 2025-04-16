@@ -10,13 +10,13 @@
 
 class BoundScope final {
 public:
-    explicit BoundScope(BoundScope &parent);
+    explicit BoundScope(BoundScope *parent);
 
     bool tryDeclare(VariableSymbol &variable);
 
     bool tryLookup(std::string &name, VariableSymbol &variable);
 
-    [[nodiscard]] BoundScope &parent() const {
+    [[nodiscard]] BoundScope *parent() const {
         return _parent;
     }
 
@@ -26,16 +26,14 @@ public:
 
     std::vector<VariableSymbol> getDeclaredVariables() const {
         std::vector<VariableSymbol> result = {};
-        // std::cout<<"var = "<<&_variables;
-        // for (const auto &[fst, snd]: _variables) {
-        //     result.push_back(snd);
-        // }
-        // std::cout << "result returning";
+        for (const auto &[fst, snd]: _variables) {
+            result.push_back(snd);
+        }
         return result;
     }
 
 private:
-    BoundScope &_parent;
+    BoundScope *_parent;
     std::unordered_map<std::string, VariableSymbol> _variables;
 };
 

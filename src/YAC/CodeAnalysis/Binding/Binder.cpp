@@ -146,22 +146,26 @@ BoundGlobalScope *Binder::BindGlobalScope(BoundGlobalScope *previous, Compilatio
 }
 
 BoundScope *Binder::CreateParentScope(BoundGlobalScope *previous) {
-    const auto stack = new std::stack<BoundGlobalScope *>();
+    std::stack<BoundGlobalScope *> stack;
 
     while (previous != nullptr) {
-        stack->push(previous);
+        stack.push(previous);
         previous = previous->previous();
     }
 
     BoundScope *parent = nullptr;
 
-    while (!stack->empty()) {
-        previous = stack->top();
-        const auto scope = new BoundScope(*parent);
+    while (!stack.empty()) {
+        previous = stack.top();
+        stack.pop();
+        const auto scope = new BoundScope(parent);
         for (auto var: previous->variables()) {
             scope->tryDeclare(var);
         }
         parent = scope;
+    }
+    if (parent == nullptr) {
+        parent = new BoundScope(parent);
     }
     return parent;
 }

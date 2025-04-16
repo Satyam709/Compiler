@@ -4,7 +4,7 @@
 
 #include "BoundScope.h"
 
-BoundScope::BoundScope(BoundScope &parent) :_parent(_parent){
+BoundScope::BoundScope(BoundScope *parent) :_parent(parent){
 }
 
 bool BoundScope::tryDeclare(VariableSymbol &variable) {
@@ -23,10 +23,10 @@ bool BoundScope::tryLookup(std::string &name, VariableSymbol &variable) {
         return true;
     }
 
-    if (&_parent == nullptr)
+    if (!_parent)
         return false;
 
-    return _parent.tryLookup(name,variable);
+    return _parent->tryLookup(name,variable);
 }
 
 
