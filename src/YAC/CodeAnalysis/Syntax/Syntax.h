@@ -24,6 +24,12 @@ enum class SyntaxKind {
     AmpersandAmpersandToken,
     PipePipeToken,
 
+    // relational operators
+    LessToken,
+    LessOrEqualsToken,
+    GreaterToken,
+    GreaterOrEqualsToken,
+
     BadToken,
     EndOfFileToken,
 

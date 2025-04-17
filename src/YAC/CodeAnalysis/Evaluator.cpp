@@ -37,9 +37,9 @@ void Evaluator::EvaluateStatement(const BoundStatement *node) {
     }
 }
 
-void Evaluator::EvaluateVariableDeclaration(const BoundVariableDeclaration* node) {
+void Evaluator::EvaluateVariableDeclaration(const BoundVariableDeclaration *node) {
     const auto value = evaluateExpression(node->getInitializer());
-    _variables[*node->getVariable()]= value;
+    _variables[*node->getVariable()] = value;
     _lastValue = value;
 }
 
@@ -153,6 +153,30 @@ std::any Evaluator::evaluateExpression(const BoundExpression *node) {
                     throw std::runtime_error("Division by zero");
                 }
                 return left / right;
+            }
+
+            case BoundBinaryOperatorKind::Less: {
+                const auto left = std::any_cast<int>(leftResult);
+                const auto right = std::any_cast<int>(rightResult);
+                return left < right;
+            }
+
+            case BoundBinaryOperatorKind::Greater: {
+                const auto left = std::any_cast<int>(leftResult);
+                const auto right = std::any_cast<int>(rightResult);
+                return left > right;
+            }
+
+            case BoundBinaryOperatorKind::LessOrEquals: {
+                const auto left = std::any_cast<int>(leftResult);
+                const auto right = std::any_cast<int>(rightResult);
+                return left <= right;
+            }
+
+            case BoundBinaryOperatorKind::GreaterOrEquals: {
+                const auto left = std::any_cast<int>(leftResult);
+                const auto right = std::any_cast<int>(rightResult);
+                return left >= right;
             }
 
             default: {

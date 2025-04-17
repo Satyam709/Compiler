@@ -26,6 +26,10 @@ int SyntaxFacts::getPrecedence(const SyntaxKind &kind) {
 
         case SyntaxKind::EqualEqualToken:
         case SyntaxKind::NotEqualToken:
+        case SyntaxKind::LessToken:
+        case SyntaxKind::LessOrEqualsToken:
+        case SyntaxKind::GreaterToken:
+        case SyntaxKind::GreaterOrEqualsToken:
             return 3;
 
         case SyntaxKind::AmpersandAmpersandToken:
@@ -46,8 +50,8 @@ SyntaxKind SyntaxFacts::getKeywordKind(const std::string &text) {
     static const std::unordered_map<std::string, SyntaxKind> keywords = {
         {"true", SyntaxKind::TrueKeyword},
         {"false", SyntaxKind::FalseKeyword},
-        {"let",SyntaxKind::LetKeyword},
-        {"var",SyntaxKind::VarKeyword}
+        {"let", SyntaxKind::LetKeyword},
+        {"var", SyntaxKind::VarKeyword}
     };
 
     const auto it = keywords.find(text);
@@ -75,4 +79,3 @@ std::vector<SyntaxKind> SyntaxFacts::GetBinaryOperatorKinds() {
     }
     return result;
 }
-

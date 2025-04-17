@@ -28,7 +28,7 @@ enum class BoundNodeKind {
     LiteralExpression,
     BinaryExpression,
     VariableExpression,
-    AssignmentExpression, BlockStatement, ExpressionStatement,VariableDeclaration
+    AssignmentExpression, BlockStatement, ExpressionStatement, VariableDeclaration
 };
 
 class BoundNode {
@@ -46,7 +46,9 @@ public:
     explicit BoundLiteralExpression(std::any value);
 
     BoundNodeKind getKind() const override;
+
     const std::type_info &getType() const override;
+
     const std::any &getValue() const;
 
 private:
@@ -69,7 +71,11 @@ enum class BoundBinaryOperatorKind {
     LogicalAnd,
     LogicalOR,
     Equals,
-    NotEquals
+    NotEquals,
+    Less,
+    LessOrEquals,
+    Greater,
+    GreaterOrEquals
 };
 
 class BoundBinaryExpression : public BoundExpression {
@@ -78,10 +84,15 @@ public:
                           const BoundExpression &right);
 
     BoundNodeKind getKind() const override;
+
     const BoundExpression &left() const;
+
     const BoundExpression &right() const;
+
     BoundBinaryOperatorKind operator_() const;
+
     const std::type_info &getType() const override;
+
     BoundBinaryOperator getOperator() const;
 
 private:
@@ -95,8 +106,11 @@ public:
     BoundUnaryExpression(const BoundUnaryOperator op, const BoundExpression &operand);
 
     BoundNodeKind getKind() const override;
+
     const std::type_info &getType() const override;
+
     const BoundExpression *getOperand() const;
+
     BoundUnaryOperatorKind getOperatorKind() const;
 
 private:
@@ -106,12 +120,15 @@ private:
 
 class BoundVariableExpression : public BoundExpression {
 public:
-    explicit BoundVariableExpression(const VariableSymbol& variable);
+    explicit BoundVariableExpression(const VariableSymbol &variable);
 
     BoundNodeKind getKind() const override;
-    const std::type_info& getType() const override;
-    const std::string& getName() const;
-    const VariableSymbol& getVariable() const;
+
+    const std::type_info &getType() const override;
+
+    const std::string &getName() const;
+
+    const VariableSymbol &getVariable() const;
 
 private:
     VariableSymbol _variable;
@@ -119,26 +136,30 @@ private:
 
 class BoundAssignmentExpression : public BoundExpression {
 public:
-    BoundAssignmentExpression(const VariableSymbol& variable, const BoundExpression* expression);
+    BoundAssignmentExpression(const VariableSymbol &variable, const BoundExpression *expression);
 
     BoundNodeKind getKind() const override;
-    const std::type_info& getType() const override;
-    const std::string& getName() const;
-    const BoundExpression* getExpression() const;
-    const VariableSymbol& getVariable() const;
+
+    const std::type_info &getType() const override;
+
+    const std::string &getName() const;
+
+    const BoundExpression *getExpression() const;
+
+    const VariableSymbol &getVariable() const;
 
 private:
     VariableSymbol _variable;
-    const BoundExpression* _expression;
+    const BoundExpression *_expression;
 };
 
 class Binder {
 private:
-    DiagnosticBag* _diagnostic;
-    BoundScope* _scope;
+    DiagnosticBag *_diagnostic;
+    BoundScope *_scope;
 
 public:
-    explicit Binder(BoundScope* parent);
+    explicit Binder(BoundScope *parent);
 
     DiagnosticBag *diagnostics() const;
 
@@ -147,13 +168,16 @@ public:
     static BoundScope *CreateParentScope(BoundGlobalScope *previous);
 
     const BoundExpression *BindLiteralExpression(const ExpressionSyntax &syntax);
+
     const BoundExpression *BindUnaryExpression(const ExpressionSyntax &syntax);
+
     const BoundExpression *BindBinaryExpression(const ExpressionSyntax &syntax);
-    const BoundExpression* BindNameExpression(const ExpressionSyntax& syntax);
+
+    const BoundExpression *BindNameExpression(const ExpressionSyntax &syntax);
 
     BoundStatement *BindVariableDeclaration(VariableDeclarationSyntax *syntax);
 
-    const BoundExpression* BindAssignmentExpression(const ExpressionSyntax& syntax);
+    const BoundExpression *BindAssignmentExpression(const ExpressionSyntax &syntax);
 
     BoundStatement *bindStatement(StatementSyntax *syntax);
 
@@ -165,7 +189,9 @@ public:
 };
 
 std::string boundKindsToString(const BoundUnaryOperatorKind kind);
+
 std::string boundKindsToString(const BoundBinaryOperatorKind kind);
+
 std::string boundKindsToString(const BoundNodeKind kind);
 
 #endif // BINDER_H
