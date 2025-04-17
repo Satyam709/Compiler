@@ -2,6 +2,7 @@
 #define TEXTSPAN_H
 
 #include <cstdint>
+#include <ostream>
 
 class TextSpan {
 public:
@@ -18,6 +19,11 @@ public:
     // Optional utility methods
     [[nodiscard]] bool Contains(int32_t position) const;
     [[nodiscard]] bool OverlapsWith(const TextSpan& span) const;
+
+    friend std::ostream& operator<<(std::ostream& os, const TextSpan& span) {
+        os<<span.Start()<<".."<<span.End();
+        return os;
+    }
 
 private:
     int32_t m_start;
