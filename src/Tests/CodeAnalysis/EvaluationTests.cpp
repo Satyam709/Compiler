@@ -91,6 +91,16 @@ std::vector<std::pair<std::string, std::any> > GetEvaluationTestCases() {
         {"false", false},
         {"!true", false},
         {"!false", true},
+        {"3 < 4", true},
+        {"5 < 4", false},
+        {"4 <= 4", true},
+        {"4 <= 5", true},
+        {"5 <= 4", false},
+        {"4 > 3", true},
+        {"4 > 5", false},
+        {"4 >= 4", true},
+        {"5 >= 4", true},
+        {"4 >= 5", false},
         {"{ var a = 0 (a = 10) * a }", 100},
     };
 }

@@ -99,6 +99,18 @@ static bool RequiresSeparator(const SyntaxKind t1Kind, const SyntaxKind t2Kind) 
     if (t1Kind == SyntaxKind::EqualsToken && t2Kind == SyntaxKind::EqualEqualToken)
         return true;
 
+    if (t1Kind == SyntaxKind::LessToken && t2Kind == SyntaxKind::EqualsToken)
+        return true;
+
+    if (t1Kind == SyntaxKind::LessToken && t2Kind == SyntaxKind::EqualEqualToken)
+        return true;
+
+    if (t1Kind == SyntaxKind::GreaterToken && t2Kind == SyntaxKind::EqualsToken)
+        return true;
+
+    if (t1Kind == SyntaxKind::GreaterToken && t2Kind == SyntaxKind::EqualEqualToken)
+        return true;
+
     return false;
 }
 
@@ -121,7 +133,7 @@ static auto GetTokenPairs() {
 
 
 // Parameterized fixture
-struct LexerTestsSingle : testing::TestWithParam<TokenInfo> {
+struct LexerTests : testing::TestWithParam<TokenInfo> {
 };
 
 TEST(LexerTests, LexerTestsAllTokens) {
@@ -163,7 +175,7 @@ TEST(LexerTests, LexerTestsAllTokens) {
 
 
 // single token test
-TEST_P(LexerTestsSingle, LexerLexesTokens) {
+TEST_P(LexerTests, LexerLexesTokens) {
     const auto text = GetParam().text;
     const auto kind = GetParam().kind;
 
@@ -202,7 +214,7 @@ TEST_P(LexerPairedTests, LexerLexesPairedTokens) {
 
 INSTANTIATE_TEST_SUITE_P(
     LexerLexesTokens, // Test suite name
-    LexerTestsSingle, // Test fixture
+    LexerTests, // Test fixture
     ::testing::ValuesIn(
         // Convert each tuple to TokenInfo
         [&]() {

@@ -9,6 +9,7 @@ add_executable(YacTests ${TEST_SOURCES}
         CodeAnalysis/EvaluationTests.cpp
         CodeAnalysis/Text/SourceTextTests.cpp
         CodeAnalysis/AnnotatedText.cpp
+        CodeAnalysis/Syntax/LexerTests.cpp
         CodeAnalysis/AnnotatedText.h)
 
 
