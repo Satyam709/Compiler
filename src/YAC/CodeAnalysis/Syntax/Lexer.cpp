@@ -37,7 +37,7 @@ char Lexer::peek(const int offset) const {
 
 SyntaxToken Lexer::nextToken() {
     if (_position >= _text.Length()) {
-        return {_position, SyntaxKind::EndOfFileToken, "EOF", nullptr};
+        return {_position, SyntaxKind::EndOfFileToken, "", nullptr};
     }
 
     const char current = getCurrentChar();

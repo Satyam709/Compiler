@@ -239,6 +239,14 @@ const BoundExpression *Binder::BindBinaryExpression(const ExpressionSyntax &synt
 const BoundExpression *Binder::BindNameExpression(const ExpressionSyntax &syntax) {
     if (const auto *exp = dynamic_cast<const NameExpressionSyntax *>(&syntax)) {
         std::string name = exp->getIdentifierToken().text;
+
+        if (name.empty())
+        {
+            // This means the token was inserted by the parser. We already
+            // reported error so we can just return an error expression.
+            return new BoundLiteralExpression(0);
+        }
+
         auto target = VariableSymbol(name, true, typeid(int));
         // just for searching as only name is hashed,type is of no use
 

@@ -111,6 +111,31 @@ std::vector<std::pair<std::string, std::any> > GetEvaluationTestCases() {
     };
 }
 
+TEST_F(EvaluationTests, Evaluator_NameExpression_Reports_NoErrorForInsertedToken) {
+    const std::string text = "[]";
+
+    const std::string diagnostics = R"(
+        Unexpected token <EndOfFileToken>, expected <IdentifierToken>.
+    )";
+
+    AssertDiagnostics(text, diagnostics);
+}
+
+TEST_F(EvaluationTests, Evaluator_BlockStatement_NoInfiniteLoop) {
+    const std::string text = R"(
+        {
+            [)][]
+
+    )";
+
+    const std::string diagnostics = R"(
+        Unexpected token <CloseParenthesisToken>, expected <IdentifierToken>.
+        Unexpected token <EndOfFileToken>, expected <CloseBraceToken>.
+    )";
+
+    AssertDiagnostics(text, diagnostics);
+}
+
 TEST_F(EvaluationTests, Evaluator_ForStatement_Reports_CannotConvert_LowerBound) {
     const std::string text = R"(
         {
