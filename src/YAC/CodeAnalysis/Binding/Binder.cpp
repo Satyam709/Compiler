@@ -282,7 +282,7 @@ const BoundExpression *Binder::BindAssignmentExpression(const ExpressionSyntax &
             _diagnostic->reportCannotAssign(exp->getEqualsToken().getSpan(), name);
         }
         if (exprType != crnt_var.getType()) {
-            _diagnostic->reportCannotConvert(exp->getSpan(), exprType, crnt_var.getType());
+            _diagnostic->reportCannotConvert(exp->expression().getSpan(), exprType, crnt_var.getType());
         }
         return new BoundAssignmentExpression(crnt_var, boundExpression);
     }
