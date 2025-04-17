@@ -102,7 +102,27 @@ std::vector<std::pair<std::string, std::any> > GetEvaluationTestCases() {
         {"5 >= 4", true},
         {"4 >= 5", false},
         {"{ var a = 0 (a = 10) * a }", 100},
+        {"{ var a = 0 if a == 0 a = 10 a }", 10},
+        {"{ var a = 0 if a == 4 a = 10 a }", 0},
+        {"{ var a = 0 if a == 0 a = 10 else a = 5 a }", 10},
+        {"{ var a = 0 if a == 4 a = 10 else a = 5 a }", 5},
     };
+}
+
+TEST_F(EvaluationTests, Evaluator_IfStatement_Reports_CannotConvert) {
+    const std::string text = R"(
+        {
+            var x = 0
+            if [10]
+                x = 10
+        }
+    )";
+
+    const std::string diagnostics = R"(
+        Cannot convert type 'int' to 'bool'.
+    )";
+
+    AssertDiagnostics(text, diagnostics);
 }
 
 TEST_F(EvaluationTests, Evaluator_VariableDeclaration_Reports_Redeclaration) {
