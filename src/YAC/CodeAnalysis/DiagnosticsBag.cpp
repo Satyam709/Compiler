@@ -45,15 +45,15 @@ void DiagnosticBag::reportUnexpectedToken(const TextSpan &span, const SyntaxKind
 void DiagnosticBag::reportUndefinedUnaryOperator(const TextSpan &span, const std::string &operatorText,
                                                  const std::string &operandType) {
     std::stringstream ss;
-    ss << "Unary operator '" << operatorText << "' is not defined for type " << operandType << ".";
+    ss << "Unary operator '" << operatorText << "' is not defined for type '" << operandType << "'.";
     report(span, ss.str());
 }
 
 void DiagnosticBag::reportUndefinedBinaryOperator(const TextSpan &span, const std::string &operatorText,
                                                   const std::string &leftType, const std::string &rightType) {
     std::stringstream ss;
-    ss << "Binary operator '" << operatorText << "' is not defined for types " << leftType << " and " << rightType <<
-            ".";
+    ss << "Binary operator '" << operatorText << "' is not defined for types '" << leftType << "' and '" << rightType <<
+            "'.";
     report(span, ss.str());
 }
 
@@ -66,7 +66,7 @@ void DiagnosticBag::reportUndefinedName(const TextSpan &span, const std::string 
 void DiagnosticBag::reportCannotConvert(const TextSpan &span, const std::type_info &fromType,
                                         const std::type_info &toType) {
     std::stringstream ss;
-    ss << "cannot convert type '" << getTypeName(fromType) << " to " << getTypeName(toType) << ".";
+    ss << "Cannot convert type '" << getTypeName(fromType) << "' to '" << getTypeName(toType) << "'.";
     report(span, ss.str());
 }
 
