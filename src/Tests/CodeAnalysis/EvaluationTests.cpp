@@ -11,13 +11,10 @@
 #include "YAC/CodeAnalysis/Syntax/Parser.h"
 
 // Test fixture for evaluation tests
-struct EvaluationTests : public ::testing::TestWithParam<std::pair<std::string, std::any>> {
+struct EvaluationTests : public ::testing::TestWithParam<std::pair<std::string, std::any> > {
 };
 
-// Test case for evaluating syntax expressions
-TEST_P(EvaluationTests, SyntaxFact_GetText_RoundTrips) {
-    const auto& [text, expectedValue] = GetParam();
-
+static void AssertValue(const std::string &text, const std::any &expectedValue) {
     const auto syntaxTree = new SyntaxTree(text);
     const auto compilation = new Compilation(*syntaxTree);
     std::unordered_map<VariableSymbol, std::any> variables;
@@ -36,8 +33,14 @@ TEST_P(EvaluationTests, SyntaxFact_GetText_RoundTrips) {
     }
 }
 
+// Test case for evaluating syntax expressions
+TEST_P(EvaluationTests, SyntaxFact_GetText_RoundTrips) {
+    const auto &[text, expectedValue] = GetParam();
+    AssertValue(text, expectedValue);
+}
+
 // Test data
-std::vector<std::pair<std::string, std::any>> GetEvaluationTestCases() {
+std::vector<std::pair<std::string, std::any> > GetEvaluationTestCases() {
     return {
         {"1", 1},
         {"+1", 1},
