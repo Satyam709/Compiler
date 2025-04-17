@@ -54,6 +54,14 @@ private:
 
     ExpressionSyntax *parsePrimaryExpression();
 
+    ExpressionSyntax *parseParenthesizedExpression();
+
+    ExpressionSyntax *parseBooleanLiteral();
+
+    ExpressionSyntax *parseNumberLiteral();
+
+    ExpressionSyntax *parseNameExpression();
+
 public:
     [[nodiscard]] DiagnosticBag * diagnostics() const {
         return _diagnostics;

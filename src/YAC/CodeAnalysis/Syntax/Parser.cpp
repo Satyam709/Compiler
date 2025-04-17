@@ -112,8 +112,19 @@ BlockStatementSyntax *Parser::parseBlockStatement() {
 
     while (current().kind != SyntaxKind::EndOfFileToken &&
            current().kind != SyntaxKind::CloseBraceToken) {
+        const auto startPosition = _position;
         auto statement = parseStatement();
         statements.push_back(statement);
+
+        // If ParseStatement() did not consume any tokens,
+        // we need to skip the current token and continue
+        // in order to avoid an infinite loop.
+        //
+        // We don't need to report an error, because we'll
+        // already tried to parse an expression statement
+        // and reported one.
+        if (_position == startPosition)
+            nextToken();
     }
 
     const auto closeBraceToken = match(SyntaxKind::CloseBraceToken);
@@ -174,27 +185,40 @@ StatementSyntax *Parser::parseVariableDeclaration() {
 
 ExpressionSyntax *Parser::parsePrimaryExpression() {
     switch (current().kind) {
-        case SyntaxKind::OpenParenthesisToken: {
-            const auto left = nextToken();
-            const auto expression = parseExpression();
-            const auto right = match(SyntaxKind::CloseParenthesisToken);
-            return new ParenthesizedExpressionSyntax(left, *expression, right);
-        }
+        case SyntaxKind::OpenParenthesisToken:
+            return parseParenthesizedExpression();
         case SyntaxKind::TrueKeyword:
-        case SyntaxKind::FalseKeyword: {
-            const auto keywordToken = nextToken();
-            bool val = keywordToken.kind == SyntaxKind::TrueKeyword;
-            return new LiteralExpressionSyntax(keywordToken, val);
-        }
-        case SyntaxKind::IdentifierToken: {
-            const auto identifierToken = nextToken();
-            return new NameExpressionSyntax(identifierToken);
-        }
-        default: {
-            const auto numberToken = match(SyntaxKind::NumberToken);
-            return new LiteralExpressionSyntax(numberToken);
-        }
+        case SyntaxKind::FalseKeyword:
+            return parseBooleanLiteral();
+        case SyntaxKind::NumberToken:
+            return parseNumberLiteral();
+        case SyntaxKind::IdentifierToken:
+        default:
+            return parseNameExpression();
     }
+}
+
+ExpressionSyntax *Parser::parseParenthesizedExpression() {
+    const auto left = match(SyntaxKind::OpenParenthesisToken);
+    const auto expression = parseExpression();
+    const auto right = match(SyntaxKind::CloseParenthesisToken);
+    return new ParenthesizedExpressionSyntax(left, *expression, right);
+}
+
+ExpressionSyntax *Parser::parseBooleanLiteral() {
+    const bool isTrue = current().kind == SyntaxKind::TrueKeyword;
+    const auto keywordToken = isTrue ? match(SyntaxKind::TrueKeyword) : match(SyntaxKind::FalseKeyword);
+    return new LiteralExpressionSyntax(keywordToken, isTrue);
+}
+
+ExpressionSyntax *Parser::parseNumberLiteral() {
+    const auto numberToken = match(SyntaxKind::NumberToken);
+    return new LiteralExpressionSyntax(numberToken);
+}
+
+ExpressionSyntax *Parser::parseNameExpression() {
+    const auto identifierToken = match(SyntaxKind::IdentifierToken);
+    return new NameExpressionSyntax(identifierToken);
 }
 
 CompilationUnitSyntax *Parser::ParseStatement() {
