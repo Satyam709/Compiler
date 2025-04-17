@@ -21,6 +21,7 @@
 #include "YAC/CodeAnalysis/Syntax/ExpressionStatementSyntax.h"
 #include "YAC/CodeAnalysis/Syntax/IfStatementSyntax.h"
 #include "YAC/CodeAnalysis/Syntax/VariableDeclarationSyntax.h"
+#include "YAC/CodeAnalysis/Syntax/WhileStatementSyntax.h"
 
 class BoundScope;
 
@@ -33,7 +34,8 @@ enum class BoundNodeKind {
     BlockStatement,
     ExpressionStatement,
     VariableDeclaration,
-    IfStatement
+    IfStatement,
+    WhileStatement
 };
 
 class BoundNode {
@@ -187,6 +189,8 @@ public:
     const BoundExpression *bindExpression(const ExpressionSyntax &syntax, const std::type_info &targetType);
 
     BoundStatement *bindIfStatement(const IfStatementSyntax *syntax);
+
+    BoundStatement *bindWhileStatement(const WhileStatementSyntax *syntax);
 
     BoundStatement *bindStatement(StatementSyntax *syntax);
 

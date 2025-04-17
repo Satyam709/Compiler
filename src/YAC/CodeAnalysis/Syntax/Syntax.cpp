@@ -56,6 +56,8 @@ std::string syntaxKindToString(const SyntaxKind kind) {
         case SyntaxKind::ElseKeyword: return "ElseKeyword";
         case SyntaxKind::IfKeyword: return "IfKeyword";
         case SyntaxKind::IfStatement: return "IfStatement";
+        case SyntaxKind::WhileKeyword: return "WhileKeyword";
+        case SyntaxKind::WhileStatement: return "WhileStatement";
 
         default: return "UnknownToken";
     }
@@ -111,6 +113,8 @@ std::string getKindText(const SyntaxKind &kind) {
             return "else";
         case SyntaxKind::IfKeyword:
             return "if";
+        case SyntaxKind::WhileKeyword:
+            return "while";
         default:
             return "";
     }

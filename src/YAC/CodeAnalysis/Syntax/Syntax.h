@@ -50,12 +50,16 @@ enum class SyntaxKind {
     BlockStatement,
     VariableDeclaration,
     IfStatement,
+    WhileStatement,
+
 
     // keywords
     LetKeyword,
     VarKeyword,
     ElseKeyword,
     IfKeyword,
+    WhileKeyword,
+
 
     // bools
     TrueKeyword,

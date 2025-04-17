@@ -12,6 +12,7 @@
 #include "ExpressionStatementSyntax.h"
 #include "IfStatementSyntax.h"
 #include "VariableDeclarationSyntax.h"
+#include "WhileStatementSyntax.h"
 
 Parser::Parser(const SourceText &input): _input(input) {
     Lexer lexer(input);
@@ -50,7 +51,7 @@ ExpressionSyntax *Parser::parseExpression() {
     return parseAssignmentExpression();
 }
 
-StatementSyntax* Parser::parseIfStatement() {
+StatementSyntax *Parser::parseIfStatement() {
     const auto keyword = match(SyntaxKind::IfKeyword);
     const auto condition = parseExpression();
     const auto statement = parseStatement();
@@ -58,7 +59,14 @@ StatementSyntax* Parser::parseIfStatement() {
     return new IfStatementSyntax(keyword, *condition, *statement, elseClause);
 }
 
-ElseClauseSyntax* Parser::parseElseClause() {
+StatementSyntax *Parser::parseWhileStatement() {
+    const auto keyword = match(SyntaxKind::WhileKeyword);
+    const auto condition = parseExpression();
+    const auto body = parseStatement();
+    return new WhileStatementSyntax(keyword, *condition, *body);
+}
+
+ElseClauseSyntax *Parser::parseElseClause() {
     if (current().kind != SyntaxKind::ElseKeyword)
         return nullptr;
 
@@ -76,6 +84,8 @@ StatementSyntax *Parser::parseStatement() {
             return parseVariableDeclaration();
         case SyntaxKind::IfKeyword:
             return parseIfStatement();
+        case SyntaxKind::WhileKeyword:
+            return parseWhileStatement();
         default:
             return parseExpressionStatement();
     }

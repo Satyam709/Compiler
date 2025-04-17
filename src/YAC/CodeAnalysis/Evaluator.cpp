@@ -7,6 +7,7 @@
 #include "Binding/BoundExpressionStatement.h"
 #include "Binding/BoundIfStatement.h"
 #include "Binding/BoundVariableDeclaration.h"
+#include "Binding/BoundWhileStatement.h"
 #include "Syntax/Expression.h"
 
 Evaluator::Evaluator(const BoundStatement &root, std::unordered_map<VariableSymbol, std::any> &variables)
@@ -39,6 +40,12 @@ void Evaluator::EvaluateStatement(const BoundStatement *node) {
             }
             break;
         }
+        case BoundNodeKind::WhileStatement: {
+            if (const auto it = dynamic_cast<const BoundWhileStatement *>(node)) {
+                return EvaluateWhileStatement(it);
+            }
+            break;
+        }
         default:
             throw std::runtime_error("Cannot evaluate: Invalid statement node kind");
     }
@@ -61,6 +68,12 @@ void Evaluator::EvaluateIfStatement(const BoundIfStatement *node) {
         EvaluateStatement(node->thenStatement());
     } else if (node->elseStatement() != nullptr) {
         EvaluateStatement(node->elseStatement());
+    }
+}
+
+void Evaluator::EvaluateWhileStatement(const BoundWhileStatement *node) {
+    while (std::any_cast<bool>(evaluateExpression(node->condition()))) {
+        EvaluateStatement(node->body());
     }
 }
 

@@ -35,6 +35,8 @@ private:
 
     StatementSyntax *parseIfStatement();
 
+    StatementSyntax *parseWhileStatement();
+
     ElseClauseSyntax *parseElseClause();
 
     StatementSyntax *parseStatement();

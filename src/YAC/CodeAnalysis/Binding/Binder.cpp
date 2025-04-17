@@ -9,11 +9,13 @@
 #include "BoundIfStatement.h"
 #include "BoundScope.h"
 #include "BoundVariableDeclaration.h"
+#include "BoundWhileStatement.h"
 #include "YAC/CodeAnalysis/Syntax/BlockStatementSyntax.h"
 #include "YAC/CodeAnalysis/Syntax/CompilationUnitSyntax.h"
 #include "YAC/CodeAnalysis/Syntax/ExpressionStatementSyntax.h"
 #include "YAC/CodeAnalysis/Syntax/IfStatementSyntax.h"
 #include "YAC/CodeAnalysis/Syntax/VariableDeclarationSyntax.h"
+#include "YAC/CodeAnalysis/Syntax/WhileStatementSyntax.h"
 
 // BoundLiteralExpression Implementation
 BoundLiteralExpression::BoundLiteralExpression(std::any value)
@@ -306,6 +308,12 @@ BoundStatement *Binder::bindIfStatement(const IfStatementSyntax *syntax) {
     return new BoundIfStatement(condition, thenStatement, elseStatement);
 }
 
+BoundStatement *Binder::bindWhileStatement(const WhileStatementSyntax *syntax) {
+    const auto condition = bindExpression(syntax->condition(), typeid(bool));
+    const auto body = bindStatement(&syntax->body());
+    return new BoundWhileStatement(condition, body);
+}
+
 
 BoundStatement *Binder::bindStatement(StatementSyntax *syntax) {
     switch (syntax->getKind()) {
@@ -317,6 +325,8 @@ BoundStatement *Binder::bindStatement(StatementSyntax *syntax) {
             return BindVariableDeclaration(static_cast<VariableDeclarationSyntax *>(syntax));
         case SyntaxKind::IfStatement:
             return bindIfStatement(static_cast<IfStatementSyntax *>(syntax));
+        case SyntaxKind::WhileStatement:
+            return bindWhileStatement(dynamic_cast<WhileStatementSyntax *>(syntax));
         default:
             throw std::runtime_error("Unexpected syntax " + syntaxKindToString(syntax->getKind()));
     }
