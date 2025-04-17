@@ -117,13 +117,14 @@ ExpressionSyntax *Parser::parseBinaryExpression(const int parentPrecedence) {
 }
 
 StatementSyntax *Parser::parseVariableDeclaration() {
-    const auto expected = current().kind == SyntaxKind::LetKeyword ? SyntaxKind::LetKeyword : SyntaxKind::VarKeyword;
+    const auto crntToken = current();
+    const auto expected = crntToken.kind == SyntaxKind::LetKeyword ? SyntaxKind::LetKeyword : SyntaxKind::VarKeyword;
     const auto keyword = match(expected);
     const auto identifier = match(SyntaxKind::IdentifierToken);
     auto equals = match(SyntaxKind::EqualsToken);
     const auto initializer = parseExpression();
 
-    return new VariableDeclarationSyntax(identifier, identifier, keyword, *initializer);
+    return new VariableDeclarationSyntax(crntToken, identifier, keyword, *initializer);
 }
 
 ExpressionSyntax *Parser::parsePrimaryExpression() {
