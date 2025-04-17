@@ -5,6 +5,7 @@
 #include <string>
 #include <unordered_map>
 
+#include "AnnotatedText.h"
 #include "YAC/CodeAnalysis/Syntax/SyntaxTree.h"
 #include "YAC/CodeAnalysis/Compilation.h"
 #include "YAC/CodeAnalysis/Symbols/VariableSymbol.h"
@@ -32,6 +33,34 @@ static void AssertValue(const std::string &text, const std::any &expectedValue) 
         FAIL() << "Unexpected type in test case";
     }
 }
+
+static void AssertDiagnostics(const std::string &text, const std::string &diagnosticText) {
+    const auto annotatedText = AnnotatedText::Parse(text);
+    const auto syntaxTree = SyntaxTree::parse(SourceText::From(annotatedText.getText()));
+    const auto compilation = Compilation(*syntaxTree);
+    std::unordered_map<VariableSymbol, std::any> variables;
+    const auto result = compilation.evaluate(variables);
+
+    const auto expectedDiagnostics = AnnotatedText::UnindentLines(diagnosticText);
+
+    if (annotatedText.getSpans().size() != expectedDiagnostics.size()) {
+        throw std::runtime_error("ERROR: Must mark as many spans as there are expected diagnostics");
+    }
+
+    ASSERT_EQ(expectedDiagnostics.size(), result.diagnostics().size());
+
+    for (size_t i = 0; i < expectedDiagnostics.size(); i++) {
+        const auto &expectedMessage = expectedDiagnostics[i];
+        const auto &actualMessage = result.diagnostics()[i].getMessage();
+        EXPECT_EQ(expectedMessage, actualMessage);
+        const auto &expectedSpan = annotatedText.getSpans()[i];
+        const auto &actualSpan = result.diagnostics()[i].getSpan();
+
+        EXPECT_EQ(expectedSpan.Start(), actualSpan.Start());
+        EXPECT_EQ(expectedSpan.Length(), actualSpan.Length());
+    }
+}
+
 
 // Test case for evaluating syntax expressions
 TEST_P(EvaluationTests, SyntaxFact_GetText_RoundTrips) {
@@ -64,6 +93,95 @@ std::vector<std::pair<std::string, std::any> > GetEvaluationTestCases() {
         {"!false", true},
         {"{ var a = 0 (a = 10) * a }", 100},
     };
+}
+
+TEST_F(EvaluationTests, Evaluator_VariableDeclaration_Reports_Redeclaration) {
+    const std::string text = R"(
+        {
+            var x = 10
+            var y = 100
+            {
+                var x = 10
+            }
+            var [x] = 5
+        }
+    )";
+
+    const std::string diagnostics = R"(
+        Variable 'x' is already declared.
+    )";
+
+    AssertDiagnostics(text, diagnostics);
+}
+
+TEST_F(EvaluationTests, Evaluator_Name_Reports_Undefined) {
+    const std::string text = "[x] * 10";
+
+    const std::string diagnostics = R"(
+        Variable 'x' does not exist.
+    )";
+
+    AssertDiagnostics(text, diagnostics);
+}
+
+TEST_F(EvaluationTests, Evaluator_Assigned_Reports_Undefined) {
+    const std::string text = "[x] = 10";
+
+    const std::string diagnostics = R"(
+        Variable 'x' does not exist.
+    )";
+
+    AssertDiagnostics(text, diagnostics);
+}
+
+TEST_F(EvaluationTests, Evaluator_Assigned_Reports_CannotAssign) {
+    const std::string text = R"(
+        {
+            let x = 10
+            x [=] 0
+        }
+    )";
+
+    const std::string diagnostics = R"(
+        Variable 'x' is read-only and cannot be assigned to.
+    )";
+
+    AssertDiagnostics(text, diagnostics);
+}
+
+TEST_F(EvaluationTests, Evaluator_Assigned_Reports_CannotConvert) {
+    const std::string text = R"(
+        {
+            var x = 10
+            x = [true]
+        }
+    )";
+
+    const std::string diagnostics = R"(
+        Cannot convert type 'bool' to 'int'.
+    )";
+
+    AssertDiagnostics(text, diagnostics);
+}
+
+TEST_F(EvaluationTests, Evaluator_Unary_Reports_Undefined) {
+    const std::string text = "[+]true";
+
+    const std::string diagnostics = R"(
+        Unary operator '+' is not defined for type 'bool'.
+    )";
+
+    AssertDiagnostics(text, diagnostics);
+}
+
+TEST_F(EvaluationTests, Evaluator_Binary_Reports_Undefined) {
+    const std::string text = "10 [*] false";
+
+    const std::string diagnostics = R"(
+        Binary operator '*' is not defined for types 'int' and 'bool'.
+    )";
+
+    AssertDiagnostics(text, diagnostics);
 }
 
 // Instantiate the test cases
