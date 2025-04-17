@@ -7,7 +7,7 @@
 #include "YAC/CodeAnalysis/Text/SourceText.h"  // Add this include
 
 // Update constructor to use SourceText
-Lexer::Lexer(const SourceText& text)
+Lexer::Lexer(const SourceText &text)
     : _text(text), _position(0), diagnosticBag(new DiagnosticBag()) {
 }
 
@@ -67,7 +67,7 @@ SyntaxToken Lexer::nextToken() {
         return {start, SyntaxKind::WhitespaceToken, tokenText, nullptr};
     }
 
-    if(std::isalpha(current)) {
+    if (std::isalpha(current)) {
         const int start = _position;
         while (std::isalpha(getCurrentChar())) {
             advance();
@@ -88,6 +88,22 @@ SyntaxToken Lexer::nextToken() {
     if (current == '*') {
         return {_position++, SyntaxKind::StarToken, "*", nullptr};
     }
+    if (current == '<') {
+        if (peek(1) == '=') {
+            int start = _position;
+            _position += 2;
+            return {start, SyntaxKind::LessOrEqualsToken, "<=", nullptr};
+        }
+        return {_position++, SyntaxKind::LessToken, "<", nullptr};
+    }
+    if (current == '>') {
+        if (peek(1) == '=') {
+            int start = _position;
+            _position += 2;
+            return {start, SyntaxKind::GreaterOrEqualsToken, ">=", nullptr};
+        }
+        return {_position++, SyntaxKind::GreaterToken, ">", nullptr};
+    }
     if (current == '/') {
         return {_position++, SyntaxKind::SlashToken, "/", nullptr};
     }
@@ -104,32 +120,31 @@ SyntaxToken Lexer::nextToken() {
         return {_position++, SyntaxKind::CloseBraceToken, "}", nullptr};
     }
     if (current == '!') {
-        if (peek(1)=='=') {
+        if (peek(1) == '=') {
             int start = _position;
-            _position+=2;
+            _position += 2;
             return {start, SyntaxKind::NotEqualToken, "!=", nullptr};
         }
         return {_position++, SyntaxKind::BangToken, "!", nullptr};
     }
-    if (current == '&' && peek(1)== '&') {
+    if (current == '&' && peek(1) == '&') {
         int start = _position;
-        _position+=2;
+        _position += 2;
         return {start, SyntaxKind::AmpersandAmpersandToken, "&&", nullptr};
     }
-    if (current == '|' && peek(1)== '|') {
+    if (current == '|' && peek(1) == '|') {
         int start = _position;
-        _position+=2;
+        _position += 2;
         return {start, SyntaxKind::PipePipeToken, "||", nullptr};
     }
-    if (current == '=' ) {
-        if (peek(1)=='=') {
+    if (current == '=') {
+        if (peek(1) == '=') {
             int start = _position;
-            _position+=2;
+            _position += 2;
             return {start, SyntaxKind::EqualEqualToken, "==", nullptr};
-        }
-        else {
-            int start=_position;
-            _position+=1;
+        } else {
+            int start = _position;
+            _position += 1;
             return {start, SyntaxKind::EqualsToken, "=", nullptr};
         }
     }

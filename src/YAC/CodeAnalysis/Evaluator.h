@@ -5,8 +5,11 @@
 
 #include "Binding/BoundBlockStatement.h"
 #include "Binding/BoundExpressionStatement.h"
+#include "Binding/BoundForStatement.h"
+#include "Binding/BoundIfStatement.h"
 #include "Binding/BoundStatement.h"
 #include "Binding/BoundVariableDeclaration.h"
+#include "Binding/BoundWhileStatement.h"
 #include "Symbols/VariableSymbol.h"
 
 class Evaluator {
@@ -18,6 +21,12 @@ public:
     void EvaluateVariableDeclaration(const BoundVariableDeclaration *node);
 
     void EvaluateBlockStatement(const BoundBlockStatement *node);
+
+    void EvaluateIfStatement(const BoundIfStatement *node);
+
+    void EvaluateWhileStatement(const BoundWhileStatement *node);
+
+    void EvaluateForStatement(const BoundForStatement *node);
 
     void EvaluateExpressionStatement(const BoundExpressionStatement *node);
 

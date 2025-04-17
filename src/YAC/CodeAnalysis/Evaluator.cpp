@@ -5,7 +5,10 @@
 #include "Binding/Binder.h"
 #include "Binding/BoundBlockStatement.h"
 #include "Binding/BoundExpressionStatement.h"
+#include "Binding/BoundForStatement.h"
+#include "Binding/BoundIfStatement.h"
 #include "Binding/BoundVariableDeclaration.h"
+#include "Binding/BoundWhileStatement.h"
 #include "Syntax/Expression.h"
 
 Evaluator::Evaluator(const BoundStatement &root, std::unordered_map<VariableSymbol, std::any> &variables)
@@ -32,20 +35,62 @@ void Evaluator::EvaluateStatement(const BoundStatement *node) {
             }
             break;
         }
+        case BoundNodeKind::IfStatement: {
+            if (const auto it = dynamic_cast<const BoundIfStatement *>(node)) {
+                return EvaluateIfStatement(it);
+            }
+            break;
+        }
+        case BoundNodeKind::WhileStatement: {
+            if (const auto it = dynamic_cast<const BoundWhileStatement *>(node)) {
+                return EvaluateWhileStatement(it);
+            }
+            break;
+        }
+        case BoundNodeKind::ForStatement: {
+            if (const auto it = dynamic_cast<const BoundForStatement *>(node)) {
+                return EvaluateForStatement(it);
+            }
+            break;
+        }
         default:
             throw std::runtime_error("Cannot evaluate: Invalid statement node kind");
     }
 }
 
-void Evaluator::EvaluateVariableDeclaration(const BoundVariableDeclaration* node) {
+void Evaluator::EvaluateVariableDeclaration(const BoundVariableDeclaration *node) {
     const auto value = evaluateExpression(node->getInitializer());
-    _variables[*node->getVariable()]= value;
+    _variables[*node->getVariable()] = value;
     _lastValue = value;
 }
 
 void Evaluator::EvaluateBlockStatement(const BoundBlockStatement *node) {
     for (const auto statement: node->statements()) {
         EvaluateStatement(statement);
+    }
+}
+
+void Evaluator::EvaluateIfStatement(const BoundIfStatement *node) {
+    if (auto condition = std::any_cast<bool>(evaluateExpression(node->condition()))) {
+        EvaluateStatement(node->thenStatement());
+    } else if (node->elseStatement() != nullptr) {
+        EvaluateStatement(node->elseStatement());
+    }
+}
+
+void Evaluator::EvaluateWhileStatement(const BoundWhileStatement *node) {
+    while (std::any_cast<bool>(evaluateExpression(node->condition()))) {
+        EvaluateStatement(node->body());
+    }
+}
+
+void Evaluator::EvaluateForStatement(const BoundForStatement *node) {
+    const auto lowerBound = std::any_cast<int>(evaluateExpression(node->lowerBound()));
+    const auto upperBound = std::any_cast<int>(evaluateExpression(node->upperBound()));
+
+    for (int i = lowerBound; i <= upperBound; i++) {
+        _variables[node->variable()] = i;
+        EvaluateStatement(node->body());
     }
 }
 
@@ -153,6 +198,30 @@ std::any Evaluator::evaluateExpression(const BoundExpression *node) {
                     throw std::runtime_error("Division by zero");
                 }
                 return left / right;
+            }
+
+            case BoundBinaryOperatorKind::Less: {
+                const auto left = std::any_cast<int>(leftResult);
+                const auto right = std::any_cast<int>(rightResult);
+                return left < right;
+            }
+
+            case BoundBinaryOperatorKind::Greater: {
+                const auto left = std::any_cast<int>(leftResult);
+                const auto right = std::any_cast<int>(rightResult);
+                return left > right;
+            }
+
+            case BoundBinaryOperatorKind::LessOrEquals: {
+                const auto left = std::any_cast<int>(leftResult);
+                const auto right = std::any_cast<int>(rightResult);
+                return left <= right;
+            }
+
+            case BoundBinaryOperatorKind::GreaterOrEquals: {
+                const auto left = std::any_cast<int>(leftResult);
+                const auto right = std::any_cast<int>(rightResult);
+                return left >= right;
             }
 
             default: {

@@ -8,8 +8,12 @@
 #include "Syntax.h"
 #include "SyntaxFacts.h"
 #include "CompilationUnitSyntax.h"
+#include "ElseClauseSyntax.h"
 #include "ExpressionStatementSyntax.h"
+#include "ForStatementSyntax.h"
+#include "IfStatementSyntax.h"
 #include "VariableDeclarationSyntax.h"
+#include "WhileStatementSyntax.h"
 
 Parser::Parser(const SourceText &input): _input(input) {
     Lexer lexer(input);
@@ -48,6 +52,41 @@ ExpressionSyntax *Parser::parseExpression() {
     return parseAssignmentExpression();
 }
 
+StatementSyntax *Parser::parseIfStatement() {
+    const auto keyword = match(SyntaxKind::IfKeyword);
+    const auto condition = parseExpression();
+    const auto statement = parseStatement();
+    const auto elseClause = parseElseClause();
+    return new IfStatementSyntax(keyword, *condition, *statement, elseClause);
+}
+
+StatementSyntax *Parser::parseWhileStatement() {
+    const auto keyword = match(SyntaxKind::WhileKeyword);
+    const auto condition = parseExpression();
+    const auto body = parseStatement();
+    return new WhileStatementSyntax(keyword, *condition, *body);
+}
+
+StatementSyntax *Parser::parseForStatement() {
+    const auto keyword = match(SyntaxKind::ForKeyword);
+    const auto identifier = match(SyntaxKind::IdentifierToken);
+    const auto equalsToken = match(SyntaxKind::EqualsToken);
+    const auto lowerBound = parseExpression();
+    const auto toKeyword = match(SyntaxKind::ToKeyword);
+    const auto upperBound = parseExpression();
+    const auto body = parseStatement();
+    return new ForStatementSyntax(keyword, identifier, equalsToken, *lowerBound, toKeyword, *upperBound, *body);
+}
+
+ElseClauseSyntax *Parser::parseElseClause() {
+    if (current().kind != SyntaxKind::ElseKeyword)
+        return nullptr;
+
+    const auto keyword = nextToken();
+    const auto statement = parseStatement();
+    return new ElseClauseSyntax(keyword, *statement);
+}
+
 StatementSyntax *Parser::parseStatement() {
     switch (current().kind) {
         case SyntaxKind::OpenBraceToken:
@@ -55,6 +94,12 @@ StatementSyntax *Parser::parseStatement() {
         case SyntaxKind::LetKeyword:
         case SyntaxKind::VarKeyword:
             return parseVariableDeclaration();
+        case SyntaxKind::IfKeyword:
+            return parseIfStatement();
+        case SyntaxKind::WhileKeyword:
+            return parseWhileStatement();
+        case SyntaxKind::ForKeyword:
+            return parseForStatement();
         default:
             return parseExpressionStatement();
     }
@@ -117,13 +162,14 @@ ExpressionSyntax *Parser::parseBinaryExpression(const int parentPrecedence) {
 }
 
 StatementSyntax *Parser::parseVariableDeclaration() {
-    const auto expected = current().kind == SyntaxKind::LetKeyword ? SyntaxKind::LetKeyword : SyntaxKind::VarKeyword;
+    const auto crntToken = current();
+    const auto expected = crntToken.kind == SyntaxKind::LetKeyword ? SyntaxKind::LetKeyword : SyntaxKind::VarKeyword;
     const auto keyword = match(expected);
     const auto identifier = match(SyntaxKind::IdentifierToken);
     auto equals = match(SyntaxKind::EqualsToken);
     const auto initializer = parseExpression();
 
-    return new VariableDeclarationSyntax(identifier, identifier, keyword, *initializer);
+    return new VariableDeclarationSyntax(crntToken, identifier, keyword, *initializer);
 }
 
 ExpressionSyntax *Parser::parsePrimaryExpression() {

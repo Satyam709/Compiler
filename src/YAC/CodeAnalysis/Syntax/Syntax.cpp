@@ -47,13 +47,26 @@ std::string syntaxKindToString(const SyntaxKind kind) {
         case SyntaxKind::BlockStatement: return "BlockStatement";
         case SyntaxKind::VariableDeclaration: return "VariableDeclaration";
         case SyntaxKind::LetKeyword: return "LetKeyword";
-        case SyntaxKind::VarKeyword:return "VarKeyword";
+        case SyntaxKind::VarKeyword: return "VarKeyword";
+        case SyntaxKind::LessToken: return "LessToken";
+        case SyntaxKind::GreaterToken: return "GreaterToken";
+        case SyntaxKind::LessOrEqualsToken: return "LessOrEqualsToken";
+        case SyntaxKind::GreaterOrEqualsToken: return "GreaterOrEqualsToken";
+        case SyntaxKind::ElseClause: return "ElseClause";
+        case SyntaxKind::ElseKeyword: return "ElseKeyword";
+        case SyntaxKind::IfKeyword: return "IfKeyword";
+        case SyntaxKind::IfStatement: return "IfStatement";
+        case SyntaxKind::WhileKeyword: return "WhileKeyword";
+        case SyntaxKind::WhileStatement: return "WhileStatement";
+        case SyntaxKind::ForKeyword: return "ForKeyword";
+        case SyntaxKind::ToKeyword: return "ToKeyword";
+        case SyntaxKind::ForStatement: return "ForStatement";
 
         default: return "UnknownToken";
     }
 }
 
-std::string getKindText(const SyntaxKind& kind) {
+std::string getKindText(const SyntaxKind &kind) {
     switch (kind) {
         case SyntaxKind::PlusToken:
             return "+";
@@ -91,6 +104,24 @@ std::string getKindText(const SyntaxKind& kind) {
             return "var";
         case SyntaxKind::LetKeyword:
             return "let";
+        case SyntaxKind::LessToken:
+            return "<";
+        case SyntaxKind::GreaterToken:
+            return ">";
+        case SyntaxKind::LessOrEqualsToken:
+            return "<=";
+        case SyntaxKind::GreaterOrEqualsToken:
+            return ">=";
+        case SyntaxKind::ElseKeyword:
+            return "else";
+        case SyntaxKind::IfKeyword:
+            return "if";
+        case SyntaxKind::WhileKeyword:
+            return "while";
+        case SyntaxKind::ForKeyword:
+            return "for";
+        case SyntaxKind::ToKeyword:
+            return "to";
         default:
             return "";
     }

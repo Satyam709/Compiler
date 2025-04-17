@@ -44,6 +44,10 @@ const std::vector<SyntaxNode *> &SyntaxNodeToken::getChildren() const {
     return emptyChildren;
 }
 
+TextSpan SyntaxNodeToken::getSpan() const {
+    return _token.getSpan();
+}
+
 void SyntaxTree::prettyPrint(const SyntaxNode &node, std::string indent, const bool isLast) {
     // Using simple ASCII characters instead of UTF-8 box characters
     const std::string marker = isLast ? "+--" : "+--";

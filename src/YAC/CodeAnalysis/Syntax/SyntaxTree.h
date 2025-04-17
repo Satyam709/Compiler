@@ -70,6 +70,8 @@ public:
 
     const std::vector<SyntaxNode *> &getChildren() const override;
 
+    [[nodiscard]] TextSpan getSpan() const override;
+
 private:
     SyntaxToken _token;
 };
