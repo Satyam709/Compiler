@@ -10,6 +10,7 @@
 #include "CompilationUnitSyntax.h"
 #include "ElseClauseSyntax.h"
 #include "ExpressionStatementSyntax.h"
+#include "ForStatementSyntax.h"
 #include "IfStatementSyntax.h"
 #include "VariableDeclarationSyntax.h"
 #include "WhileStatementSyntax.h"
@@ -66,6 +67,17 @@ StatementSyntax *Parser::parseWhileStatement() {
     return new WhileStatementSyntax(keyword, *condition, *body);
 }
 
+StatementSyntax *Parser::parseForStatement() {
+    const auto keyword = match(SyntaxKind::ForKeyword);
+    const auto identifier = match(SyntaxKind::IdentifierToken);
+    const auto equalsToken = match(SyntaxKind::EqualsToken);
+    const auto lowerBound = parseExpression();
+    const auto toKeyword = match(SyntaxKind::ToKeyword);
+    const auto upperBound = parseExpression();
+    const auto body = parseStatement();
+    return new ForStatementSyntax(keyword, identifier, equalsToken, *lowerBound, toKeyword, *upperBound, *body);
+}
+
 ElseClauseSyntax *Parser::parseElseClause() {
     if (current().kind != SyntaxKind::ElseKeyword)
         return nullptr;
@@ -86,6 +98,8 @@ StatementSyntax *Parser::parseStatement() {
             return parseIfStatement();
         case SyntaxKind::WhileKeyword:
             return parseWhileStatement();
+        case SyntaxKind::ForKeyword:
+            return parseForStatement();
         default:
             return parseExpressionStatement();
     }

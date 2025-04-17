@@ -55,6 +55,8 @@ SyntaxKind SyntaxFacts::getKeywordKind(const std::string &text) {
         {"if", SyntaxKind::IfKeyword},
         {"else", SyntaxKind::ElseKeyword},
         {"while", SyntaxKind::WhileKeyword},
+        {"for", SyntaxKind::ForKeyword},
+        {"to", SyntaxKind::ToKeyword},
     };
 
     const auto it = keywords.find(text);

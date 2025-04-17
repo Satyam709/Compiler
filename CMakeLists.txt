@@ -75,6 +75,10 @@ set(SOURCES
         src/YAC/CodeAnalysis/Syntax/WhileStatementSyntax.h
         src/YAC/CodeAnalysis/Binding/BoundWhileStatement.cpp
         src/YAC/CodeAnalysis/Binding/BoundWhileStatement.h
+        src/YAC/CodeAnalysis/Syntax/ForStatementSyntax.cpp
+        src/YAC/CodeAnalysis/Syntax/ForStatementSyntax.h
+        src/YAC/CodeAnalysis/Binding/BoundForStatement.cpp
+        src/YAC/CodeAnalysis/Binding/BoundForStatement.h
 )
 
 # Create library from sources

@@ -51,6 +51,8 @@ enum class SyntaxKind {
     VariableDeclaration,
     IfStatement,
     WhileStatement,
+    ForStatement,
+
 
 
     // keywords
@@ -59,6 +61,8 @@ enum class SyntaxKind {
     ElseKeyword,
     IfKeyword,
     WhileKeyword,
+    ForKeyword,
+    ToKeyword,
 
 
     // bools

@@ -5,6 +5,7 @@
 
 #include "BoundBlockStatement.h"
 #include "BoundExpressionStatement.h"
+#include "BoundForStatement.h"
 #include "BoundGlobalScope.h"
 #include "BoundIfStatement.h"
 #include "BoundScope.h"
@@ -13,6 +14,7 @@
 #include "YAC/CodeAnalysis/Syntax/BlockStatementSyntax.h"
 #include "YAC/CodeAnalysis/Syntax/CompilationUnitSyntax.h"
 #include "YAC/CodeAnalysis/Syntax/ExpressionStatementSyntax.h"
+#include "YAC/CodeAnalysis/Syntax/ForStatementSyntax.h"
 #include "YAC/CodeAnalysis/Syntax/IfStatementSyntax.h"
 #include "YAC/CodeAnalysis/Syntax/VariableDeclarationSyntax.h"
 #include "YAC/CodeAnalysis/Syntax/WhileStatementSyntax.h"
@@ -314,6 +316,25 @@ BoundStatement *Binder::bindWhileStatement(const WhileStatementSyntax *syntax) {
     return new BoundWhileStatement(condition, body);
 }
 
+BoundStatement *Binder::bindForStatement(const ForStatementSyntax *syntax) {
+    const auto lowerBound = bindExpression(syntax->lowerBound(), typeid(int));
+    const auto upperBound = bindExpression(syntax->upperBound(), typeid(int));
+
+    _scope = new BoundScope(_scope);
+
+    const auto &name = syntax->identifier().text;
+    auto variable = VariableSymbol(name, true, typeid(int));
+    if (!_scope->tryDeclare(variable)) {
+        _diagnostic->reportVariableAlreadyDeclared(syntax->identifier().getSpan(), name);
+    }
+
+    const auto body = bindStatement(&syntax->body());
+
+    _scope = _scope->parent();
+
+    return new BoundForStatement(variable, lowerBound, upperBound, body);
+}
+
 
 BoundStatement *Binder::bindStatement(StatementSyntax *syntax) {
     switch (syntax->getKind()) {
@@ -327,6 +348,8 @@ BoundStatement *Binder::bindStatement(StatementSyntax *syntax) {
             return bindIfStatement(static_cast<IfStatementSyntax *>(syntax));
         case SyntaxKind::WhileStatement:
             return bindWhileStatement(dynamic_cast<WhileStatementSyntax *>(syntax));
+        case SyntaxKind::ForStatement:
+            return bindForStatement(dynamic_cast<ForStatementSyntax *>(syntax));
         default:
             throw std::runtime_error("Unexpected syntax " + syntaxKindToString(syntax->getKind()));
     }

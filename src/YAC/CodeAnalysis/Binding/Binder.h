@@ -19,6 +19,7 @@
 #include "YAC/CodeAnalysis/Symbols/VariableSymbol.h"
 #include "YAC/CodeAnalysis/Syntax/BlockStatementSyntax.h"
 #include "YAC/CodeAnalysis/Syntax/ExpressionStatementSyntax.h"
+#include "YAC/CodeAnalysis/Syntax/ForStatementSyntax.h"
 #include "YAC/CodeAnalysis/Syntax/IfStatementSyntax.h"
 #include "YAC/CodeAnalysis/Syntax/VariableDeclarationSyntax.h"
 #include "YAC/CodeAnalysis/Syntax/WhileStatementSyntax.h"
@@ -35,7 +36,8 @@ enum class BoundNodeKind {
     ExpressionStatement,
     VariableDeclaration,
     IfStatement,
-    WhileStatement
+    WhileStatement,
+    ForStatement
 };
 
 class BoundNode {
@@ -191,6 +193,8 @@ public:
     BoundStatement *bindIfStatement(const IfStatementSyntax *syntax);
 
     BoundStatement *bindWhileStatement(const WhileStatementSyntax *syntax);
+
+    BoundStatement *bindForStatement(const ForStatementSyntax *syntax);
 
     BoundStatement *bindStatement(StatementSyntax *syntax);
 
