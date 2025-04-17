@@ -33,7 +33,9 @@ enum class SyntaxKind {
     BadToken,
     EndOfFileToken,
 
+    // nodes
     CompilationUnit,
+    ElseClause,
 
     // expressions
     LiteralExpression,
@@ -46,25 +48,26 @@ enum class SyntaxKind {
     // Statements
     ExpressionStatement,
     BlockStatement,
+    VariableDeclaration,
+    IfStatement,
 
     // keywords
+    LetKeyword,
+    VarKeyword,
+    ElseKeyword,
+    IfKeyword,
 
     // bools
     TrueKeyword,
     FalseKeyword,
 
     // identifier
-
     IdentifierToken,
     EqualEqualToken,
     NotEqualToken,
 
-
     // auxiliary kind to mark enum end
     ENDS,
-    VariableDeclaration,
-    LetKeyword,
-    VarKeyword,
 };
 
 // just a helper method to convert enum class kind from int to respective value

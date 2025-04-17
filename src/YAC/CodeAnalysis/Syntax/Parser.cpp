@@ -8,7 +8,9 @@
 #include "Syntax.h"
 #include "SyntaxFacts.h"
 #include "CompilationUnitSyntax.h"
+#include "ElseClauseSyntax.h"
 #include "ExpressionStatementSyntax.h"
+#include "IfStatementSyntax.h"
 #include "VariableDeclarationSyntax.h"
 
 Parser::Parser(const SourceText &input): _input(input) {
@@ -48,6 +50,23 @@ ExpressionSyntax *Parser::parseExpression() {
     return parseAssignmentExpression();
 }
 
+StatementSyntax* Parser::parseIfStatement() {
+    const auto keyword = match(SyntaxKind::IfKeyword);
+    const auto condition = parseExpression();
+    const auto statement = parseStatement();
+    const auto elseClause = parseElseClause();
+    return new IfStatementSyntax(keyword, *condition, *statement, elseClause);
+}
+
+ElseClauseSyntax* Parser::parseElseClause() {
+    if (current().kind != SyntaxKind::ElseKeyword)
+        return nullptr;
+
+    const auto keyword = nextToken();
+    const auto statement = parseStatement();
+    return new ElseClauseSyntax(keyword, *statement);
+}
+
 StatementSyntax *Parser::parseStatement() {
     switch (current().kind) {
         case SyntaxKind::OpenBraceToken:
@@ -55,6 +74,8 @@ StatementSyntax *Parser::parseStatement() {
         case SyntaxKind::LetKeyword:
         case SyntaxKind::VarKeyword:
             return parseVariableDeclaration();
+        case SyntaxKind::IfKeyword:
+            return parseIfStatement();
         default:
             return parseExpressionStatement();
     }

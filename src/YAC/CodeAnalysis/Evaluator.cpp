@@ -5,6 +5,7 @@
 #include "Binding/Binder.h"
 #include "Binding/BoundBlockStatement.h"
 #include "Binding/BoundExpressionStatement.h"
+#include "Binding/BoundIfStatement.h"
 #include "Binding/BoundVariableDeclaration.h"
 #include "Syntax/Expression.h"
 
@@ -32,6 +33,12 @@ void Evaluator::EvaluateStatement(const BoundStatement *node) {
             }
             break;
         }
+        case BoundNodeKind::IfStatement: {
+            if (const auto it = dynamic_cast<const BoundIfStatement *>(node)) {
+                return EvaluateIfStatement(it);
+            }
+            break;
+        }
         default:
             throw std::runtime_error("Cannot evaluate: Invalid statement node kind");
     }
@@ -46,6 +53,14 @@ void Evaluator::EvaluateVariableDeclaration(const BoundVariableDeclaration *node
 void Evaluator::EvaluateBlockStatement(const BoundBlockStatement *node) {
     for (const auto statement: node->statements()) {
         EvaluateStatement(statement);
+    }
+}
+
+void Evaluator::EvaluateIfStatement(const BoundIfStatement *node) {
+    if (auto condition = std::any_cast<bool>(evaluateExpression(node->condition()))) {
+        EvaluateStatement(node->thenStatement());
+    } else if (node->elseStatement() != nullptr) {
+        EvaluateStatement(node->elseStatement());
     }
 }
 

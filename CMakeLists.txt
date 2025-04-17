@@ -65,6 +65,12 @@ set(SOURCES
         src/YAC/CodeAnalysis/Syntax/VariableDeclarationSyntax.h
         src/YAC/CodeAnalysis/Binding/BoundVariableDeclaration.cpp
         src/YAC/CodeAnalysis/Binding/BoundVariableDeclaration.h
+        src/YAC/CodeAnalysis/Syntax/ElseClauseSyntax.cpp
+        src/YAC/CodeAnalysis/Syntax/ElseClauseSyntax.h
+        src/YAC/CodeAnalysis/Syntax/IfStatementSyntax.cpp
+        src/YAC/CodeAnalysis/Syntax/IfStatementSyntax.h
+        src/YAC/CodeAnalysis/Binding/BoundIfStatement.cpp
+        src/YAC/CodeAnalysis/Binding/BoundIfStatement.h
 )
 
 # Create library from sources

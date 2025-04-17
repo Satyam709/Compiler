@@ -47,17 +47,21 @@ std::string syntaxKindToString(const SyntaxKind kind) {
         case SyntaxKind::BlockStatement: return "BlockStatement";
         case SyntaxKind::VariableDeclaration: return "VariableDeclaration";
         case SyntaxKind::LetKeyword: return "LetKeyword";
-        case SyntaxKind::VarKeyword:return "VarKeyword";
+        case SyntaxKind::VarKeyword: return "VarKeyword";
         case SyntaxKind::LessToken: return "LessToken";
         case SyntaxKind::GreaterToken: return "GreaterToken";
         case SyntaxKind::LessOrEqualsToken: return "LessOrEqualsToken";
         case SyntaxKind::GreaterOrEqualsToken: return "GreaterOrEqualsToken";
+        case SyntaxKind::ElseClause: return "ElseClause";
+        case SyntaxKind::ElseKeyword: return "ElseKeyword";
+        case SyntaxKind::IfKeyword: return "IfKeyword";
+        case SyntaxKind::IfStatement: return "IfStatement";
 
         default: return "UnknownToken";
     }
 }
 
-std::string getKindText(const SyntaxKind& kind) {
+std::string getKindText(const SyntaxKind &kind) {
     switch (kind) {
         case SyntaxKind::PlusToken:
             return "+";
@@ -103,6 +107,10 @@ std::string getKindText(const SyntaxKind& kind) {
             return "<=";
         case SyntaxKind::GreaterOrEqualsToken:
             return ">=";
+        case SyntaxKind::ElseKeyword:
+            return "else";
+        case SyntaxKind::IfKeyword:
+            return "if";
         default:
             return "";
     }

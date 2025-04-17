@@ -5,6 +5,7 @@
 
 #include "Binding/BoundBlockStatement.h"
 #include "Binding/BoundExpressionStatement.h"
+#include "Binding/BoundIfStatement.h"
 #include "Binding/BoundStatement.h"
 #include "Binding/BoundVariableDeclaration.h"
 #include "Symbols/VariableSymbol.h"
@@ -18,6 +19,8 @@ public:
     void EvaluateVariableDeclaration(const BoundVariableDeclaration *node);
 
     void EvaluateBlockStatement(const BoundBlockStatement *node);
+
+    void EvaluateIfStatement(const BoundIfStatement *node);
 
     void EvaluateExpressionStatement(const BoundExpressionStatement *node);
 

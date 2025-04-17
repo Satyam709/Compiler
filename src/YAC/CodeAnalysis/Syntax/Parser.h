@@ -4,6 +4,7 @@
 
 #include "BlockStatementSyntax.h"
 #include "CompilationUnitSyntax.h"
+#include "ElseClauseSyntax.h"
 #include "ExpressionStatementSyntax.h"
 #include "Syntax.h"
 #include "YAC/CodeAnalysis/DiagnosticsBag.h"
@@ -31,6 +32,10 @@ private:
     SyntaxToken match(SyntaxKind kind);
 
     ExpressionSyntax *parseExpression();
+
+    StatementSyntax *parseIfStatement();
+
+    ElseClauseSyntax *parseElseClause();
 
     StatementSyntax *parseStatement();
 

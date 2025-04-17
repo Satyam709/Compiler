@@ -19,6 +19,7 @@
 #include "YAC/CodeAnalysis/Symbols/VariableSymbol.h"
 #include "YAC/CodeAnalysis/Syntax/BlockStatementSyntax.h"
 #include "YAC/CodeAnalysis/Syntax/ExpressionStatementSyntax.h"
+#include "YAC/CodeAnalysis/Syntax/IfStatementSyntax.h"
 #include "YAC/CodeAnalysis/Syntax/VariableDeclarationSyntax.h"
 
 class BoundScope;
@@ -28,7 +29,11 @@ enum class BoundNodeKind {
     LiteralExpression,
     BinaryExpression,
     VariableExpression,
-    AssignmentExpression, BlockStatement, ExpressionStatement, VariableDeclaration
+    AssignmentExpression,
+    BlockStatement,
+    ExpressionStatement,
+    VariableDeclaration,
+    IfStatement
 };
 
 class BoundNode {
@@ -163,7 +168,7 @@ public:
 
     DiagnosticBag *diagnostics() const;
 
-    static BoundGlobalScope *BindGlobalScope(BoundGlobalScope *previous, CompilationUnitSyntax *compilation_unit);
+    static BoundGlobalScope *BindGlobalScope(BoundGlobalScope *previous, const CompilationUnitSyntax *compilation_unit);
 
     static BoundScope *CreateParentScope(BoundGlobalScope *previous);
 
@@ -175,15 +180,19 @@ public:
 
     const BoundExpression *BindNameExpression(const ExpressionSyntax &syntax);
 
-    BoundStatement *BindVariableDeclaration(VariableDeclarationSyntax *syntax);
+    BoundStatement *BindVariableDeclaration(const VariableDeclarationSyntax *syntax);
 
     const BoundExpression *BindAssignmentExpression(const ExpressionSyntax &syntax);
 
+    const BoundExpression *bindExpression(const ExpressionSyntax &syntax, const std::type_info &targetType);
+
+    BoundStatement *bindIfStatement(const IfStatementSyntax *syntax);
+
     BoundStatement *bindStatement(StatementSyntax *syntax);
 
-    BoundStatement *bindBlockStatement(BlockStatementSyntax *syntax);
+    BoundStatement *bindBlockStatement(const BlockStatementSyntax *syntax);
 
-    BoundStatement *bindExpressionStatement(ExpressionStatementSyntax *syntax);
+    BoundStatement *bindExpressionStatement(const ExpressionStatementSyntax *syntax);
 
     const BoundExpression *bindExpression(const ExpressionSyntax &syntax);
 };
