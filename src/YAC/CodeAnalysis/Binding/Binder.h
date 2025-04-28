@@ -69,6 +69,7 @@ enum class BoundUnaryOperatorKind {
     Negation,
     Invalid,
     LogicalAnd,
+    OnesComplement,
 };
 
 enum class BoundBinaryOperatorKind {
@@ -84,6 +85,9 @@ enum class BoundBinaryOperatorKind {
     Less,
     LessOrEquals,
     Greater,
+    BitwiseAnd,
+    BitwiseOr,
+    BitwiseXor,
     GreaterOrEquals
 };
 

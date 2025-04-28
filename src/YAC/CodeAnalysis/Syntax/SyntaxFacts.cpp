@@ -7,6 +7,7 @@ int SyntaxFacts::getUnaryPrecedence(const SyntaxKind &kind) {
         case SyntaxKind::BangToken:
         case SyntaxKind::PlusToken:
         case SyntaxKind::MinusToken:
+        case SyntaxKind::TildeToken:
             return 6;
 
         default:
@@ -32,10 +33,13 @@ int SyntaxFacts::getPrecedence(const SyntaxKind &kind) {
         case SyntaxKind::GreaterOrEqualsToken:
             return 3;
 
+        case SyntaxKind::AmpersandToken:
         case SyntaxKind::AmpersandAmpersandToken:
             return 2;
 
+        case SyntaxKind::PipeToken:
         case SyntaxKind::PipePipeToken:
+        case SyntaxKind::HatToken:
             return 1;
 
         case SyntaxKind::EqualsToken:

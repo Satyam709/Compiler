@@ -119,6 +119,12 @@ SyntaxToken Lexer::nextToken() {
     if (current == '}') {
         return {_position++, SyntaxKind::CloseBraceToken, "}", nullptr};
     }
+    if (current == '~') {
+        return {_position++, SyntaxKind::TildeToken, "~", nullptr};
+    }
+    if (current == '^') {
+        return {_position++, SyntaxKind::HatToken, "^", nullptr};
+    }
     if (current == '!') {
         if (peek(1) == '=') {
             int start = _position;
@@ -127,15 +133,27 @@ SyntaxToken Lexer::nextToken() {
         }
         return {_position++, SyntaxKind::BangToken, "!", nullptr};
     }
-    if (current == '&' && peek(1) == '&') {
-        int start = _position;
-        _position += 2;
-        return {start, SyntaxKind::AmpersandAmpersandToken, "&&", nullptr};
+    if (current == '&') {
+        if (peek(1) == '&') {
+            int start = _position;
+            _position += 2;
+            return {start, SyntaxKind::AmpersandAmpersandToken, "&&", nullptr};
+        } else {
+            int start = _position;
+            _position += 1;
+            return {start, SyntaxKind::AmpersandToken, "&", nullptr};
+        }
     }
-    if (current == '|' && peek(1) == '|') {
-        int start = _position;
-        _position += 2;
-        return {start, SyntaxKind::PipePipeToken, "||", nullptr};
+    if (current == '|') {
+        if (peek(1) == '|') {
+            int start = _position;
+            _position += 2;
+            return {start, SyntaxKind::PipePipeToken, "||", nullptr};
+        } else {
+            int start = _position;
+            _position += 1;
+            return {start, SyntaxKind::PipeToken, "|", nullptr};
+        }
     }
     if (current == '=') {
         if (peek(1) == '=') {

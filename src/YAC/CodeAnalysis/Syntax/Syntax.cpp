@@ -36,6 +36,10 @@ std::string syntaxKindToString(const SyntaxKind kind) {
         case SyntaxKind::TrueKeyword: return "TrueKeyword";
         case SyntaxKind::IdentifierToken: return "IdentifierToken";
         case SyntaxKind::BangToken: return "BangToken";
+        case SyntaxKind::TildeToken: return "TildeToken";
+        case SyntaxKind::AmpersandToken: return "AmpersandToken";
+        case SyntaxKind::PipeToken: return "PipeToken";
+        case SyntaxKind::HatToken: return "HatToken";
         case SyntaxKind::PipePipeToken: return "PipePipeToken";
         case SyntaxKind::AmpersandAmpersandToken: return "AmpersandAmpersandToken";
         case SyntaxKind::EqualEqualToken: return "EqualEqualToken";
@@ -80,10 +84,16 @@ std::string getKindText(const SyntaxKind &kind) {
             return "!";
         case SyntaxKind::EqualsToken:
             return "=";
+        case SyntaxKind::AmpersandToken:
+            return "&";
         case SyntaxKind::AmpersandAmpersandToken:
             return "&&";
+        case SyntaxKind::PipeToken:
+            return "|";
         case SyntaxKind::PipePipeToken:
             return "||";
+        case SyntaxKind::HatToken:
+            return "^";
         case SyntaxKind::EqualEqualToken:
             return "==";
         case SyntaxKind::NotEqualToken:
@@ -104,6 +114,8 @@ std::string getKindText(const SyntaxKind &kind) {
             return "var";
         case SyntaxKind::LetKeyword:
             return "let";
+        case SyntaxKind::TildeToken:
+            return "~";
         case SyntaxKind::LessToken:
             return "<";
         case SyntaxKind::GreaterToken:

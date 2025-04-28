@@ -110,6 +110,9 @@ std::any Evaluator::evaluateExpression(const BoundExpression *node) {
         if (unaryNode->getOperatorKind() == BoundUnaryOperatorKind::LogicalAnd) {
             return !std::any_cast<bool>(operand);
         }
+        if (unaryNode->getOperatorKind() == BoundUnaryOperatorKind::OnesComplement) {
+            return ~std::any_cast<int>(operand);
+        }
 
         throw std::runtime_error("Invalid unary operator" + boundKindsToString(unaryNode->getOperatorKind()));
     }
@@ -198,6 +201,51 @@ std::any Evaluator::evaluateExpression(const BoundExpression *node) {
                     throw std::runtime_error("Division by zero");
                 }
                 return left / right;
+            }
+
+            case BoundBinaryOperatorKind::BitwiseAnd: {
+                if (leftResult.type() == rightResult.type()) {
+                    if (leftResult.type() == typeid(int)) {
+                        return std::any_cast<int>(leftResult) & std::any_cast<int>(rightResult);
+                    } else if (leftResult.type() == typeid(bool)) {
+                        // Cast result to bool
+                        return static_cast<bool>(
+                            std::any_cast<bool>(leftResult) &
+                            std::any_cast<bool>(rightResult)
+                        );
+                    }
+                }
+                throw std::runtime_error("Type mismatch for BitwiseAnd");
+            }
+
+            case BoundBinaryOperatorKind::BitwiseOr: {
+                if (leftResult.type() == rightResult.type()) {
+                    if (leftResult.type() == typeid(int)) {
+                        return std::any_cast<int>(leftResult) | std::any_cast<int>(rightResult);
+                    } else if (leftResult.type() == typeid(bool)) {
+                        // Cast result to bool
+                        return static_cast<bool>(
+                            std::any_cast<bool>(leftResult) |
+                            std::any_cast<bool>(rightResult)
+                        );
+                    }
+                }
+                throw std::runtime_error("Type mismatch for BitwiseOr");
+            }
+
+            case BoundBinaryOperatorKind::BitwiseXor: {
+                if (leftResult.type() == rightResult.type()) {
+                    if (leftResult.type() == typeid(int)) {
+                        return std::any_cast<int>(leftResult) ^ std::any_cast<int>(rightResult);
+                    } else if (leftResult.type() == typeid(bool)) {
+                        // Cast result to bool
+                        return static_cast<bool>(
+                            std::any_cast<bool>(leftResult) ^
+                            std::any_cast<bool>(rightResult)
+                        );
+                    }
+                }
+                throw std::runtime_error("Type mismatch for BitwiseXor");
             }
 
             case BoundBinaryOperatorKind::Less: {

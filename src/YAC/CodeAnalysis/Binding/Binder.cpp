@@ -416,6 +416,8 @@ std::string boundKindsToString(const BoundUnaryOperatorKind kind) {
             return "Negation";
         case BoundUnaryOperatorKind::LogicalAnd:
             return "LogicalAnd";
+        case BoundUnaryOperatorKind::OnesComplement:
+            return "OnesComplement";
     }
     return "Not Found";
 }

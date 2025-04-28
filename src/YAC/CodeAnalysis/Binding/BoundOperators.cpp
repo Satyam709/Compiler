@@ -71,6 +71,23 @@ std::vector<std::shared_ptr<BoundBinaryOperator> > BoundBinaryOperator::operator
     std::make_shared<BoundBinaryOperator>(SyntaxKind::SlashToken,
                                           BoundBinaryOperatorKind::Division, typeid(int)),
 
+    //Bitwise operators
+    std::make_shared<BoundBinaryOperator>(SyntaxKind::AmpersandToken,
+                                          BoundBinaryOperatorKind::BitwiseAnd, typeid(int)),
+    std::make_shared<BoundBinaryOperator>(SyntaxKind::PipeToken,
+                                          BoundBinaryOperatorKind::BitwiseOr, typeid(int)),
+    std::make_shared<BoundBinaryOperator>(SyntaxKind::HatToken,
+                                          BoundBinaryOperatorKind::BitwiseXor, typeid(int)),
+    std::make_shared<BoundBinaryOperator>(SyntaxKind::AmpersandToken,
+                                          BoundBinaryOperatorKind::BitwiseAnd, typeid(bool)),
+    std::make_shared<BoundBinaryOperator>(SyntaxKind::PipeToken,
+                                          BoundBinaryOperatorKind::BitwiseOr, typeid(bool)),
+    std::make_shared<BoundBinaryOperator>(SyntaxKind::HatToken,
+                                          BoundBinaryOperatorKind::BitwiseXor, typeid(bool)),
+
+
+
+
     // logical operators
     std::make_shared<BoundBinaryOperator>(SyntaxKind::EqualEqualToken,
                                           BoundBinaryOperatorKind::Equals, typeid(int),
@@ -150,5 +167,7 @@ std::vector<std::shared_ptr<BoundUnaryOperator> > BoundUnaryOperator::operators 
     std::make_shared<BoundUnaryOperator>(SyntaxKind::MinusToken,
                                          BoundUnaryOperatorKind::Negation, typeid(int)),
     std::make_shared<BoundUnaryOperator>(SyntaxKind::BangToken,
-                                         BoundUnaryOperatorKind::LogicalAnd, typeid(bool))
+                                         BoundUnaryOperatorKind::LogicalAnd, typeid(bool)),
+    std::make_shared<BoundUnaryOperator>(SyntaxKind::TildeToken,
+                                         BoundUnaryOperatorKind::OnesComplement, typeid(int))
 };

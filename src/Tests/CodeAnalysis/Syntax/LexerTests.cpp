@@ -111,6 +111,18 @@ static bool RequiresSeparator(const SyntaxKind t1Kind, const SyntaxKind t2Kind) 
     if (t1Kind == SyntaxKind::GreaterToken && t2Kind == SyntaxKind::EqualEqualToken)
         return true;
 
+    if (t1Kind == SyntaxKind::AmpersandToken && t2Kind == SyntaxKind::AmpersandToken)
+        return true;
+
+    if (t1Kind == SyntaxKind::AmpersandToken && t2Kind == SyntaxKind::AmpersandAmpersandToken)
+        return true;
+
+    if (t1Kind == SyntaxKind::PipeToken && t2Kind == SyntaxKind::PipeToken)
+        return true;
+
+    if (t1Kind == SyntaxKind::PipeToken && t2Kind == SyntaxKind::PipePipeToken)
+        return true;
+
     return false;
 }
 
