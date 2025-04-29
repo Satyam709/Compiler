@@ -20,3 +20,15 @@ VariableSymbol* BoundVariableDeclaration::getVariable() const {
 const BoundExpression* BoundVariableDeclaration::getInitializer() const {
     return _initializer;
 }
+
+std::vector<const BoundNode*> BoundVariableDeclaration::getChildren() const {
+    return {_initializer}; // Declaration has the initializer as a child
+}
+
+std::vector<std::pair<std::string, std::string>>
+BoundVariableDeclaration::getProperties() const {
+    return {
+            {"Name", _variable->getName()},
+            {"Type", _variable->getType().name()}
+    };
+}

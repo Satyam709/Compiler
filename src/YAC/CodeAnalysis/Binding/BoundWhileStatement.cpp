@@ -12,3 +12,12 @@ BoundWhileStatement::BoundWhileStatement(const BoundExpression* condition, const
 BoundNodeKind BoundWhileStatement::getKind() const {
     return BoundNodeKind::WhileStatement;
 }
+
+std::vector<const BoundNode*> BoundWhileStatement::getChildren() const {
+    return {_condition, _body};
+}
+
+std::vector<std::pair<std::string, std::string>>
+BoundWhileStatement::getProperties() const {
+    return {};
+}

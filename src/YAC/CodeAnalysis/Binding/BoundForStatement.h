@@ -22,6 +22,9 @@ public:
     const BoundExpression* upperBound() const { return _upperBound; }
     BoundStatement* body() const { return _body; }
 
+    std::vector<const BoundNode*> getChildren() const override;
+    std::vector<std::pair<std::string, std::string>> getProperties() const override;
+
 private:
     VariableSymbol _variable;
     const BoundExpression* _lowerBound;

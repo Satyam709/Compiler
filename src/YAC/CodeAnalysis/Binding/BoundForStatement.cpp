@@ -17,3 +17,12 @@ BoundForStatement::BoundForStatement(const VariableSymbol& variable,
 BoundNodeKind BoundForStatement::getKind() const {
     return BoundNodeKind::ForStatement;
 }
+
+std::vector<const BoundNode*> BoundForStatement::getChildren() const {
+    return {_lowerBound, _upperBound, _body};
+}
+
+std::vector<std::pair<std::string, std::string>>
+BoundForStatement::getProperties() const {
+    return {{"LoopVariable", _variable.getName()}};
+}

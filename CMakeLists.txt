@@ -86,7 +86,8 @@ set(SOURCES
 # Create library from sources
 add_library(CompilerLib STATIC ${SOURCES}
         src/YAC/CodeAnalysis/Binding/BoundNode.cpp
-        src/YAC/CodeAnalysis/Binding/BoundNode.h)
+        src/YAC/CodeAnalysis/Binding/BoundNode.h
+)
 
 # Create the main executable
 add_executable(${PROJECT_NAME} ${SOURCES})

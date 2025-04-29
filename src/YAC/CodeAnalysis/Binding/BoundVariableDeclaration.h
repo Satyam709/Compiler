@@ -15,6 +15,9 @@ public:
     VariableSymbol* getVariable() const;
     const BoundExpression* getInitializer() const;
 
+    std::vector<const BoundNode*> getChildren() const override;
+    std::vector<std::pair<std::string, std::string>> getProperties() const override;
+
 private:
     VariableSymbol* _variable;
     const BoundExpression* _initializer;

@@ -15,6 +15,9 @@ public:
     const BoundExpression* condition() const { return _condition; }
     const BoundStatement* body() const { return _body; }
 
+    std::vector<const BoundNode*> getChildren() const override;
+    std::vector<std::pair<std::string, std::string>> getProperties() const override;
+
 private:
     const BoundExpression* _condition;
     const BoundStatement* _body;

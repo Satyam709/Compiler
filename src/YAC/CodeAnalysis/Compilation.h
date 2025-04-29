@@ -34,6 +34,8 @@ public:
         return _previous;
     }
 
+    void printBoundTree(std::ostream& out) const;
+
 private:
     const SyntaxTree& _syntaxTree;
     mutable BoundGlobalScope* _boundGlobalScope = nullptr;

@@ -52,6 +52,20 @@ class BoundNode {
 public:
     virtual ~BoundNode() = default;
     virtual BoundNodeKind getKind() const = 0;
+    virtual std::vector<const BoundNode*> getChildren() const = 0;
+    virtual std::vector<std::pair<std::string, std::string>> getProperties() const = 0;
+
+    void writeTo(std::ostream& writer) const;
+    std::string toString() const;
+
+private:
+    static void prettyPrint(std::ostream& writer,
+                           const BoundNode* node,
+                           const std::string& indent = "",
+                           bool isLast = true);
+
+    static std::string getText(const BoundNode* node);
+    static std::string getColor(const BoundNode* node);
 };
 
 class BoundExpression : public BoundNode {
@@ -65,6 +79,10 @@ public:
     BoundNodeKind getKind() const override;
     const std::type_info& getType() const override;
     const std::any& getValue() const;
+
+    // Implementation in .cpp
+    std::vector<const BoundNode*> getChildren() const override;
+    std::vector<std::pair<std::string, std::string>> getProperties() const override;
 
 private:
     std::any _value;
@@ -80,6 +98,10 @@ public:
     const std::type_info& getType() const override;
     BoundBinaryOperator getOperator() const;
 
+    // Implementation in .cpp
+    std::vector<const BoundNode*> getChildren() const override;
+    std::vector<std::pair<std::string, std::string>> getProperties() const override;
+
 private:
     const BoundExpression& _left;
     const BoundExpression& _right;
@@ -89,14 +111,14 @@ private:
 class BoundUnaryExpression : public BoundExpression {
 public:
     BoundUnaryExpression(const BoundUnaryOperator op, const BoundExpression &operand);
-
     BoundNodeKind getKind() const override;
-
     const std::type_info &getType() const override;
-
     const BoundExpression *getOperand() const;
-
     BoundUnaryOperatorKind getOperatorKind() const;
+
+    // Implementation in .cpp
+    std::vector<const BoundNode*> getChildren() const override;
+    std::vector<std::pair<std::string, std::string>> getProperties() const override;
 
 private:
     BoundUnaryOperator _op;
@@ -106,14 +128,14 @@ private:
 class BoundVariableExpression : public BoundExpression {
 public:
     explicit BoundVariableExpression(const VariableSymbol &variable);
-
     BoundNodeKind getKind() const override;
-
     const std::type_info &getType() const override;
-
     const std::string &getName() const;
-
     const VariableSymbol &getVariable() const;
+
+    // Implementation in .cpp
+    std::vector<const BoundNode*> getChildren() const override;
+    std::vector<std::pair<std::string, std::string>> getProperties() const override;
 
 private:
     VariableSymbol _variable;
@@ -122,23 +144,22 @@ private:
 class BoundAssignmentExpression : public BoundExpression {
 public:
     BoundAssignmentExpression(const VariableSymbol &variable, const BoundExpression *expression);
-
     BoundNodeKind getKind() const override;
-
     const std::type_info &getType() const override;
-
     const std::string &getName() const;
-
     const BoundExpression *getExpression() const;
-
     const VariableSymbol &getVariable() const;
+
+    // Implementation in .cpp
+    std::vector<const BoundNode*> getChildren() const override;
+    std::vector<std::pair<std::string, std::string>> getProperties() const override;
 
 private:
     VariableSymbol _variable;
     const BoundExpression *_expression;
 };
 
-// Helper functions for converting enums to strings
+// Helper function declarations
 std::string boundKindsToString(BoundUnaryOperatorKind kind);
 std::string boundKindsToString(BoundBinaryOperatorKind kind);
 std::string boundKindsToString(BoundNodeKind kind);

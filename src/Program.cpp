@@ -32,6 +32,7 @@ void setConsoleColor(bool isError = false) {
 
 int main() {
     bool showTree = true;
+    bool showBoundTree = true;
     std::unordered_map<VariableSymbol, std::any> variables;
     Compilation* previous = nullptr;
 
@@ -56,6 +57,12 @@ int main() {
             continue;
         }
 
+        if (inputText == "#showBoundTree\r\n") {
+            showBoundTree = !showBoundTree;
+            std::cout << (showBoundTree ? "Showing bound trees." : "Not showing bound trees") << std::endl;
+            continue;
+        }
+
         if (inputText == "#showTree\r\n") {
             showTree = !showTree;
             std::cout << (showTree ? "Showing parse trees." : "Not showing parse trees") << std::endl;
@@ -74,6 +81,14 @@ int main() {
         // Compilation and evaluation
         Compilation* compilation = previous == nullptr? new Compilation(*syntaxTree):previous->continuwWith(syntaxTree);
         EvaluationResult result = compilation->evaluate(variables);
+
+        if (showBoundTree) {
+            setConsoleColor(false);
+            std::cout << "\n=== Bound Tree ===\n";
+            compilation->printBoundTree(std::cout);
+            std::cout << "==================\n\n";
+            setConsoleColor();
+        }
 
         if (showTree) {
             setConsoleColor(false); // Set to dark gray

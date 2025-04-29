@@ -15,6 +15,9 @@ public:
     BoundNodeKind getKind() const override;
     const std::vector<BoundStatement*>& statements() const;
 
+    std::vector<const BoundNode*> getChildren() const override;
+    std::vector<std::pair<std::string, std::string>> getProperties() const override;
+
 private:
     std::vector<BoundStatement*> _statements;
 };

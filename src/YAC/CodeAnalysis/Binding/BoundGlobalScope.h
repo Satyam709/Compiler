@@ -33,6 +33,7 @@ public:
         return _statement;
     }
 
+
 private:
     BoundGlobalScope *_previous;
     std::vector<Diagnostic> _diagnostics;

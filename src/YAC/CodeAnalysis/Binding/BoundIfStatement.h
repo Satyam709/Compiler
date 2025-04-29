@@ -19,6 +19,10 @@ public:
     [[nodiscard]] const BoundStatement* thenStatement() const { return _thenStatement; }
     [[nodiscard]] const BoundStatement* elseStatement() const { return _elseStatement; }
 
+    std::vector<const BoundNode*> getChildren() const override;
+    std::vector<std::pair<std::string, std::string>> getProperties() const override;
+
+
 private:
     const BoundExpression* _condition;
     const BoundStatement* _thenStatement;
