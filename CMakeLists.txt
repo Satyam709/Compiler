@@ -27,6 +27,9 @@ set(SOURCES
         src/YAC/CodeAnalysis/Syntax/SyntaxFacts.cpp
         src/YAC/CodeAnalysis/Syntax/SyntaxFacts.h
         src/YAC/CodeAnalysis/Binding/Binder.h
+        src/YAC/CodeAnalysis/Binding/Binder.cpp
+        src/YAC/CodeAnalysis/Binding/BoundNode.h
+        src/YAC/CodeAnalysis/Binding/BoundNode.cpp
         src/YAC/Utils/Caster.h
         src/YAC/CodeAnalysis/Binding/BoundOperators.h
         src/YAC/CodeAnalysis/Binding/BoundOperators.cpp
@@ -44,7 +47,6 @@ set(SOURCES
         src/YAC/CodeAnalysis/Diagnostics.cpp
         src/YAC/CodeAnalysis/DiagnosticsBag.h
         src/YAC/CodeAnalysis/DiagnosticsBag.cpp
-        src/YAC/CodeAnalysis/Binding/Binder.cpp
         src/YAC/CodeAnalysis/Symbols/VariableSymbol.cpp
         src/YAC/CodeAnalysis/Symbols/VariableSymbol.h
         src/YAC/CodeAnalysis/Binding/BoundScope.cpp
@@ -82,7 +84,9 @@ set(SOURCES
 )
 
 # Create library from sources
-add_library(CompilerLib STATIC ${SOURCES})
+add_library(CompilerLib STATIC ${SOURCES}
+        src/YAC/CodeAnalysis/Binding/BoundNode.cpp
+        src/YAC/CodeAnalysis/Binding/BoundNode.h)
 
 # Create the main executable
 add_executable(${PROJECT_NAME} ${SOURCES})
